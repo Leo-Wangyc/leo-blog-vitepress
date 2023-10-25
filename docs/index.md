@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: Documents
-      link: /documents/computer-science/ComputerScience
+      link: /documents/computer-science/computer-science
     - theme: alt
       text: Certificates
       link: /certificates

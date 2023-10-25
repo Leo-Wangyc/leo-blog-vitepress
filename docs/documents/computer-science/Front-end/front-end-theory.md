@@ -764,13 +764,13 @@ HTTP 内容
 
 ---
 
-![1381649902262_.pic](../../../public/assets/FrontEndTheory/1381649902262_.pic.jpg)
+![1381649902262_.pic](../../../public/assets/front-end-theory/1381649902262_.pic.jpg)
 
 ### HTTP 缓存
 
 http 缓存分为 **强缓存** 和 **协商缓存** 两种
 
-![image-20220414150617720](../../../public/assets/FrontEndTheory/image-20220414150617720.png)
+![image-20220414150617720](../../../public/assets/front-end-theory/image-20220414150617720.png)
 
 - **强缓存**
 

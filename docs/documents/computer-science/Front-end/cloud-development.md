@@ -1,4 +1,4 @@
-CloudDevelopment
+cloud-development
 
 周分享会（2021-8-20）
 
@@ -27,29 +27,29 @@ CloudDevelopment
 
 前置条件：**要保证在有云函数的项目中进行本地调试，否则会报找不到云函数**
 
-<img src="../../../public/assets/CloudDevelopment/image-20211223175455216.png" alt="image-20211223175455216" style="zoom:50%;" />
+<img src="../../../public/assets/cloud-development/image-20211223175455216.png" alt="image-20211223175455216" style="zoom:50%;" />
 
 即如图所示，需为上述项目中才可
 
 具体步骤：
 
-1.<img src="../../../public/assets/CloudDevelopment/image-20211223175558501.png" alt="image-20211223175558501" style="zoom:50%;" />
+1.<img src="../../../public/assets/cloud-development/image-20211223175558501.png" alt="image-20211223175558501" style="zoom:50%;" />
 
 打开云开发面板
 
-2.<img src="../../../public/assets/CloudDevelopment/image-20211223175647209.png" alt="image-20211223175647209" style="zoom:50%;" />
+2.<img src="../../../public/assets/cloud-development/image-20211223175647209.png" alt="image-20211223175647209" style="zoom:50%;" />
 
 进入云函数区块
 
-3.<img src="../../../public/assets/CloudDevelopment/image-20211223175716100.png" alt="image-20211223175716100" style="zoom:40%;" />
+3.<img src="../../../public/assets/cloud-development/image-20211223175716100.png" alt="image-20211223175716100" style="zoom:40%;" />
 
 选择本地调试
 
-4.<img src="../../../public/assets/CloudDevelopment/image-20211223175825223.png" alt="image-20211223175825223" style="zoom:50%;" />
+4.<img src="../../../public/assets/cloud-development/image-20211223175825223.png" alt="image-20211223175825223" style="zoom:50%;" />
 
 开发面板右侧，选择手动调用，如果选择从模拟器调用，请保持基础库等级低于 2.14.3
 
-5.<img src="../../../public/assets/CloudDevelopment/image-20211223180127768.png" alt="image-20211223180127768" style="zoom:50%;" />
+5.<img src="../../../public/assets/cloud-development/image-20211223180127768.png" alt="image-20211223180127768" style="zoom:50%;" />
 
 更改上述相关参数，即可实现本地调用
 
@@ -79,15 +79,15 @@ CloudDevelopment
 
 - 第一步，进入云函数版本管理
 
-  <img src="../../../public/assets/CloudDevelopment/image-20220105171511971.png" alt="image-20220105171511971" style="zoom:30%;" />
+  <img src="../../../public/assets/cloud-development/image-20220105171511971.png" alt="image-20220105171511971" style="zoom:30%;" />
 
 - 第二步，点击配置
 
-  <img src="../../../public/assets/CloudDevelopment/image-20220105171604319.png" alt="image-20220105171604319" style="zoom:30%;" />
+  <img src="../../../public/assets/cloud-development/image-20220105171604319.png" alt="image-20220105171604319" style="zoom:30%;" />
 
 - 第三步，写入配置 TZ, Asia/Shanghai，点击确认即可
 
-  <img src="../../../public/assets/CloudDevelopment/image-20220105171718485.png" alt="image-20220105171718485" style="zoom:50%;" />
+  <img src="../../../public/assets/cloud-development/image-20220105171718485.png" alt="image-20220105171718485" style="zoom:50%;" />
 
 # 云数据库
 

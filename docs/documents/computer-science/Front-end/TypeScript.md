@@ -1,6 +1,6 @@
-# TypeScript
+# typescript
 
-> 深入理解 TypeScript: https://jkchao.github.io/typescript-book-chinese/#why
+> 深入理解 typescript: https://jkchao.github.io/typescript-book-chinese/#why
 
 ## ts 数据类型
 

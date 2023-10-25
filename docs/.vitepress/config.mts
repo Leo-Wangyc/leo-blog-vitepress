@@ -14,7 +14,7 @@ export default defineConfig({
         items: [
           {
             text: "Computer Science",
-            link: "/documents/computer-science/ComputerScience",
+            link: "/documents/computer-science/computer-science",
           },
           {
             text: "Economics",
@@ -51,7 +51,7 @@ export default defineConfig({
           items: [
             {
               text: "Basic Computer Science",
-              link: "/documents/computer-science/computerScience",
+              link: "/documents/computer-science/computer-science",
             },
             {
               text: "Git Guidebook",
@@ -77,11 +77,11 @@ export default defineConfig({
               items: [
                 {
                   text: "Front-end Theory",
-                  link: "/documents/computer-science/front-end/FrontEndTheory",
+                  link: "/documents/computer-science/front-end/front-end-theory",
                 },
                 {
-                  text: "HTML5",
-                  link: "/documents/computer-science/front-end/HTML5",
+                  text: "h5",
+                  link: "/documents/computer-science/front-end/h5",
                 },
                 {
                   text: "CSS",
@@ -92,8 +92,8 @@ export default defineConfig({
                   link: "/documents/computer-science/front-end/js&es6+",
                 },
                 {
-                  text: "TypeScript",
-                  link: "/documents/computer-science/front-end/typeScript",
+                  text: "typescript",
+                  link: "/documents/computer-science/front-end/typescript",
                 },
                 {
                   text: "Node",
@@ -117,14 +117,14 @@ export default defineConfig({
                 },
                 {
                   text: "Components Design",
-                  link: "/documents/computer-science/front-end/componentDesign",
+                  link: "/documents/computer-science/front-end/component-design",
                 },
                 {
                   text: "Cloud Development",
-                  link: "/documents/computer-science/front-end/cloudDevelopment",
+                  link: "/documents/computer-science/front-end/cloud-development",
                 },
                 {
-                  text: "Real Project",
+                  text: "Engineering",
                   link: "/documents/computer-science/front-end/project",
                 },
                 {
@@ -139,7 +139,7 @@ export default defineConfig({
               items: [
                 {
                   text: "Python Basic",
-                  link: "/documents/computer-science/python/pythonBasic",
+                  link: "/documents/computer-science/python/python-basic",
                 },
               ],
             },
