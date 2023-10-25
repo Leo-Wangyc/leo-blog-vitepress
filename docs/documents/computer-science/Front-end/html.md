@@ -17,7 +17,7 @@
 
 结构语义化方便阅读代码以及理解页面结构，如下图
 
-![page](../../../public/assets/h5/page.png)
+![page](../../../public/assets/html/page.png)
 
 其中，\<figure>标签用于包裹插图，\<figcaption>用于对所含图片进行描述说明，类似 alt 属性
 

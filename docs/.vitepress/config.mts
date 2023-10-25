@@ -80,8 +80,8 @@ export default defineConfig({
                   link: "/documents/computer-science/front-end/front-end-theory",
                 },
                 {
-                  text: "h5",
-                  link: "/documents/computer-science/front-end/h5",
+                  text: "html",
+                  link: "/documents/computer-science/front-end/html",
                 },
                 {
                   text: "CSS",
@@ -92,7 +92,7 @@ export default defineConfig({
                   link: "/documents/computer-science/front-end/js&es6+",
                 },
                 {
-                  text: "typescript",
+                  text: "Typescript",
                   link: "/documents/computer-science/front-end/typescript",
                 },
                 {

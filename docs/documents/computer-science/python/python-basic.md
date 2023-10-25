@@ -9,6 +9,8 @@ a = 20
 b = input(‘please input a value’)
 ```
 
+
+
 ## Functions
 
 使用 def 关键字，没有 parentheses 包裹，全靠 indentation 来控制函数 scope
@@ -17,6 +19,8 @@ b = input(‘please input a value’)
 def func:
   print(‘hello world’)
 ```
+
+
 
 ## Calculation
 
@@ -37,6 +41,8 @@ def calcEnergy(m):
 
 main()
 ```
+
+
 
 ## Common Used Methods
 
@@ -104,6 +110,8 @@ main()
 
 字符串首字母大写，例如’string’.capitalize() == ‘String’
 
+
+
 ## Main function
 
 Python 不具有变量提升的特点，定义在后面的函数在前面使用的话会报错，故而需要定义 main, 在最后调用，确保函数调用不出错
@@ -119,6 +127,8 @@ def getHello(v):
 main()
 ```
 
+
+
 ## **列表生成式**
 
 结构 [expression for element in iterable if condition]
@@ -132,6 +142,8 @@ eg2: [x+'1' for x in 'balala'] —> ['b1', 'a1', 'l1', 'a1', 'l1', 'a1']
 还可以搭配限制条件 ‘’.join(x+’1’ for x in ‘’balala’ if x == a) —> 'a1a1'
 
 **注意，expression 和 element 中的变量名要一致！例如，不能写 [ y for x in list ]**
+
+
 
 ## Conditions
 
