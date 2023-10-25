@@ -1,9 +1,9 @@
-Git
-
 # git 命令
 
 > git 图形化在线练习
 > https://learngitbranching.js.org/?locale=zh_CN
+
+
 
 ## git commit
 
@@ -14,6 +14,8 @@ git commit
 git commit -m 'demo'
 ```
 
+
+
 ## git branch
 
 用于新建分支
@@ -21,6 +23,8 @@ git commit -m 'demo'
 ```javascript
 git branch 'branch'
 ```
+
+
 
 ## git checkout
 
@@ -30,6 +34,8 @@ git branch 'branch'
 git checkout 'branch1' // 分支切换
 git checkout -b 'branch2'  // 新建，并切换分支到branch2
 ```
+
+
 
 ## git merge
 
