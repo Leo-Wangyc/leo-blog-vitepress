@@ -2,7 +2,7 @@
   "name": "vite-press-blog",
   "version": "1.0.0",
   "main": "index.js",
-  "author": "Ahao <helloahao@icloud.com>",
+  "author": "Leo <542507136@qq.com>",
   "license": "MIT",
   "devDependencies": {
     "vitepress": "1.0.0-rc.24"
