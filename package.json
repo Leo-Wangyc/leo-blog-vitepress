@@ -1,8 +1,16 @@
 {
+  "name": "vite-press-blog",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Ahao <helloahao@icloud.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "vitepress": "1.0.0-rc.24"
+  },
   "scripts": {
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
-    "deploy": "bash deploy.sh"
-  }
+    "docs:preview": "vitepress preview docs"
+  },
+  "dependencies": {}
 }
