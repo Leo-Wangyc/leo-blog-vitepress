@@ -2,79 +2,71 @@
 
 ## variables
 
-python没有特殊符号定义类型，属于动态创建类型
+python 没有特殊符号定义类型，属于动态创建类型
 
-````python
+```python
 a = 20
 b = input(‘please input a value’)
-````
-
-
+```
 
 ## Functions
 
-使用def关键字，没有parentheses包裹，全靠indentation来控制函数scope	
+使用 def 关键字，没有 parentheses 包裹，全靠 indentation 来控制函数 scope
 
-````python
+```python
 def func:
   print(‘hello world’)
-````
-
-
+```
 
 ## Calculation
 
-\+ - * / % 五大基本运算	
+\+ - \* / % 五大基本运算
 
-平方计算：[pow(number)] [number**2]	
+平方计算：[pow(number)] [number**2]
 
 **注意：只有数字类型可以进行运算！字符串需要进行格式转换！**
 
-````python
-def main():	
+```python
+def main():
   mass = int(input('m: '))	// 此处必须用int或者float包一下，不然会报错！
-  calcEnergy(mass)	
-  
-def calcEnergy(m):	
-  energy = m * pow(300000000, 2)	
-  return print(energy)	
+  calcEnergy(mass)
 
-main()	
-````
+def calcEnergy(m):
+  energy = m * pow(300000000, 2)
+  return print(energy)
 
-
-
-
+main()
+```
 
 ## Common Used Methods
 
 **print(text1, text2, …, sep=“, ”)**
 
-控制台打印方法，接收sep参数作为不同text之间的连接符
+控制台打印方法，接收 sep 参数作为不同 text 之间的连接符
 
 **int()**
 
-字符串转数字，python不具有隐式转换
+字符串转数字，python 不具有隐式转换
 
 **strip()**
 
 消除字符串两端的空格
 
-**f”{variable: .nf}”** 
+**f”{variable: .nf}”**
 
-字符串格式化，保留n位小数,eg: f”{result: .2f}”, 13.22
+字符串格式化，保留 n 位小数,eg: f”{result: .2f}”, 13.22
 
-**f”{variable: ,.nf}”** 
+**f”{variable: ,.nf}”**
 
-字符串格式化，保留n位小数，并带逗号格式话,eg: f”{result: ,.2f}”, 13,333.22
+字符串格式化，保留 n 位小数，并带逗号格式话,eg: f”{result: ,.2f}”, 13,333.22
 
 **round(number, [digits])**
 
-格式化number为digits位小数，如果不填digit，则返回四舍五入后的整数，如果digit填0，还是会返回xx.0的浮点数
+格式化 number 为 digits 位小数，如果不填 digit，则返回四舍五入后的整数，如果 digit 填 0，还是会返回 xx.0 的浮点数
 
 **range(number)**
 
-给定一个数字，用于生成一个number长度的数组
+给定一个数字，用于生成一个 number 长度的数组
 
 **string.lower()**
 
@@ -106,30 +98,26 @@ main()
 
 **string.zfill()**
 
-自动补零，例如str(9).zfill(2) == ’09’ capitalize()
+自动补零，例如 str(9).zfill(2) == ’09’ capitalize()
 
 **string.capitalize()**
 
 字符串首字母大写，例如’string’.capitalize() == ‘String’
 
-
-
 ## Main function
 
-Python不具有变量提升的特点，定义在后面的函数在前面使用的话会报错，故而需要定义main, 在最后调用，确保函数调用不出错
+Python 不具有变量提升的特点，定义在后面的函数在前面使用的话会报错，故而需要定义 main, 在最后调用，确保函数调用不出错
 
-````python
-def main:	
+```python
+def main:
 	inputValue = input(‘say something please: ’)
 	getHello(inputValue)
-  
+
 def getHello(v):
 	return print(f`Hello ${v}`)
 
-main()	
-````
-
-
+main()
+```
 
 ## **列表生成式**
 
@@ -143,47 +131,31 @@ eg2: [x+'1' for x in 'balala'] —> ['b1', 'a1', 'l1', 'a1', 'l1', 'a1']
 
 还可以搭配限制条件 ‘’.join(x+’1’ for x in ‘’balala’ if x == a) —> 'a1a1'
 
-**注意，expression和element中的变量名要一致！例如，不能写 [ y for x in list ]**
-
-
-
-
+**注意，expression 和 element 中的变量名要一致！例如，不能写 [ y for x in list ]**
 
 ## Conditions
 
 ### if
 
-Python可以用运算连写，例如grade >= 90 and grade <=100，可以直接写成 90 <= grade <= 100
+Python 可以用运算连写，例如 grade >= 90 and grade <=100，可以直接写成 90 <= grade <= 100
 
-````python
+```python
 def is_right(answer):
   formatted_answer = answer.strip().lower()
   if formatted_answer == '42' or formatted_answer == 'forty-two' or formatted_answer == 'forty two':
     return 'Yes'
   else:
     return 'No'
-````
+```
 
-
-
-**注意，python中没有‘||’ (或)的关键字，必须使用or**
-
-
+**注意，python 中没有‘||’ (或)的关键字，必须使用 or**
 
 ### if in
 
 **if item in item_dic:**
 
-If in关键字，判断某项是否在某个字典中有值
-
-
+If in 关键字，判断某项是否在某个字典中有值
 
 ### match
 
-Python中的match就是其他语言中的switch!
-
-
-
-
-
-![image-20231025150519913](/Users/leo/Documents/personal/vite-press/docs/public/assets/python-basic/image-20231025150519913.png)
+Python 中的 match 就是其他语言中的 switch!
