@@ -1,0 +1,28 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/npm-debug.log*
+/yarn-error.log
+/yarn.lock
+/package-lock.json
+/docs/.vitepress/dist
+
+# production
+/dist
+deploy_versions/
+project/**
+!project/.keep
+
+# misc
+.DS_Store
+
+# ide
+.idea
+/**/.idea
+
+# other
+.temp/
+.rn_temp/
+src/.tmp/
+/.history
