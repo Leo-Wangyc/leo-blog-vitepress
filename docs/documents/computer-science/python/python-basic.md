@@ -155,7 +155,16 @@ eg2: [x+'1' for x in 'balala'] —> ['b1', 'a1', 'l1', 'a1', 'l1', 'a1']
 
 Python可以用运算连写，例如grade >= 90 and grade <=100，可以直接写成 90 <= grade <= 100
 
-![image-20231025144649847](/Users/leo/Documents/personal/vite-press/docs/public/assets/python-basic/image-20231025144649847.png)
+````python
+def is_right(answer):
+  formatted_answer = answer.strip().lower()
+  if formatted_answer == '42' or formatted_answer == 'forty-two' or formatted_answer == 'forty two':
+    return 'Yes'
+  else:
+    return 'No'
+````
+
+
 
 **注意，python中没有‘||’ (或)的关键字，必须使用or**
 
@@ -171,6 +180,10 @@ If in关键字，判断某项是否在某个字典中有值
 
 ### match
 
-Python中的match就是其他语言中的switch
+Python中的match就是其他语言中的switch!
 
-<img src="/Users/leo/Documents/personal/vite-press/docs/public/assets/python-basic/image-20231025144806440.png" alt="image-20231025144806440" style="zoom:50%;" />
+
+
+
+
+![image-20231025150519913](/Users/leo/Documents/personal/vite-press/docs/public/assets/python-basic/image-20231025150519913.png)
