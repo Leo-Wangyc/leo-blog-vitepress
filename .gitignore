@@ -2,13 +2,13 @@
 
 # dependencies
 node_modules
-docs/.vitepress/dist/
+docs/.vitepress/dist
 /npm-debug.log*
 /yarn-error.log
 /yarn.lock
 
 # production
-/dist
+dist/
 deploy_versions/
 project/**
 !project/.keep
