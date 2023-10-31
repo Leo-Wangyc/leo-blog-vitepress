@@ -1,6 +1,18 @@
 # Vue2
 
+##Vue2基本指令
 
+### v-once
+
+v-once包裹的内容，只会渲染一次，后续值的更新不会触发组件渲染
+
+### v-html
+
+可用于解析html内容
+
+### v-on/v-if/v-else-if...
+
+经常用到，不多赘述
 
 
 
@@ -204,22 +216,6 @@ c2: [a, b, e, c, d, h, f, g]		// 新的子元素
 
 
 
-##Vue3基本指令
-
-### v-once
-
-v-once包裹的内容，只会渲染一次，后续值的更新不会触发组件渲染
-
-### v-html
-
-可用于解析html内容
-
-### v-on/v-if/v-else-if...
-
-经常用到，不多赘述
-
-
-
 
 
 ## Key和diff算法
@@ -238,11 +234,29 @@ SFC即single-file components，单文件组件，即推荐使用.vue文件后缀
 
 
 
-## CSS scoped
+## CSS
+
+### CSS scoped
 
 scoped表示改css仅在该文件内有效
 
-###
+### CSS中的v-bind
+
+````js
+<script setup>
+const color1 = 'red'
+</script>
+
+<style>
+  .red{
+    color: v-bind(color1)
+  }
+</style>
+````
+
+
+
+
 
 ##动态绑定
 
@@ -261,6 +275,129 @@ scoped表示改css仅在该文件内有效
 ````
 
 这种情况下，name和leo都是变量！
+
+
+
+## Composition API
+
+### ref,reactive
+
+不多解释了
+
+
+
+### isProxy, isReactive, isReadonly, isRef
+
+用于判断某个对象是否为响应式对象/属性
+
+**注意：ref创建的是RefImpl对象，因此不可以用isProxy来判断**
+
+
+
+### toRaw
+
+用于将响应式对象变回普通对象
+
+
+
+### shallowReactive, shallowReadonly
+
+创建浅层的代理响应式/只读对象，只有对象的**根级别**的属性具有对应特性
+
+
+
+### toRef
+
+可用于拆分响应式对象，令其中的每个属性都具有响应式
+
+````js
+<template>
+	<button>{{age}}</button>
+</template>
+
+// 错误示范
+<script setup>
+  const reactiveObj = reactive({name: 'Leo', age: 10})
+	const { name, age } = reactiveObj
+  const addAge = () => {
+    age ++ 	// 此时对age进行操作，页面上无响应
+  }
+</script>
+
+// 正确示范
+<script setup>
+  const reactiveObj = reactive({name: 'Leo', age: 10})
+	const { name, age } = toRef(reactiveObj) // 使用toRef包裹住
+  const addAge = () => {
+    age ++ 	// 此时对age进行操作，页面上有
+  }
+</script>
+````
+
+
+
+### unref
+
+该函数接收一个参数，如果参数是个ref属性，则返回其value，如果不是，则返回参数本身
+
+本质上是如下的一个语法糖
+
+````js
+result = unref(val)
+result = isRef(val) ? val.value : val
+````
+
+
+
+### computed
+
+computed和vue2中的用法差别不大
+
+````js
+const computedValue = computed(()=> val1 + val2)
+````
+
+不过computed函数支持传入set和get
+
+````js
+const computedValue = computed({
+  get: ()=> val1 + val2,
+  set(newVal){
+  	first = val1;
+    second = val2
+	}
+})
+````
+
+
+
+### watch, watchEffect
+
+watchEffect在运行时会立即触发一次，最后会监听写在传入其中的函数体内响应式数据，当其中的响应式数据再度发生变化的时候，会自动触发watchEffect的执行
+
+除此之外，watchEffect函数本身的返回值是一个stop函数，当需要停止监听的时候，直接调用即可
+
+````js
+const age = ref(18)
+const stop = watchEffect(()=>{
+  console.log('age: ', age) // 每次age发生变化，都会触发该watch
+})
+const changeAge = () => {
+	if(age > 65){
+    stop()	// 调用watchEffect本身返回的函数，即可停止监听
+  }else{
+    age ++
+  }
+}
+````
+
+
+
+
+
+
+
+
 
 
 
