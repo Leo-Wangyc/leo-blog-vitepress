@@ -2,11 +2,9 @@
 
 ## 前端数据结构
 
----
+### 栈stacks
 
-### 栈
-
-- 栈结构具有 **先进后出**的特点，用 js 代码实现栈如下
+- 栈结构具有 **先进后出LIFO** (last in, first out) 的特点，用 js 代码实现栈如下
 
   ```typescript
   class Stack = {
@@ -19,22 +17,30 @@
     }
   }
   ```
+  
+- 入栈push，出栈pop
 
-### 队列
 
-- 队列结构具有 `先进先出` 的特点，用 js 代码实现队列如下
+
+### 队列queue
+
+- 队列结构具有 **先进先出FIFO**(first in, first out) 的特点，用 js 代码实现队列如下
 
 * ```typescript
   class Queue = {
     private items: number[] = []
-  	equeue(element: number){	 //入栈操作
+  	equeue(element: number){	 //入队enqueue操作
       this.items.push(element);
     }
-  	dequeue(element: number){		//出栈操作
+  	dequeue(element: number){		//出队dequeue操作
       return this.items.shift(elemnt);		//shift函数删除并返回第一个元素
     }
   }
   ```
+  
+* 入队enqueue，出栈dequeue
+
+
 
 ### 链表
 
@@ -270,13 +276,13 @@
 >
 > **解析**：输出结果为 1,1,1,2,1,2
 >
-> ​ 首先，因为 demo 函数的返回值是一个引用类型而非值类型，所以，返回的是一串内存地址，demo 函数每次被调用，都会开辟一块新的内存空间，而且，一旦产生闭包，那么产生闭包的作用域内的全部变量均不会被垃圾回收机制回收，即 demo 内部的所有函数和对象和值，全部会存在着，所以 n 不会被回收。
+>  首先，因为 demo 函数的返回值是一个引用类型而非值类型，所以，返回的是一串内存地址，demo 函数每次被调用，都会开辟一块新的内存空间，而且，一旦产生闭包，那么产生闭包的作用域内的全部变量均不会被垃圾回收机制回收，即 demo 内部的所有函数和对象和值，全部会存在着，所以 n 不会被回收。
 >
-> ​ 然后，每次调用 demo 函数都会开辟新的内存空间，那么返回值是一个引用类型，返回的就是该内存所在的内存地址。拿例题来看，第一次 demo()，返回值假设为一串叫"AAAA1"的内存指针，那么自调用 demo()()，调用的是将"AAAA1"中的 n 输出，并自加 1。继而，第二次 demo()，又新开辟了一块空间，假设返回的指针为"AAAA2"，此时自调用，调用的是将"AAAA2"中的 n 输出，并自加 1，所以，输出还是 1。
+>  然后，每次调用 demo 函数都会开辟新的内存空间，那么返回值是一个引用类型，返回的就是该内存所在的内存地址。拿例题来看，第一次 demo()，返回值假设为一串叫"AAAA1"的内存指针，那么自调用 demo()()，调用的是将"AAAA1"中的 n 输出，并自加 1。继而，第二次 demo()，又新开辟了一块空间，假设返回的指针为"AAAA2"，此时自调用，调用的是将"AAAA2"中的 n 输出，并自加 1，所以，输出还是 1。
 >
-> ​ 第三次，重新调用 demo()，此时继续开辟新空间，假设指针为"AAAA3"，此时的不同点是，将改指针赋值给了变量 a，所以 a 储存的是"AAAA3"这个内存指针，第一次 a()，"AAAA3"中的 n 进行了输入，而且自+1，第二次 a()，仍旧还是"AAAA3"中的 n，此时 n 为 2，所以输出就变成了 2，然后自+1 变成 3
+>  第三次，重新调用 demo()，此时继续开辟新空间，假设指针为"AAAA3"，此时的不同点是，将改指针赋值给了变量 a，所以 a 储存的是"AAAA3"这个内存指针，第一次 a()，"AAAA3"中的 n 进行了输入，而且自+1，第二次 a()，仍旧还是"AAAA3"中的 n，此时 n 为 2，所以输出就变成了 2，然后自+1 变成 3
 >
-> ​ 最后，重新调用 demo()并赋值给 b，按上面同理，开辟"AAAA4"，而且进行后续操作也都是新的一块内存空间了，互不影响。所以输出也为 1 和 2
+>  最后，重新调用 demo()并赋值给 b，按上面同理，开辟"AAAA4"，而且进行后续操作也都是新的一块内存空间了，互不影响。所以输出也为 1 和 2
 
 ### var, let, const
 
@@ -956,7 +962,7 @@ http://www.example.net/sample.aspx?callback=mycallback
   let objb = { ...obja };
   objb.a = 2; // 不改变obja的值
   objb.b = [3, 4]; // 不改变objb的值
-
+  
   let obja = [{ a: 1 }, { b: 2 }];
   let objb = [...obja];
   objb[0].a = 2; // 会改变obja内的a的值
@@ -1171,19 +1177,19 @@ a | b; // 0111  --> 7
     private constructor() {
       // ..
     }
-
+  
     public static getInstance() {
       if (!Singleton.instance) {
         Singleton.instance = new Singleton();
       }
-
+  
       return Singleton.instance;
     }
-
+  
     someMethod() {}
   }
   let someThing = new Singleton(); // Error: constructor of 'singleton' is private
-
+  
   let instacne1 = Singleton.getInstance(); // do some thing with the instance
   let instacne2 = Singleton.getInstance(); // 无论创建多少次，都是指向的同一个实例对象 instacne1 === instacne2
   let instacne3 = Singleton.getInstance(); // 无论创建多少次，都是指向的同一个实例对象 instacne1 === instacne2 === instacne3
@@ -1210,7 +1216,7 @@ a | b; // 0111  --> 7
   interface ICalc {
     calc(num1: number, num2: number): number;
   }
-
+  
   // 代理对象A实现该方法
   class Add implements ICalc {
     constructor() {}
@@ -1218,7 +1224,7 @@ a | b; // 0111  --> 7
       return num1 + num2;
     }
   }
-
+  
   // 代理对象B实现该方法
   class Minus implements ICalc {
     constructor() {}
@@ -1226,7 +1232,7 @@ a | b; // 0111  --> 7
       return num1 - num2;
     }
   }
-
+  
   // 源对象
   class Num {
     constructor() {}
@@ -1236,7 +1242,7 @@ a | b; // 0111  --> 7
       return this.delegate.calc(num1, num2);
     }
   }
-
+  
   let num = new Num();
   // num.delegate = new Add();	// 利用源对象中的delegate实现代理
   num.delegate = new Minus(); // 不同的代理对象可以有不同的实现
@@ -1264,18 +1270,18 @@ a | b; // 0111  --> 7
       this.funcList.forEach((fn) => fn(name, data)); // 每当发布者发布新内容的时候，自动调用所有订阅了该发布者的订阅方法
     },
   };
-
+  
   events.on((name, data) => {
     // 此处有一个方法，他订阅了别的方法，每当有emit的方法执行后，该方法就会自动执行
     console.log(name + "方法执行了，结果是" + data);
   });
-
+  
   fs.readFile("./a.txt", "UTF8", (err, data) => {
     // 模拟异步事件1
     let name = "A";
     events.emit(name, data);
   });
-
+  
   fs.readFile("./b.txt", "UTF8", (err, data) => {
     // 模拟异步事件2
     let name = "B";
@@ -1293,14 +1299,14 @@ a | b; // 0111  --> 7
   interface IObserver {
     namechanged(name: string): void;
   }
-
+  
   class Person {
     constructor() {}
-
+  
     private _name: string = "";
-
+  
     obeservers: Array<IObserver> = new Array<IObserver>();
-
+  
     set name(newname: string) {
       this._name = newname;
       for (let items of this.obeservers) {
@@ -1311,21 +1317,21 @@ a | b; // 0111  --> 7
       return this._name;
     }
   }
-
+  
   class OverSee implements IObserver {
     constructor() {}
-
+  
     namechanged(name: string) {
       console.log("name has changed", name);
     }
   }
-
+  
   let person = new Person();
   let oversee = new OverSee();
-
+  
   person.obeservers.push(oversee);
   person.name = "I am groot!";
-
+  
   //  "name has changed",  "I am groot!"
   ```
 
