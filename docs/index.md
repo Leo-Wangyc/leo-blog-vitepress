@@ -19,9 +19,9 @@ hero:
 
 features:
   - title: Documents
-    details: Check All of the documents and passage.
+    details: Check All of the documents and passages.
   - title: Certificates
-    details: Display the Certificate I get.
+    details: Display the Certificates I get.
   - title: Annual Summary
     details: To show how much progress I did in the past years
 ---
