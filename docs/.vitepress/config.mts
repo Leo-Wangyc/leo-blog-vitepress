@@ -40,7 +40,12 @@ export default defineConfig({
       },
       {
         text: "Annual Summary",
-        link: "/annual-summary",
+        items: [
+          {
+            text: "Career Trajectory",
+            link: "/annual-summary/career-trajectory",
+          },
+        ],
       },
     ],
 
