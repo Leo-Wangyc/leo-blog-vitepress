@@ -18,7 +18,7 @@ export default defineConfig({
           },
           {
             text: "Economics",
-            link: "/documents/economics/Economics",
+            link: "/documents/economics/economics",
           },
           {
             text: "English",
