@@ -1,9 +1,6 @@
-vue-press 个人博客
+# vue-press & vite-press
 
-# 目录格式
+## vite-press + typora
 
-doc
+主要讲一下vite-press和typora结合，搭建自己的笔记库
 
-# 配置相关
-
-## 导航栏配置
