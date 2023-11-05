@@ -77,6 +77,16 @@ export default defineConfig({
               ],
             },
             {
+              text: "Game",
+              collapsed: true,
+              items: [
+                {
+                  text: "Cocos",
+                  link: "/documents/computer-science/game/cocos",
+                },
+              ],
+            },
+            {
               text: "Front-end",
               collapsed: true,
               items: [
