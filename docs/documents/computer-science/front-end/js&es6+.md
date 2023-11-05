@@ -213,13 +213,13 @@
       console.log("Say Hi");
     };
   }
-
+  
   foo.prototype.sayGoodBy = function () {
     console.log("Say Good By");
   };
-
+  
   let myPro = new foo();
-
+  
   console.log(myPro.name); // foo
   console.log(myPro.hasOwnProperty("name")); // true
   console.log(myPro.hasOwnProperty("toString")); // false
@@ -263,7 +263,7 @@
    let arr = ["a", "b", "c"];
    console.log("b" in arr); // false
    console.log(2 in arr); // true
-
+   
    let obj = { name: "leo", age: 18 };
    console.log(18 in obj); // false
    console.log("name" in obj); // true, 同时要注意，此处的key必须为字符串格式，若不加''，则会判断为变量
@@ -413,7 +413,7 @@ func(1, 2, "3");
   // 原生方法：
   logInfo.call(obj);
   // 1, female  2, male
-
+  
   // 自己实现一个call
   Function.prototype.myCall = function (obj, ...args) {
     // 第一步， 将函数挂载到obj上，此时的this是调用myCall方法的函数本身。例如，logInfo.myCall，那么this和obj.func就是logInfo
@@ -425,7 +425,7 @@ func(1, 2, "3");
     // 最后，因为call函数没有返回值，所以直接return即可
     return;
   };
-
+  
   // 自己实现一个bind
   Function.prototype.myBind = function (obj, ...args) {
     // 第一步，与上述所说一致，挂载函数到obj上
@@ -621,7 +621,9 @@ fn(2) // 成功情况
   });
 ```
 
-####promise.then
+
+
+###promise.then
 
 Promise.then 是 promise 中的函数成功时的触发，会自动调用函数中的 resolve 方法，then 接受的参数是一个函数，函数的参数就是 resolve 中的参数，例如 3.5.1 中的例子：
 
@@ -654,6 +656,8 @@ p.then((arg) => {
 });
 ```
 
+
+
 ### promise.catch
 
 Promise.then 是 promise 中的函数失败时的触发，会自动调用函数中的 reject 方法，then 接受的参数是一个函数，函数的参数就是 reject 中的参数，例如上述 then 中的例子
@@ -682,6 +686,8 @@ promiseClick()
     console.log("失败，原因为:", reason);
   });
 ```
+
+
 
 ### promise.all
 
@@ -727,6 +733,8 @@ promiseClick()
 
   > https://www.jianshu.com/p/7e60fc1be1b2
 
+
+
 ### promise.race
 
 - 说明
@@ -741,13 +749,13 @@ promiseClick()
       resolve("success");
     }, 1000);
   });
-
+  
   let p2 = new Promise((resolve, reject) => {
     setTimeout(() => {
       reject("failed");
     }, 500);
   });
-
+  
   Promise.race([p1, p2])
     .then((result) => {
       console.log(result);
@@ -870,7 +878,7 @@ promiseClick()
 
   ```javascript
   var fs = require("fs");
-
+  
   var readFile = function (fileName) {
     return new Promise(function (resolve, reject) {
       fs.readFile(fileName, function (error, data) {
@@ -954,7 +962,7 @@ promiseClick()
       console.log(err);
     }
   }
-
+  
   // 也可以写成
   async function myFunction() {
     await somethingThatReturnsAPromise().catch(function (err) {
@@ -1498,7 +1506,7 @@ reduce 方法有很多的骚操作，类似于对数组进行一波 map，每个
    ```javascript
    var str = "Apple, Banana, Mango";
    var res = str.slice(7, 13); // Banana
-   ```
+  ```
 
 2. **subString**
 
@@ -1524,10 +1532,10 @@ reduce 方法有很多的骚操作，类似于对数组进行一波 map，每个
   ```js
   let str = "0x29";
   let num = parseInt(str); // 16
-
+  
   let str = "101001";
   let num = parseInt(str, "2"); // 41
-
+  
   let str = "29";
   let num = parseInt(str, "16"); // 41
   ```
@@ -1540,7 +1548,7 @@ reduce 方法有很多的骚操作，类似于对数组进行一波 map，每个
 
 ## throw
 
-### 1 throw 简介
+### throw 简介
 
 throw 是用来**抛出异常**的
 
@@ -1550,7 +1558,7 @@ throw 是用来**抛出异常**的
 
 一般可以用来搭配报错信息使用
 
-### 2 throw 语法
+### throw 语法
 
 - 基本语法
 
@@ -1569,17 +1577,21 @@ throw 是用来**抛出异常**的
   // 1：
   throw new Error("出错了");
   console.log("111"); // 此处不会打印111，因为throw已经抛出异常结束了代码
-
+  
   // 2：
   console.error("出错了");
   console.log("111"); // 此处会打印111，console.error并不会结束代码进程
   ```
 
+
+
+
+
 ## Map&Set
 
 Map 和 Set 是 ES6 中新增的两种数据结构
 
-### 1 Map
+### Map
 
 Map 的结构和 Object 很像，也是一种**键值对**的集合，只不过，Object 中的键是字符串 string 格式，而 Map 中的键可以是任意类型，包括对象也可以是键！
 
@@ -1600,7 +1612,9 @@ mapmap.set(arr1, [4, 5, 6]);
 mapmap.get(arr1); // [4,5,6]
 ```
 
-### 2 Set
+
+
+### Set
 
 不同于 map 是键值对的集合，set 只是**值的集合**，既然 Map 的结构和 Object 很像，那 Set 自然对应的就是和 Array 很像了，与数组不同的是，Set 中不会存在相同的值，所以，可以很方便地用于数组去重，如下
 
@@ -1609,13 +1623,15 @@ let arr = [1, 2, 3, 3, 3, 4];
 let newArr = [...new Set(arr)]; // [1,2,3,4]
 ```
 
-### 3 WeakMap
+
+
+### WeakMap
 
 待补充，简而言之和 map 很像，但是 key 值只能是对象
 
-## Proxy&Reflect
 
-### 1 proxy
+
+## Proxy
 
 Proxy 可以对目标对象的读取、函数调用等操作进行拦截，然后进行操作处理。它不直接操作对象，而是像代理模式，通过对象的代理对象进行操作，在进行这些操作时，可以添加一些需要的额外操作。
 
@@ -1643,11 +1659,68 @@ proxy.name; // 实际执行 handler.get
 proxy.age = 25; // 实际执行 handler.set
 ```
 
-####2 reflect
+
+
+## Reflect
+
+Reflect说人话就是，提供了对对象的一系列操作，可以用于对对象进行操作的统一处理
+
+例如，用来赋值，获取值
+
+**Reflect.get**
+
+````js
+const obj = { name: "John", age: 30 };
+const key = "name";
+
+// 使用 Reflect.get 获取属性值
+const value = Reflect.get(obj, key);
+console.log(value); // 输出 "John"
+````
+
+**Reflect.set**
+
+````js
+const obj = { name: "John", age: 30 };
+const key = "age";
+const newValue = 35;
+
+// 使用 Reflect.set 设置属性值
+Reflect.set(obj, key, newValue);
+console.log(obj.age); // 输出 35
+````
+
+**Reflect.has**
+
+````js
+const obj = { name: "John", age: 30 };
+const key = "name";
+
+// 使用 Reflect.has 检查属性是否存在
+const hasProperty = Reflect.has(obj, key);
+console.log(hasProperty); // 输出 true
+````
+
+**Reflect.deleteProperty**
+
+````js
+const obj = { name: "John", age: 30 };
+const key = "name";
+
+// 使用 Reflect.deleteProperty 删除属性
+Reflect.deleteProperty(obj, key);
+console.log(obj); // 输出 { age: 30 }
+````
+
+
+
+
+
+
 
 ## 模块化语法
 
-### 1 commonjs
+### commonjs
 
 ```javascript
 // 导出语法-------------文件a.js
@@ -1663,7 +1736,7 @@ console.log(m.a); // 1
 console.log(m.b); // 2
 ```
 
-####2 es6
+####es6
 
 ```javascript
 // 导出语法-------------文件a.js

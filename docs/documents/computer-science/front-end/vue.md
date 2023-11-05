@@ -85,21 +85,73 @@ MVVM，即**View, View-Modal, Modal**
 
 **详细内容**
 
-1. reactive
+#### reactive
 
-   > http://www.zhufengpeixun.com/advance/guide/04.reactivity-2.html#reactivity%E6%A8%A1%E5%9D%97%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8
-   >
-   > 密码：2558@手机号后四位
+> http://www.zhufengpeixun.com/advance/guide/04.reactivity-2.html#reactivity%E6%A8%A1%E5%9D%97%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8
+>
+> 密码：2558@手机号后四位
 
-2. effect
+reactive函数接收一个对象，返回一个proxy
 
-    
+````typescript
+export const reactive = <T extends object>(target: T) => {
+  return new Proxy(target, {
+    get(target, key, reciever){
+      // return target[key]  
+      // 此处本应该直接返回target[key]，但是出于确保代理对象的属性访问行为与直接访问原始对象的属性时的行为一致的原因，此处使用了Reflect函数来操作对象，说人话就是为了保证上下文一致，进一步说人话就是，暂时也没想到，看看后来能不能理解吧
+      let res = Reflect.get(target, key, reciever)
+      return res
+    },
+    set(){
+      let res = Reflect.set(target, key, reciever)
+      return res
+    },
+    delete(){}
+    ...
+  })
+}
+````
 
-3. watch
 
-4. computed
 
-5. ref
+#### effect
+
+````typescript
+let activeEffect;
+export const effect = (fn: Function) => {
+  const _effect = function(){ // 设置一个闭包
+    activeEffect = _effect 	// 将当前的effect作为全局的当前活跃effect
+    fn()	
+  }
+  _effect() // 传入的函数会调用一下
+}
+````
+
+
+
+#### traker
+
+目前能力有限，有点听不懂，之后再回顾一下
+
+> https://www.bilibili.com/video/BV1dS4y1y7vd?p=10&vd_source=6adac1d9bbd16466fad0c4ec156dc9b7 p10
+
+````typescript
+
+const targetMap = new WeakMap()
+export const track = (target, key) => {
+  
+}
+````
+
+
+
+  
+
+1. watch
+
+2. computed
+
+3. ref
 
 
 
