@@ -115,6 +115,10 @@ export class test extends Component {
 
 可以给节点绑定上一系列事件
 
+### 鼠标事件
+
+鼠标事件挂载在**Node.EventType**下
+
 ```typescript
 import { Node } from 'cc'
 export class test extends Component {
@@ -132,6 +136,28 @@ export class test extends Component {
   onTouchEnd(event: EventTouch){}
   // 鼠标
   onTouchCancel(event: EventTouch){}
+
+  update(deltaTime: number) {
+  }
+}
+```
+
+
+
+### 键盘事件
+
+键盘事件挂载在**Input.EventType**下
+
+```typescript
+import { Node } from 'cc'
+export class test extends Component {
+  start() {
+    this.node.on(Input.EventType.KEY_DOWN, this.onKeyDown, this)
+  }
+  // 键盘按下
+  onKeyDown(event: EventTouch){
+    event.key_word = KEY_W
+  }
 
   update(deltaTime: number) {
   }
@@ -209,6 +235,122 @@ export class test extends Component {
   }
   
   update(deltaTime: number) {}
+}
+```
+
+
+
+## 脚本操作其他节点
+
+在cocos中，我们使用this.node操作的该脚本挂载的节点，如果想要操作其他节点，那么我们需要使用props的方式进行传入
+
+**@property(Node) [NodeName]: Node** 的格式，可以将其他节点挂载到当前脚本中进行操作，例如，我们挂载一个button节点到整个Node的节点脚本中
+
+```typescript
+export class test extends Component {
+  // 将button传进来，可以对button进行操作
+  @property(Node) button: Node;
+  start() {}
+}
+```
+
+如果挂载成功，那么在cocos的页面上的组件菜单栏中，也会对应出现一个同名组件，此时可以将需要挂载的button节点拖拽到该位置上进行绑定
+
+<img src="../../../public/assets/cocos/image-20231107221936467.png" alt="image-20231107221936467" style="zoom:50%;" />
+
+<img src="../../../public/assets/cocos/image-20231107222026300.png" alt="image-20231107222026300" style="zoom:50%;" />
+
+此时在脚本中，this.node获取到的将会是node节点，this.button获取到的将会是button节点
+
+
+
+## 缓动系统
+
+要介绍缓动系统，我们首先将cocos中的节点绑定到脚本上
+
+
+
+代码如下，笔记待补充
+
+```typescript
+import { _decorator, Component, Node, EventTouch, tween, v3, Color } from "cc";
+const { ccclass, property } = _decorator;
+
+@ccclass("test")
+export class test extends Component {
+  @property(Node) button: Node;
+  start() {
+    this.button.on(Node.EventType.TOUCH_END, this.onTouchEnd, this);
+  }
+
+  onTouchEnd(event: EventTouch) {
+    this.button.setScale(1, 1);
+    this.myAnimation();
+  }
+
+  myAnimation() {
+    // 注意，我们并不是直接操作tween去改变节点的位置，而是通过tween，改变数据，再由数据驱动节点的相关改变
+    // 1. 例如，我们可以设置一个obj,里面包含了y轴的位置信息，那么我们就可以通过tween改变y的值，然后在onUpdate里面，由改动过的y值，利用setPosition方式驱动节点的重新渲染
+    const obj = {
+      y: 0,
+    };
+    // 2. 此外，我们还可以设置一个颜色vec3向量变量，里面包含了颜色的信息
+    const color = v3(255, 255, 255);
+    // 1 - 1: tween改变y值从而setPosition改变y轴
+    tween(obj)
+      .repeatForever(
+        // 值得一提的是，repeatForever里面可以包含需要循环播放的tween实现循环播放（1-1），也可以通过多个tween进行.union的方式再.repeatForever(2-1)
+        tween(obj)
+          .to(
+            3, // 此处的数字代表动画时间
+            { y: 200 },
+            {
+              onUpdate: (target, ratio) => {
+                this.button.setPosition(this.button.position.x, obj.y);
+              },
+              easing: "quadOut",
+            }
+          )
+          .to(
+            3,
+            { y: 0 },
+            {
+              onUpdate: (target, ratio) => {
+                this.button.setPosition(this.button.position.x, obj.y);
+              },
+              easing: "quadOut",
+            }
+          )
+      )
+      .start();
+    // 2-1: 颜色的循环变化
+    tween(color)
+      .to(
+        3,
+        { x: 10, y: 20, z: 30 },
+        {
+          onUpdate(target, ratio) {
+            this.button.color = new Color(color.x, color.y, color.z);
+          },
+        }
+      )
+      .to(
+        3,
+        { x: 120, y: 0, z: 100 },
+        {
+          onUpdate(target, ratio) {
+            this.button.color = new Color(color.x, color.y, color.z);
+          },
+        }
+      )
+      .union() // 此处通过先将多个tween进行union，再repeat forever
+      .repeatForever()
+      .start();
+  }
+
+  update(deltaTime: number) {
+    this.node.angle += 1;
+  }
 }
 ```
 
