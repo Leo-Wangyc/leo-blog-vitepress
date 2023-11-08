@@ -240,11 +240,11 @@ export class test extends Component {
 
 
 
-## 脚本操作其他节点
+## 脚本中操作其他节点
 
-在cocos中，我们使用this.node操作的该脚本挂载的节点，如果想要操作其他节点，那么我们需要使用props的方式进行传入
+在cocos中，我们使用this.node操作的时候，只能操作该脚本挂载的节点，如果想要操作其他节点，那么我们需要使用props的方式进行传入
 
-**@property(Node) [NodeName]: Node** 的格式，可以将其他节点挂载到当前脚本中进行操作，例如，我们挂载一个button节点到整个Node的节点脚本中
+**@property(Node) [NodeName]: Node** 的格式，可以将其他节点挂载到当前脚本中进行操作，例如，我们想要挂载一个button节点到整个Node的节点脚本中，首先，在脚本中进行property定义
 
 ```typescript
 export class test extends Component {
@@ -254,13 +254,13 @@ export class test extends Component {
 }
 ```
 
-如果挂载成功，那么在cocos的页面上的组件菜单栏中，也会对应出现一个同名组件，此时可以将需要挂载的button节点拖拽到该位置上进行绑定
+定义成功后，在cocos的页面上的点击该脚本所挂载的组件，在其组件菜单栏中，会对应出现一个命名的组件（就是上述代码示例中所写的的button），此时可以将需要挂载的button节点拖拽到该位置上进行绑定
 
 <img src="../../../public/assets/cocos/image-20231107221936467.png" alt="image-20231107221936467" style="zoom:50%;" />
 
 <img src="../../../public/assets/cocos/image-20231107222026300.png" alt="image-20231107222026300" style="zoom:50%;" />
 
-此时在脚本中，this.node获取到的将会是node节点，this.button获取到的将会是button节点
+此时在脚本中，this.node获取到的将会是该脚本挂载的node节点本身，而this.button获取到的将会是挂载传进来的button节点
 
 
 
@@ -268,27 +268,34 @@ export class test extends Component {
 
 要介绍缓动系统，我们首先将cocos中的节点绑定到脚本上
 
-
-
-代码如下，笔记待补充
+按照脚本中操作其他节点的方式，我们将button挂载进来，并对touchEnd事件进行监听
 
 ```typescript
-import { _decorator, Component, Node, EventTouch, tween, v3, Color } from "cc";
-const { ccclass, property } = _decorator;
-
 @ccclass("test")
 export class test extends Component {
   @property(Node) button: Node;
   start() {
     this.button.on(Node.EventType.TOUCH_END, this.onTouchEnd, this);
   }
+}
+```
 
-  onTouchEnd(event: EventTouch) {
-    this.button.setScale(1, 1);
-    this.myAnimation();
-  }
+然后，编写onTouchEnd事件，设置缓动函数
 
-  myAnimation() {
+```typescript
+onTouchEnd(event: EventTouch) {
+  this.button.setScale(0.9, 0.9);
+  this.myAnimation();
+}
+```
+
+编写缓动函数**tween**，有以下注意点
+
+1. cocos的渲染原理，有点类似于vue等mvvm框架的原理，利用数据变化驱动视图更新，而不是直接更改视图，故而无论是位置，大小，旋转度，颜色等，都可以先对数据进行改变，然后再用改变后的数据驱动视图的update
+2. 对于无限播放的动画，我们需要使用到**repeatForever()**函数，该函数可以直接传入tween进行循环播放，也可以在union了多个tween之后，设置.repeatForever，代码分别如下（1,1-1对应y轴变化驱动视图变化，采用repeatForever函数传入tween的方式。2,2-1对应颜色变化，采用多个tween.union再repeat的形式）：
+
+```typescript
+myAnimation() {
     // 注意，我们并不是直接操作tween去改变节点的位置，而是通过tween，改变数据，再由数据驱动节点的相关改变
     // 1. 例如，我们可以设置一个obj,里面包含了y轴的位置信息，那么我们就可以通过tween改变y的值，然后在onUpdate里面，由改动过的y值，利用setPosition方式驱动节点的重新渲染
     const obj = {
@@ -347,10 +354,5 @@ export class test extends Component {
       .repeatForever()
       .start();
   }
-
-  update(deltaTime: number) {
-    this.node.angle += 1;
-  }
-}
 ```
 
