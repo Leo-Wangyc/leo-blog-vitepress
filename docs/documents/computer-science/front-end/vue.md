@@ -65,211 +65,6 @@ MVVM，即**View, View-Modal, Modal**
 
 
 
-## 源码分析
-
-###整体模块划分
-
-整体模块划分为三大块，**compiler-module，renderer-module，reactivity-module**
-
-+ 编译器模块compiler将视图模板编译成一个**渲染函数**
-+ 数据响应式模块reactivity将模板中使用到的数据对象变为为响应式对象
-+ 渲染模块开始进入渲染阶段(render phase)，调用刚刚生成的**渲染函数**，观察响应式数据对象的变化，并返回一个**虚拟的DOM节点**
-+ 然后在挂载阶段(mount phase)，调用`mount`函数，使用**虚拟DOM节点**来创建web页面
-+ 当观察的响应式对象发生变化时，渲染模块会再次调用**渲染函数**创建一个新的虚拟DOM节点，然后发送到`patch`函数中，进行DOM diff，然后更新视图
-
-###响应式原理分析
-
-**个人简单理解一下整理的流程**
-
-
-
-**详细内容**
-
-#### reactive
-
-> http://www.zhufengpeixun.com/advance/guide/04.reactivity-2.html#reactivity%E6%A8%A1%E5%9D%97%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8
->
-> 密码：2558@手机号后四位
-
-reactive函数接收一个对象，返回一个proxy
-
-````typescript
-export const reactive = <T extends object>(target: T) => {
-  return new Proxy(target, {
-    get(target, key, reciever){
-      // return target[key]  
-      // 此处本应该直接返回target[key]，但是出于确保代理对象的属性访问行为与直接访问原始对象的属性时的行为一致的原因，此处使用了Reflect函数来操作对象，说人话就是为了保证上下文一致，进一步说人话就是，暂时也没想到，看看后来能不能理解吧
-      let res = Reflect.get(target, key, reciever)
-      return res
-    },
-    set(){
-      let res = Reflect.set(target, key, reciever)
-      return res
-    },
-    delete(){}
-    ...
-  })
-}
-````
-
-
-
-#### effect
-
-````typescript
-let activeEffect;
-export const effect = (fn: Function) => {
-  const _effect = function(){ // 设置一个闭包
-    activeEffect = _effect 	// 将当前的effect作为全局的当前活跃effect
-    fn()	
-  }
-  _effect() // 传入的函数会调用一下
-}
-````
-
-
-
-#### traker
-
-目前能力有限，有点听不懂，之后再回顾一下
-
-> https://www.bilibili.com/video/BV1dS4y1y7vd?p=10&vd_source=6adac1d9bbd16466fad0c4ec156dc9b7 p10
-
-````typescript
-
-const targetMap = new WeakMap()
-export const track = (target, key) => {
-  
-}
-````
-
-
-
-  
-
-1. watch
-
-2. computed
-
-3. ref
-
-
-
-#### 虚拟DOM
-
-
-
-
-
-### Diff算法
-
-#### vue3 diff算法
-
-vue3中比较子元素数组，使用到了diff算法，具体的流程如下：
-
-统一使用案例
-
-````javascript
-c1: [a, b, c, d, e, f, g]			// 之前的子元素
-c2: [a, b, e, c, d, h, f, g]		// 新的子元素
-````
-
-1. **先从头开始比**
-
-   按上面的例子，那么可以排除掉ab不需要重新渲染
-
-   ````javascript
-   // 第一轮筛选过后
-   [a, b, c, d, e, f, g]				// 之前的子元素
-   [a, b, e, c, d, h, f, g]		// 新的子元素
-   // 筛选结果，可以不需要重新渲染ab
-   [a, b]  [c, d, e, f, g]  // 之前的子元素
-   [a, b]  [e, c, d, h, f, g]		// 新的子元素
-   ````
-
-2. **再从尾部开始比**
-
-   继续筛选，可以筛掉fg，根据下标，进行unmount
-
-   ````javascript
-   // 第二轮筛选过后
-   [c, d, e, f, g] 			// 之前的子元素
-   [e, c, d, h, f, g]		// 新的子元素
-   // 筛选结果，可以不需要重新渲染fg
-   [c, d, e]  [f, g]	  // 之前的子元素
-   [e, c, d, h]  [f, g]		// 新的子元素
-   ````
-
-3. **然后判断是否为最简单的插入和删除操作**
-
-   本情况，另起一个新例子，不看上面的，如下
-
-   ````javascript
-   // 案例1 --------------------------
-   [a, b, c]
-   [a, b, c, d]	
-   // 第一二轮筛选完成后，发现老节点已经没了，剩下一个新节点d，直接进行插入d的操作即可
-   
-   // 案例2 --------------------------
-   [a, b, c, d]
-   [a, b, c]
-   // 第一二轮筛选完成后，发现新节点已经没了，剩下一个老节点d，直接进行删除d的操作即可
-   ````
-
-   上面两案例中，经过第一轮，第二轮的筛选过后，会存在一个情况，那就是新或老元素节点其中一方已经空了，没了，那就不需要进行下面第四步的乱序比较了，直接进行插入和删除即可
-
-4. **如果不是上述的简单情况，那么就需要进行复杂比对了**
-
-   继续回到统一案例中，当经过一二轮筛选后，而且发现新老节点都还有剩下，那么就不会走第三步。接下来，就需要进行复杂的乱序比较了
-
-   ````javascript
-   // 经过第一二轮的筛选，剩下的为
-   c1: [a,b] [c, d, e] [f, g]	  // 老节点
-   c2: [a,b] [e, c, d, h] [f, g]	 // 新节点
-   // 其中，c1代表老节点List, c2代表新节点list
-   
-   // 还有几个变量要注意，s1, e1, s2, e2，分别对应老节点的开始，老节点的结束，新节点的开始，新节点的结束对应的数组下标index
-   				 	(s1)  (e1)
-   c1: [a,b] [c, d, e] [f, g]	  // 老节点
-   c2: [a,b] [e, c, d, h] [f, g]	 // 新节点
-   					(s2)      (e2)
-   // s1 = 2, e1 = 4
-   // s2 = 2, e2 = 5
-   ````
-
-   - 4.1 第一步，先创建一个c2中新节点的map映射表
-
-     ````javascript
-     let keyToNewIndexMap = new Map()
-     // 从s2到e2，创建映射表
-     for(let i = s2; i<= e2; i++){	
-       // 键为子元素的key，值为子元素的c2数组下标
-       keyToNewIndexMap.set(c2[i].key, i)
-     }
-     // keyToNewIndexMap
-     // [e:2, c:3, d:4, h:5]
-     ````
-
-   - 4.2 第二步，循环老元素c1，看新的里面有没有，如果有，比较差异并添加，如果没有，就删掉老元素
-
-     ````javascript
-      
-     ````
-
-     
-
-
-
-#### 最长递增子序列
-
-
-
-
-
-
-
-
-
 ## Key和diff算法
 
 v-for进行遍历的时候，推荐给每个元素带上key，因为diff算法是根据key进行判断的，所以可以提高更新速度，减少不必要的DOM操作
@@ -278,7 +73,7 @@ v-for进行遍历的时候，推荐给每个元素带上key，因为diff算法�
 
 
 
-##SFC开发模式
+## SFC开发模式
 
 SFC即single-file components，单文件组件，即推荐使用.vue文件后缀，将template, js, css写在同一个文件内
 
@@ -446,6 +241,232 @@ const changeAge = () => {
 
 
 
+
+
+
+## 源码分析
+
+### 整体模块划分
+
+整体模块划分为三大块，**compiler-module，renderer-module，reactivity-module**
+
++ 编译器模块compiler将视图模板编译成一个**渲染函数**
++ 数据响应式模块reactivity将模板中使用到的**数据对象变为为响应式对象**
++ 渲染模块开始进入渲染阶段(render phase)，调用刚刚生成的**渲染函数**，观察响应式数据对象的变化，并返回一个**虚拟的DOM节点**
++ 然后在挂载阶段(mount phase)，调用`mount`函数，使用**虚拟DOM节点**来创建web页面
++ 当观察的响应式对象发生变化时，渲染模块会再次调用**渲染函数**创建一个新的虚拟DOM节点，然后发送到`patch`函数中，进行DOM diff，然后更新视图
+
+
+
+### 响应式原理分析
+
+针对reactivity-module响应式模块，其核心原理是：
+
+**通过Proxy代理目标对象的存取器，拦截存取操作，在执行收集依赖track以及出发更新trigger的方法后，再完成原先的存取操作**
+
+
+
+#### reactive
+
+> http://www.zhufengpeixun.com/advance/guide/04.reactivity-2.html#reactivity%E6%A8%A1%E5%9D%97%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8
+>
+> 密码：2558@手机号后四位
+
+reactive函数接收一个对象，返回一个proxy
+
+````typescript
+export const reactive = <T extends object>(target: T) => {
+  return new Proxy(target, {
+    get(target, key, reciever){
+      // return target[key]  
+      // 此处本应该直接返回target[key]，但是出于确保代理对象的属性访问行为与直接访问原始对象的属性时的行为一致的原因，此处使用了Reflect函数来操作对象，说人话就是为了保证上下文一致，进一步说人话就是，暂时也没想到，看看后来能不能理解吧
+      let res = Reflect.get(target, key, reciever)
+      return res
+    },
+    set(){
+      let res = Reflect.set(target, key, reciever)
+      return res
+    },
+    delete(){}
+    ...
+  })
+}
+````
+
+
+
+#### effect
+
+````typescript
+let activeEffect;
+export const effect = (fn: Function) => {
+  const _effect = function(){ // 设置一个闭包
+    activeEffect = _effect 	// 将当前的effect作为全局的当前活跃effect
+    fn()	
+  }
+  _effect() // 传入的函数会调用一下
+}
+````
+
+
+
+#### traker
+
+目前能力有限，有点听不懂，之后再回顾一下
+
+> https://www.bilibili.com/video/BV1dS4y1y7vd?p=10&vd_source=6adac1d9bbd16466fad0c4ec156dc9b7 p10
+
+````typescript
+const targetMap = new WeakMap()
+export const track = (target, key) => {
+  
+}
+````
+
+
+
+#### computed
+
+```typescript
+// computed 基本使用
+// 1. 传入函数 computed(()=>{})
+// 2. 传入对象 computed({ get(){}, set(){} })
+// 重点是进行脏值检测
+
+// 此处引入effect
+import { effect } from './effect'
+
+export const computed = (getter: Function) => {
+  // let getter;
+  // let setter;
+  // 1. 如果传入一个函数，则为该函数为getter，否则将会对象。
+  let _value = effect(getter)
+  let cacheValue
+  let _dirty = true	// 脏值检测
+  
+  class ComputedRefImpl {
+    get value(){
+      if(_dirty){
+        cacheValue = _value()
+			}
+      return cacheValue
+    }
+  }
+  
+  return new ComputedRefImpl()
+}
+```
+
+
+
+
+
+#### 虚拟DOM
+
+
+
+
+
+### Diff算法
+
+#### vue3 diff算法
+
+vue3中比较子元素数组，使用到了diff算法，具体的流程如下：
+
+统一使用案例
+
+````javascript
+c1: [a, b, c, d, e, f, g]			// 之前的子元素
+c2: [a, b, e, c, d, h, f, g]		// 新的子元素
+````
+
+1. **先从头开始比**
+
+   按上面的例子，那么可以排除掉ab不需要重新渲染
+
+   ````javascript
+   // 第一轮筛选过后
+   [a, b, c, d, e, f, g]				// 之前的子元素
+   [a, b, e, c, d, h, f, g]		// 新的子元素
+   // 筛选结果，可以不需要重新渲染ab
+   [a, b]  [c, d, e, f, g]  // 之前的子元素
+   [a, b]  [e, c, d, h, f, g]		// 新的子元素
+   ````
+
+2. **再从尾部开始比**
+
+   继续筛选，可以筛掉fg，根据下标，进行unmount
+
+   ````javascript
+   // 第二轮筛选过后
+   [c, d, e, f, g] 			// 之前的子元素
+   [e, c, d, h, f, g]		// 新的子元素
+   // 筛选结果，可以不需要重新渲染fg
+   [c, d, e]  [f, g]	  // 之前的子元素
+   [e, c, d, h]  [f, g]		// 新的子元素
+   ````
+
+3. **然后判断是否为最简单的插入和删除操作**
+
+   本情况，另起一个新例子，不看上面的，如下
+
+   ````javascript
+   // 案例1 --------------------------
+   [a, b, c]
+   [a, b, c, d]	
+   // 第一二轮筛选完成后，发现老节点已经没了，剩下一个新节点d，直接进行插入d的操作即可
+   
+   // 案例2 --------------------------
+   [a, b, c, d]
+   [a, b, c]
+   // 第一二轮筛选完成后，发现新节点已经没了，剩下一个老节点d，直接进行删除d的操作即可
+   ````
+
+   上面两案例中，经过第一轮，第二轮的筛选过后，会存在一个情况，那就是新或老元素节点其中一方已经空了，没了，那就不需要进行下面第四步的乱序比较了，直接进行插入和删除即可
+
+4. **如果不是上述的简单情况，那么就需要进行复杂比对了**
+
+   继续回到统一案例中，当经过一二轮筛选后，而且发现新老节点都还有剩下，那么就不会走第三步。接下来，就需要进行复杂的乱序比较了
+
+   ````javascript
+   // 经过第一二轮的筛选，剩下的为
+   c1: [a,b] [c, d, e] [f, g]	  // 老节点
+   c2: [a,b] [e, c, d, h] [f, g]	 // 新节点
+   // 其中，c1代表老节点List, c2代表新节点list
+   
+   // 还有几个变量要注意，s1, e1, s2, e2，分别对应老节点的开始，老节点的结束，新节点的开始，新节点的结束对应的数组下标index
+   				 	(s1)  (e1)
+   c1: [a,b] [c, d, e] [f, g]	  // 老节点
+   c2: [a,b] [e, c, d, h] [f, g]	 // 新节点
+   					(s2)      (e2)
+   // s1 = 2, e1 = 4
+   // s2 = 2, e2 = 5
+   ````
+
+   - 4.1 第一步，先创建一个c2中新节点的map映射表
+
+     ````javascript
+     let keyToNewIndexMap = new Map()
+     // 从s2到e2，创建映射表
+     for(let i = s2; i<= e2; i++){	
+       // 键为子元素的key，值为子元素的c2数组下标
+       keyToNewIndexMap.set(c2[i].key, i)
+     }
+     // keyToNewIndexMap
+     // [e:2, c:3, d:4, h:5]
+     ````
+
+   - 4.2 第二步，循环老元素c1，看新的里面有没有，如果有，比较差异并添加，如果没有，就删掉老元素
+
+     ````javascript
+      
+     ````
+
+     
+
+
+
+#### 最长递增子序列
 
 
 

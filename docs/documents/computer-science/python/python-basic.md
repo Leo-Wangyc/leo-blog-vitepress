@@ -171,3 +171,17 @@ If in 关键字，判断某项是否在某个字典中有值
 ### match
 
 Python 中的 match 就是其他语言中的 switch!
+
+````python
+name = input ("What's your name?
+match name:
+	case "Harry" "Hermione" I "Ron":
+		print ("Gryffindor")
+	case "Draco"
+		print ("Slytherin")
+	case _:
+		print ("Who?")
+````
+
+
+
