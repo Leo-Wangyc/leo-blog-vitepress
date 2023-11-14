@@ -220,14 +220,44 @@ const computedValue = computed({
 
 ### watch, watchEffect
 
+watch的用法和vue2中差不多，如下
+
+```typescript
+const name = ref('Leo')
+const obj = reactive({
+  age: 18
+  height: 180
+})
+
+watch(name, ()=> console.log(name))
+watch(obj, 
+      ()=> console.log(obj), 
+      {
+  			deep: true,	// 	deep属性对于reactive包裹的对象来说是默认开启的，关闭的话，监听不到对象里面值的变化
+  			immediate: false,	// immediate默认关闭，用于决定是否需要函数一进来就调用一次watch函数
+			}
+)
+```
+
+**watchEffect和react中的useEffect效果一样**
+
+**与watch不同的是，watch需要传入监听的值，但是watchEffect不需要，它会自动监听watchEffect里面所有值的变化，任何一个值发生变化，都会触发watchEffect的刷新**
+
 watchEffect在运行时会立即触发一次，最后会监听写在传入其中的函数体内响应式数据，当其中的响应式数据再度发生变化的时候，会自动触发watchEffect的执行
 
 除此之外，watchEffect函数本身的返回值是一个stop函数，当需要停止监听的时候，直接调用即可
 
 ````js
 const age = ref(18)
+const age2 = ref(20)
 const stop = watchEffect(()=>{
   console.log('age: ', age) // 每次age发生变化，都会触发该watch
+})
+const stopWatch = watchEffect(()=>{
+  console.log('age2', age2)
+  oninvalidate(()=>{
+    console.log('before')  // oninvalidate会在watch执行前触发，可用于加一些防抖逻辑
+  })
 })
 const changeAge = () => {
 	if(age > 65){
@@ -236,6 +266,7 @@ const changeAge = () => {
     age ++
   }
 }
+
 ````
 
 
@@ -274,12 +305,15 @@ const changeAge = () => {
 
 reactive函数接收一个对象，返回一个proxy
 
+reactive仅用于创建响应式对象，不用于监测，不涉及到
+
 ````typescript
 export const reactive = <T extends object>(target: T) => {
   return new Proxy(target, {
     get(target, key, reciever){
       // return target[key]  
-      // 此处本应该直接返回target[key]，但是出于确保代理对象的属性访问行为与直接访问原始对象的属性时的行为一致的原因，此处使用了Reflect函数来操作对象，说人话就是为了保证上下文一致，进一步说人话就是，暂时也没想到，看看后来能不能理解吧
+      // 此处本应该直接返回target[key]，但是出于保证this的指向始终是指向的调用对象，而不是代理对象本身
+      // 详情可参考 https://juejin.cn/post/7101084596053213215
       let res = Reflect.get(target, key, reciever)
       return res
     },
@@ -355,6 +389,19 @@ export const computed = (getter: Function) => {
   
   return new ComputedRefImpl()
 }
+```
+
+
+
+#### watch
+
+```typescript
+// watch的基本使用
+// watch(target, (newValue, oldValue)=>{})
+// 对于reactive包裹的响应式对象来说，默认deep开启，对于ref包裹的响应式对象，默认deep为false
+// watch([target1, target2 , (newValue, oldValue)=>{}, { deep: true, immediate: false })
+
+// TODO:
 ```
 
 
