@@ -119,6 +119,10 @@ export default defineConfig({
                   link: "/documents/computer-science/front-end/vue",
                 },
                 {
+                  text: "Vite",
+                  link: "/documents/computer-science/front-end/vite",
+                },
+                {
                   text: "React",
                   link: "/documents/computer-science/front-end/react",
                 },

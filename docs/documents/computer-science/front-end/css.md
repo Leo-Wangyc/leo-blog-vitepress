@@ -1,5 +1,3 @@
-# CSS 部分
-
 ## 伪类，伪元素
 
 英：pseudo-element [ˈsudoʊ ˈelɪmənt] , p 不发音
@@ -12,9 +10,13 @@
 
 before 和 after 用于在元素的前面/后面插入一些指定的内容，html 本身不存在可插入的内容，
 
+
+
 ## 渐变
 
-###基本对齐
+### 基本对齐
+
+
 
 ### 居中对齐
 
@@ -30,11 +32,15 @@ before 和 after 用于在元素的前面/后面插入一些指定的内容，ht
 }
 ```
 
+
+
 ## flex 布局
 
 > flex 布局 _flex layout_
 
 > flex 相关练习题：https://bbs.huaweicloud.com/blogs/detail/279930
+
+
 
 ## grid 布局
 
@@ -118,11 +124,156 @@ grid-row-gap: 20px;
 grid-column-gap: 10px;
 ```
 
+
+
 ## css 预处理
 
 预处理工具有 Less 和 sass 等
 
 此外还有 umi 提供 extraPostCSSPlugins，也可以使用 CSS Module
+
+
+
+## Sass
+
+**嵌套规则**
+
+```scss
+#main {
+  color: red;
+  a {
+    color:blue;
+  }
+}
+```
+
+**&代表父级**
+
+```scss
+#main {
+  &acolor
+}
+```
+
+**变量定义**
+
+```scss
+$width = 5em;
+
+#main {
+  width: $width
+}
+```
+
+**插值语句**
+
+```scss
+$name = foo;
+$attr = border
+
+p.#{$name} {
+  #{$attr}-color:blue;
+}
+```
+
+**@at-root**
+
+直接置于顶层，不会到添加到父类中
+
+```scss
+#main {
+  color: red;
+  @at-root a {
+    color:blue;
+  }
+}
+```
+
+**@mixin混入**
+
+```scss
+// 简单定义
+@mixin large-text {
+  font {
+    family: Arial;
+    size: 20px;
+    weight: bold;
+  }
+}
+// 简单使用
+.page-title{
+  @include large-text;
+}
+```
+
+```scss
+// 带参数定义
+@mixin sexy-border($color, $width){
+  border{
+    color: $color;
+    width: $width;
+    style: dashed;
+	}
+}
+// 带参数使用
+p {
+  @include sexy-border(blue, 5px)
+}
+```
+
+
+
+## BEM架构
+
+BEM（Block, Element, Modifier）是一种命名约定，用于在编写 CSS 和 HTML 类名时创建可维护和可重用的样式。BEM 是一种常用的 CSS 命名规范，它的目的是减少样式之间的耦合，增加样式的可读性，并提高样式的复用性。
+
+
+
+### BEM架构下的全局Sass文件
+
+定义的时候
+
+```scss
+$namespace: 'leo' !default
+$block-sel: "-" !defalut
+$elem-sel: "__" !default
+$mod-sel: "--" !default
+  
+@mixin b($block){
+  $B:#{$namespace + $block-sel + $block};
+  .#{$B}{
+    @content
+  }
+}
+
+@minin e($el){
+  // 获取父级类名
+  $selector: &;
+  // 跳出嵌套（没理解）
+  @at-root{
+    #{$selector + $elem-sel + $el}{
+    	@content
+  	}
+  }
+}
+
+@mixin m($m){
+// 获取父级类名
+  $selector: &;
+  // 跳出嵌套（没理解）
+  @at-root{
+    #{$selector + $mod-sel + $m}{
+    	@content
+  	}
+  }
+}
+```
+
+使用的时候
+
+
+
+
 
 ## 实战中遇见的一些效果实现
 
@@ -195,7 +346,7 @@ div {
    <div class="box">
      <img src="../images/demo.png" />
    </div>
-
+   
    <!-- css部分 -->
    .box{ width:300px; height:300px; background:url(./demo.png) no-repeat center
    center }

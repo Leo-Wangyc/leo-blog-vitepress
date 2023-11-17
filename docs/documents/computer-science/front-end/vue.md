@@ -101,11 +101,11 @@ const color1 = 'red'
 </style>
 ````
 
+ 
 
 
 
-
-##动态绑定
+## vue动态绑定
 
 在vue中，通过`v-bind`，或者`:` 可以动态绑定值，例如
 
@@ -129,7 +129,18 @@ const color1 = 'red'
 
 ### ref,reactive
 
-不多解释了
+ref定义简单数据类型和获取DOM，reactive定于引用数据类型
+
+```vue
+<template>
+	<div ref='simDom'></div>
+</template>
+<script>
+  import { ref, reactive } from 'vue'
+  const name = ref<string>('Leo')	// 定义简单类型
+  const simDom = ref<HTMLElement>()	// 获取DOM
+</script>
+```
 
 
 
@@ -270,6 +281,150 @@ const changeAge = () => {
 ````
 
 
+
+
+
+
+
+## Vue3组件生命周期
+
+**vue2中的beforeCreated和created在setup模式下是不存在的**，使用setup直接替换掉了。
+
+也就是说，使用了**\<script setup>\</script>**这种写法的话，组件创建的时候就直接进入到了script里面，不需要再created了
+
+Vue3 composition API中的组件
+
+```vue
+<script setup>
+  // onBeforeMount阶段获取不到DOM
+  onBeforeMounted(()=>{})
+  
+	onMounted(()=>{})
+  
+	onBeforeUpdate(()=>{})
+  
+	onBeforeUnmounted(()=>{})
+  
+	onUnmounted(()=>{})
+</script>
+```
+
+
+
+
+
+## 父子组件传参
+
+### 父组件 to 子组件
+
+```typescript
+// 父组件传递
+<Son title="leo" :arr="parentArr"></Son>
+
+// 子组件接收
+// 1.js方式
+const props = defineProps({
+	title: {
+    type: string
+    default: ''
+  },
+  arr: {
+    type: Array,
+    default: [],
+	}
+})
+// 2.ts方式
+const props = defineProps<{
+  title: string,
+  arr: number[],
+}>
+      
+// 子组件使用
+// 模板中，直接使用
+<template>{{title}} {{arr}}</template>
+// script中，[props.]的方式使用
+const result = `Hello ${props.title}`
+```
+
+
+
+### 子组件 to 父组件
+
+**js方式**
+
+```typescript
+// 父组件
+<Son @on-click='func'></Son>
+const func = (name) => `Hello ${name}`
+
+// son
+const emit = defineEmits(['on-click', ...])
+const send = () => {
+  emit('on-click', 'Leo')
+}
+```
+
+**ts方式**
+
+```typescript
+// son
+const emit = defineEmits<{
+  (e: "on-click", name:string):void,
+  (e: "on-touch", name:string):void,
+  ...
+}>
+```
+
+
+
+### defineExpose
+
+与vue2不同，vue2中，父组件可以通过$ref的方式拿到子组件实例，并获取子组件的方法和属性，如下
+
+```vue
+<s-form-item
+  ref="bankName"
+  ...
+>
+  <s-input ...></s-input>
+</s-form-item>
+<script>
+  ...
+this.$refs.bankName.resetField()
+</script>
+```
+
+但在vue3中，子组件需要通过**defineExpose**暴露属性，父组件通过ref才能拿到
+
+```typescript
+// 子组件定义好需要暴露给父组件的属性或方法
+<script setup>
+import { ref } from "vue";
+const innerValue = ref("innerValue");
+const exportsValue = ref("exportsValue");
+const sayHi = () => 'Hello world'
+defineExpose({
+  exportsValue,
+  sayHi
+});
+</script>
+
+// 父组件
+// template中，给子组件加上ref
+<Son ref='sonCom'></Son>
+
+// script中，正常引入子组件
+import sonComponent from './Son'
+
+// 利用ts和vue3的特性，类似vue2中的$refs，ref()可以拿到同名的ref组件的vue实例
+const sonCom = ref<InstanceType<typeof sonComponent>>()
+
+// 通过[.value]的方式可以拿到暴露出来的值            
+// ⚠️注意！获取子组件的value需要写在onMounted里面，不然拿到的会是null！
+onMounted(() => {
+  console.log("test", sonCom.value); // 可以拿到exportsValue和sayHi，拿不到innerValue
+});
+```
 
 
 
@@ -516,6 +671,8 @@ c2: [a, b, e, c, d, h, f, g]		// 新的子元素
 #### 最长递增子序列
 
 
+
+### 生命周期源码
 
 
 
