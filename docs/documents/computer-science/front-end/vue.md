@@ -430,6 +430,98 @@ onMounted(() => {
 
 
 
+## 组件
+
+### 局部组件
+
+
+
+
+
+### 全局组件
+
+**app.component**
+
+在main.ts里面，通过**app.component**进行全局注册，之后在任何vue文件中都可以直接使用
+
+```typescript
+// main.ts
+import myComponent from './components/myComponent.vue'
+
+app.component('myComp', myComponent)
+
+// 其他组件中，不需要再import，可以在Template中直接使用
+<MyComp></MyComp>
+```
+
+
+
+### 递归组件
+
+#### Tree
+
+```typescript
+<template>
+  <div v-for="item in data">
+    <input v-model="item.checked" type='checkbox' @click='select'><span>{{item.name}}</span>
+		// 方式一：直接使用文件名，比如当前文件名是Tree.vue，就可以直接使用<Tree>
+		<Tree v-if="item.children?.length" :data="item?.children"></Tree>
+		// 方式二：使用namespace，需要额外写一个script，见下
+		<Leo v-if="item.children?.length" :data="item?.children"></Leo>
+  </div>
+</template>
+
+// 方式二的namespace定义
+<script lang='ts'>
+export default {
+	name: 'Leo'
+}
+</script>
+
+<script setup>
+interface Tree {
+  name:string
+  checked: false
+  children?: Tree[]
+}
+
+const data = reactive<Tree[]>([
+  {
+    name: '1',
+    checked: false,
+    children: [
+      {
+        name: '1-1'
+        checked: false,
+        children: [
+          {
+						name: '1-1-1'
+        		checked: false,
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: '2',
+    checked: false,
+  }
+])
+</script>
+```
+
+#### 递归组件冒泡
+
+在上述事例中，我们点击1-1-1所对应的那个checkbox的时候，会同时触发1-1-1, 1-1, 1三个checkbox的事件，这个时候，我们需要将click后面添加**.stop**来阻止事件冒泡
+
+```typescript
+<input v-model="item.checked" type='checkbox' @click.stop='select'><span>{{item.name}}</span>
+```
+
+
+
+
+
 ## 源码分析
 
 ### 整体模块划分
