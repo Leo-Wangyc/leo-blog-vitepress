@@ -434,7 +434,26 @@ onMounted(() => {
 
 ### 局部组件
 
+不同于vue2需要注册组件
 
+```typescript
+components: {
+  ACom,
+  BCom,
+  CCom,
+}
+```
+
+vue3组件引入即可直接使用
+
+```typescript
+<template>
+  <SonComp ref="sonCom"></SonComp>
+</template>
+
+<script setup>
+import SonComp from "./components/SonCom.vue";
+```
 
 
 
@@ -517,6 +536,80 @@ const data = reactive<Tree[]>([
 ```typescript
 <input v-model="item.checked" type='checkbox' @click.stop='select'><span>{{item.name}}</span>
 ```
+
+
+
+### 动态组件
+
+使用component的方式，可以
+
+```typescript
+<template>
+  <component :is='comId'></component>
+</template>
+
+<script setup>
+import ACom from './ACom.vue'
+const comId = shallowRef(ACom)
+</scipt>
+```
+
+
+
+
+
+## 插槽
+
+### 匿名插槽
+
+```typescript
+// 父组件
+<template v-slot>
+  content
+</template>
+
+// 子组件
+<slot></slot>
+```
+
+
+
+### 具名插槽
+
+```typescript
+// 父组件
+<template v-slot:header>
+  content
+</template>
+//或者简写成
+<template #header>
+  content
+</template>
+
+// 子组件
+<slot name="header"></slot>
+```
+
+
+
+### 动态插槽
+
+```typescript
+// 父组件
+<template #[slotName]>
+  content
+</template>
+
+<script setup>
+const slotName = ref('header')
+</scipt>
+```
+
+
+
+### 插槽传值
+
+TODO
 
 
 

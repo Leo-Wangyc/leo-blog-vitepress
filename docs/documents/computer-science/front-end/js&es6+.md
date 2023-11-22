@@ -479,9 +479,25 @@ const [bill, peter] = demoArr;
 console.log(bill); // 'peter'
 ```
 
-## for...in 与 for...of
 
----
+
+## 可选链操作符
+
+### || 和 ?? 的区别
+
+??只用来区别undefined和null
+
+```typescript
+0 ?? 123 // 0
+0 || 123 // 123
+
+undefined ?? 123 // 123
+undefined || 123 // 123
+```
+
+
+
+## for...in 与 for...of
 
 ### for...in
 
@@ -553,11 +569,26 @@ for (let value of myArray) {
 // 7 number
 ```
 
+
+
 ## Promise
 
----
-
 ### Promise 简介
+
+promise可以简单理解为一种**立即执行的，拥有着错误检测机制的函数**
+
+对普通普通函数来说，接收传入的值，经过处理后，返回所需要的返回值。而且函数分为了定义和使用两种场景，如下
+
+```typescript
+// 定义
+const sum:number = (a:number, b: number) => a+b 
+// 使用
+sum(1,2) 
+```
+
+而对promise来说，在new Promise的时候，它就会立即执行，所以，promise一般都是用于当作函数的返回值来使用。
+
+与函数不同的是，promise回根据内部执行情况，决定走resolve还是走reject，resolve的话，会调用外部的.then，reject的话，会调用外部的.catch
 
 - promise 用来执行异步操作，有效地消除了回调地狱，并且增加了错误捕获机制，其本质上是一个函数对象，会**自行调用**，自身拥有着**all、reject、resolve**等方法，其原型上有**then、catch**等方法。示例如下：
 
@@ -591,6 +622,8 @@ for (let value of myArray) {
 
   ！！！**注意，promise 会直接自调用**，所以一定要确保其中的改赋值的变量都已赋值！！！
 
+
+
 ### promise 在实际函数中的运用
 
 因为**只有 promise 才具有.then 的方法**，所以函数**必须返回一个 promise**，才能实现.then 的调用
@@ -623,7 +656,7 @@ fn(2) // 成功情况
 
 
 
-###promise.then
+### promise.then
 
 Promise.then 是 promise 中的函数成功时的触发，会自动调用函数中的 resolve 方法，then 接受的参数是一个函数，函数的参数就是 resolve 中的参数，例如 3.5.1 中的例子：
 
