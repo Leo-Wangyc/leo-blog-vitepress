@@ -34,6 +34,14 @@ before 和 after 用于在元素的前面/后面插入一些指定的内容，ht
 
 
 
+## Position
+
+### fix
+
+相对于当前窗口进行固定布局，适合用来做全局弹框
+
+
+
 ## flex 布局
 
 > flex 布局 _flex layout_

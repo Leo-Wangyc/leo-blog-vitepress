@@ -282,6 +282,94 @@ const changeAge = () => {
 
 
 
+## Vue3组件
+
+### Teleport
+
+内置组件，可以直接使用，将组件挂载到某一特定DOM节点下，而不是挂载到当前组件中
+
+```typescript
+<template>
+  // 此处会将SomCom挂载到body上，而不是挂载到当前的父组件上
+	<Teleport to="body" disable="">
+  	<SonCom></SonCom>
+  </Teleport>
+</template>
+```
+
+
+
+### Keep-alive
+
+用于缓存用户数据，例如表单提交中，如果切换到了别的组件，再切回来可以保证数据不丢失，有点类似v-show，但是v-show不能跨路由，但是keep-alive可以
+
+```typescript
+<template>
+  // AForm组件切换的时候会丢失表单数据
+	<AFrom></AFrom>
+	<keep-alive>
+  	// BForm组件切换的时候不会丢失表单数据，下次进来会继续保持
+  	<BFrom></BFrom>
+  </keep-alive>
+</template>
+```
+
+Keep-alive会让组件多两个生命周期
+
+```typescript
+onActivated(){
+  // 每次keep-alive包裹的组件切换出来进行渲染的时候会执行
+}
+onDeactivated(){
+  // 每次keep-alive包裹的组件切换隐藏的时候会执行
+}
+onUnmounted(){
+  // keep-alive包裹的组件，不会走onMounted进行卸载
+}
+```
+
+
+
+### transition
+
+动画组件
+
+// TODO
+
+
+
+### provide & inject
+
+在不使用状态管理库的时候，用于多级组件之间传递数据
+
+```typescript
+// grandparent comp ----------------------------
+<script>
+import { ref, provide } from 'vue'
+const colorVal = ref('red')
+provide('color', colorVal)
+</script>
+
+
+// grandson comp ----------------------------
+<temaplate>
+ 	<div class='box'></div>
+</template>
+
+<script setup>
+import { inject } from 'vue'
+const color = inject<Ref<string>>('color')
+// 子组件还可以改provide传入的值，如果不希望子组件修改传入的值，可以在provide的时候设置为readonly(colorVal)
+color.value = 'yellow'
+</script>
+
+<style scoped>
+.box{
+  background: v-bind(color)
+}
+</style>
+```
+
 
 
 
@@ -553,6 +641,12 @@ import ACom from './ACom.vue'
 const comId = shallowRef(ACom)
 </scipt>
 ```
+
+
+
+### 异步组件
+
+#### 异步组件和懒加载
 
 
 
