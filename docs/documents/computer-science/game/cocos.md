@@ -362,3 +362,152 @@ myAnimation() {
 
 ## 母鸡接蛋游戏实操
 
+### 前期项目搭建
+
+首先，我们需要创建好游戏资源库的目录，资源不能随意堆放，新建图片和脚本文件夹，并将所需要的素材导入
+
+<img src="../../../public/assets/cocos/image-20231123231203887.png" alt="image-20231123231203887" style="zoom:50%;" />
+
+随后，在canvas画布下，新增一个GameRoot的节点，表示游戏的根节点，同时，创建好所需的相关节点
+
+<img src="../../../public/assets/cocos/image-20231123231432889.png" alt="image-20231123231432889" style="zoom:50%;" />
+
+随后，将chiken素材导入chiken节点，调整好大小，并复制出多个
+
+<img src="../../../public/assets/cocos/image-20231123231727618.png" alt="image-20231123231727618" style="zoom:50%;" />
+
+在chiken的根节点下，创建layout组件
+
+<img src="../../../public/assets/cocos/image-20231123231827980.png" alt="image-20231123231827980" style="zoom:50%;" />
+
+设置好type为horizontal水平排布，让多个子节点排在水平线上
+
+resize mode为container，可以让子节点自动适应画布宽度
+
+spacing x，可以改变子节点之间的间距
+
+affected by scale，可以让改节点下的子节点都跟随父节点的比例进行变换
+
+<img src="../../../public/assets/cocos/image-20231123233925382.png" alt="image-20231123233925382" style="zoom:50%;" />
+
+<img src="../../../public/assets/cocos/image-20231123232217411.png" alt="image-20231123232217411" style="zoom:50%;" />
+
+同样的方式拖入player，然后新建GameRoot空脚本，挂载到gameroot节点上，进行编辑
+
+脚本编写第一步，先将三个根节点在gameroot中引入，根节点最好带上root后缀
+
+```typescript
+export class GameRoot extends Component {
+  @property(Node) player: Node;
+  @property(Node) chickenRoot: Node;
+  @property(Node) eggsRoot: Node;
+
+  start() {}
+
+  update(deltaTime: number) {}
+}
+```
+
+随后回到cocos页面，将三个根节点拖入到GameRoot的组件面板中，方便我们直接通过this获取位置
+
+<img src="../../../public/assets/cocos/image-20231123233056654.png" alt="image-20231123233056654" style="zoom:50%;" />
+
+继续回到代码中，通过input.on监听键盘事件
+
+
+
+### player移动逻辑
+
+首先，对键盘事件进行监听
+
+```typescript
+start() {
+  this.openInputEvent();
+}
+
+openInputEvent() {
+  input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
+}
+
+onKeyDown(event: EventKeyboard) {
+  switch (event.keyCode) {
+    case KeyCode.KEY_A:
+      // 左移逻辑
+      break;
+    case KeyCode.KEY_D:
+      // 右移逻辑
+      break;
+  }
+}
+```
+
+随后，获取每只鸡的x坐标，用于配置player的移动
+
+```typescript
+playerPosIndex = 0;
+chickenPosArr = [];
+
+initData() {
+  for (let i = 0; i < this.chickenRoot.children.length; i++) {
+    const currentChicken = this.chickenRoot[i];
+    this.chickenPosArr[i] = currentChicken.position.x;
+  }
+}
+
+start() {
+  this.initData();
+  this.openInputEvent();
+}
+```
+
+然后编写移动逻辑
+
+```typescript
+onKeyDown(event: EventKeyboard) {
+  switch (event.keyCode) {
+    case KeyCode.KEY_A:
+      // 左移传入-1
+      this.movePlayer(-1);
+      break;
+    case KeyCode.KEY_D:
+      // 右移传入1
+      this.movePlayer(1);
+      break;
+  }
+}
+
+movePlayer(dir: 1 | -1) {
+  this.playerPosIndex += dir;
+  if (this.playerPosIndex < 0) {
+    this.playerPosIndex = 0;
+  }
+  if (this.playerPosIndex > this.chickenRoot.children.length - 1) {
+    this.playerPosIndex = this.chickenRoot.children.length - 1;
+  }
+  this.renderPlayerPos();
+}
+
+renderPlayerPos() {
+  const x = this.chickenPosArr[this.playerPosIndex];
+  const y = this.player.position.y;
+  this.player.setPosition(x, y);
+}
+```
+
+最后，别忘了初始化player的位置，这样可以让player在进游戏的时候位置保持在最左边
+
+```typescript
+initData() {
+  ...
+  this.renderPlayerPos();
+}
+```
+
+最后效果如图
+
+<img src="../../../public/assets/cocos/image-20231124000342656.png" alt="image-20231124000342656" style="zoom:50%;" />
+
+
+
+### 鸡蛋的逻辑
+
