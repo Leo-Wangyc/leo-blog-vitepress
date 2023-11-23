@@ -6,13 +6,13 @@ export default defineConfig({
   head: [
     [
       "link",
-      { rel: "icon", type: "image/x-icon", href: "/public/assets/boat.png" },
+      { rel: "icon", type: "image/png", href: "/leo-blog-vitepress/boat.png" },
     ],
   ],
   description: "Leo's daily study",
   base: "/leo-blog-vitepress/",
   themeConfig: {
-    logo: "/public/assets/boat.png",
+    logo: "/assets/boat.png",
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Home", link: "/" },
