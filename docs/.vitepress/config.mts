@@ -3,9 +3,16 @@ import { defineConfig } from "vitepress";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Leo's Blog",
+  head: [
+    [
+      "link",
+      { rel: "icon", type: "image/x-icon", href: "/public/assets/boat.png" },
+    ],
+  ],
   description: "Leo's daily study",
   base: "/leo-blog-vitepress/",
   themeConfig: {
+    logo: "/public/assets/boat.png",
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "Home", link: "/" },
