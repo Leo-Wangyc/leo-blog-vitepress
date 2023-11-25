@@ -302,7 +302,7 @@ ts 中，函数中的 this 必须要声明之后才能使用，否则会报错
   // 如果按第一种写法
   let fun = (x: string | number, y: string | number): void => {};
   fun(1, "2"); // 这种写法，并不会报错
-
+  
   // -------------上述函数可重载为下面的函数---------------------
   function fun(x: string, y: string): void;
   function fun(x: number, y: number): void;
@@ -409,13 +409,13 @@ ts 里面提供的修饰符共有三个，分别是
    class Person {
      public name: string;
      public age: number = 20;
-
+   
      static sex: string = "男"; // 保护属性
-
+   
      constructor(name: string) {
        this.name = name;
      }
-
+   
      run() {
        // 实例方法
        console.log(`${this.name}在奔跑`);
@@ -423,7 +423,7 @@ ts 里面提供的修饰符共有三个，分别是
      work() {
        console.log(`${this.name}在工作`);
      }
-
+   
      static print() {
        //静态方法
        console.log("print方法");
@@ -431,7 +431,7 @@ ts 里面提供的修饰符共有三个，分别是
        console.log("print方法" + this.sex);
      }
    }
-
+   
    let p = new Person("张三");
    // 调用实例方法
    p.run();
@@ -458,7 +458,7 @@ ts 里面提供的修饰符共有三个，分别是
        console.log("吃的方法");
      }
    }
-
+   
    class Dog extends Animal {
      constructor(name: string) {
        super(name);
@@ -467,7 +467,7 @@ ts 里面提供的修饰符共有三个，分别是
        return this.name + "吃粮食";
      }
    }
-
+   
    class Cat extends Animal {
      constructor(name: string) {
        super(name);
@@ -505,7 +505,7 @@ ts 里面提供的修饰符共有三个，分别是
      }
    }
    var a = new Animal(); // 这里这么写是错误的，因为抽象类不可以被实例
-
+   
    class Dog extends Animal {
      constructor(name: any) {
        super(name);
@@ -568,7 +568,7 @@ ts 里面提供的修饰符共有三个，分别是
        (): string;
        name: string;
      }
-
+     
      let t: any = () => {}; // 此处如果不加any，下面会报错，因为t对应的是空函数，不能赋值
      t.name = "Dog";
      let dog: Animal2 = t;
@@ -650,9 +650,9 @@ let employees: Record<number, EmployeeType> = {
 };
 ```
 
-## 装饰器
 
----
+
+## 装饰器
 
 ### 类装饰器
 

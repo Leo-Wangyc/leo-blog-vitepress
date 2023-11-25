@@ -401,7 +401,7 @@ Vue3 composition API中的组件
 
 
 
-## 父子组件传参
+## 组件传参
 
 ### 父组件 to 子组件
 
@@ -513,6 +513,74 @@ onMounted(() => {
   console.log("test", sonCom.value); // 可以拿到exportsValue和sayHi，拿不到innerValue
 });
 ```
+
+
+
+### 兄弟组件传参
+
+#### 父组件当桥梁
+
+通过父组件当作桥梁进行传参，不做演示了
+
+#### eventBus (for vue2)
+
+利用全局事件总线。
+
+在vue2中，在$vue上面，通过全局注册一个发布订阅的bus, 使用emit和on进行组件间的通信
+
+```typescript
+// 给vue的根节点挂载eventBus
+class Bus {
+  ...
+  emit(eventName, params){ ... }
+  on(eventName, callback){ ... }
+}
+                          
+// 组件A
+import Bus from './Bus'
+Bus.emit('passParam', 'Hello')
+                          
+// 组件B
+import Bus from './Bus'
+Bus.on('passParam', (params)=>{console.log(params)})
+```
+
+#### mitt (for vue3)
+
+用法和vue2的eventBus差不多，不过mitt封装得更完备一点
+
+首先，在main.ts中，将mitt挂载到$vue上
+
+```typescript
+// TODO
+```
+
+然后，在子组件中通过拿到组件实例进行使用
+
+```typescript
+// 组件A
+<script setup>
+import { getCurrentInstance } from 'vue'
+const instance = getCurrentInstance()
+instance.proxy.$Bus.emit('eventName', params)
+</script>
+
+// 组件B
+<script setup>
+import { getCurrentInstance } from 'vue'
+const instance = getCurrentInstance()
+// 可以监听某个事件
+instance.proxy.$Bus.on('eventName', (...)=> {
+  callback()
+})
+// 也可以选择监听所有事件，然后根据不同的事件再做不同决定
+instance.proxy.$Bus.on('*', (EventType, ...)=> {
+  callback()
+})
+</script>
+```
+
+
 
 
 
