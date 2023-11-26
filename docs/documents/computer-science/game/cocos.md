@@ -511,3 +511,358 @@ initData() {
 
 ### 鸡蛋的逻辑
 
+将鸡蛋设置为预制体（prefab）
+
+首先，将egg拖到egg节点下
+
+<img src="../../../public/assets/cocos/image-20231126195705136.png" alt="image-20231126195705136" style="zoom:50%;" />
+
+然后，再把egge拖回到assets中，这样，会自动将egg变成预制体，双击预制体，还能对其进行编辑
+
+<img src="../../../public/assets/cocos/image-20231126195751191.png" alt="image-20231126195751191" style="zoom:50%;" />
+
+then，去脚本中挂载鸡蛋节点，并绑定到gameroot节点上
+
+```typescript
+export class GameRoot extends Component {
+ 	...
+  @property(Prefab) eggPrefab: Prefab;
+	...
+}
+```
+
+then，编写鸡蛋生成的脚本。
+
+通过**instantiate()**可以实例化预制体
+
+通过**addChild**将生成的实例化预制体绑定到节点上
+
+通过**schedule(callback, interval, times, ..) **设置定时器
+
+```typescript
+start() {
+  this.initData();
+  this.openInputEvent();
+  this.startCreateEggs();
+}
+
+startCreateEggs() {
+  this.schedule(this.createSingleEgg, 2);
+}
+
+createSingleEgg() {
+  const randomIndex = Math.floor(Math.random() * this.chickenPosArr.length);
+  const egg = instantiate(this.eggPrefab);
+  this.eggsRoot.addChild(egg);
+  egg.setPosition(
+    this.chickenPosArr[randomIndex],
+    this.chickenRoot.position.y
+  );
+}
+```
+
+最后，在update中补充鸡蛋下落的动画，并令其在触底的时候进行销毁
+
+通过遍历所有的eggRoot下的eggs，通过**deltaTime**对其y轴坐标进行减少
+
+如果触底（canvas画布中心为y轴0点，1280分辨率下，取一半，也就是640，为底端），通过**destory()**来销毁当前预制体
+
+```typescript
+update(deltaTime: number) {
+  for (let i = 0; i < this.eggsRoot.children.length; i++) {
+    const currentEgg = this.eggsRoot.children[i];
+    const x = currentEgg.position.x;
+    const y = currentEgg.position.y - 150 * deltaTime;
+    currentEgg.setPosition(x, y);
+    
+    if(y<-600){
+      currentEgg.destroy()
+    }
+  }
+}
+```
+
+### 碰撞事件
+
+给**player**组件和**egg预制体**分别加上**刚体组件**和**碰撞盒组件**，⚠️**注意，两者要同时添加才可生效！碰撞是两个物体的碰撞！而且是加在egg预制体上！而不是加在eggRoot上！**
+
+其中，刚体组件RigidBody2d需要勾选**enable contact listener**，这样发生碰撞事件才能被监听到
+
+同时，type需要选为**animated**，其他type的作用可以参考文档
+
+在碰撞盒组件BoxConllider2d中，需要勾选sensor，这样会触发回调函数
+
+<img src="../../../public/assets/cocos/image-20231126210248608.png" alt="image-20231126210248608" style="zoom:50%;" />
+
+对player节点进行碰撞事件监听
+
+首先通过**getComponent**获取到player身上挂载的碰撞体collider2D组件，boxCollider2D也可以，不过collider2D可以同时监听到box, circle和polygon的类型的碰撞体
+
+随后，启动监听该组件的碰撞事件**Contact2DType.BEGIN_CONTACT**
+
+在碰撞事件发生的时候，需要消除otherCollider，也就是与player节点发生碰撞的这个组件，在本案例中也就是egg组件。此时不可以直接**otherCollider.node.destroy()**， 因为此时物理碰撞事件还在进行中，直接销毁会报错，我们需要通过**director.once**，在物理碰撞事件发生之后，再对组件进行销毁
+
+```typescript
+ start() {
+   ...
+   this.onCollider2DEvent();
+}
+
+onCollider2DEvent() {
+  const comp = this.player.getComponent(Collider2D);
+  // 写boxCollider2D也可以，不过用Collider2D可以获取改节点下任何类型的碰撞体
+  // const comp = this.player.getComponent(BoxCollider2D);
+  console.log("comp", comp);
+  comp.on(
+    Contact2DType.BEGIN_CONTACT,
+    (
+      selfCollider: Collider2D, // 当前碰撞组件
+      otherCollider: Collider2D, // 被其他碰撞体所碰撞的那个组件
+      contact: IPhysics2DContact | null // 当前碰撞中的信息
+    ) => {
+      director.once(
+        Director.EVENT_AFTER_PHYSICS,
+        () => {
+          otherCollider.node.destroy();
+        },
+        this
+      );
+    },
+    this
+  );
+}
+```
+
+### 封装得分，hp展示
+
+新增hp和score的label，并进行property封装，挂载到gameRoot上
+
+```typ
+@property(Label) scoreLabel: Label;
+@property(Label) hpLabel: Label;
+
+score = 0;
+hp = 3;
+```
+
+<img src="../../../public/assets/cocos/image-20231126213105304.png" alt="image-20231126213105304" style="zoom:50%;" />
+
+在start中，封装初始化展示逻辑，通过label
+
+```typescript
+start() {
+  ...
+  this.initLabel();
+}
+
+initLabel() {
+  this.renderScoreLabel();
+  this.renderHpLabel();
+}
+
+renderHpLabel() {
+  this.hpLabel.string = `HP: ${this.hp}`;
+}
+
+renderScoreLabel() {
+  this.scoreLabel.string = `${this.score} 分`;
+}
+```
+
+在已经写好的组件摧毁事件后，添加得分/掉血的逻辑，并触发label的更新
+
+```typescript
+// score
+director.once(
+  Director.EVENT_AFTER_PHYSICS,
+  () => {
+    otherCollider.node.destroy();
+  },
+  this
+);
+this.score += 1;
+this.renderScoreLabel();
+
+// hurt
+if (y < -600) {
+  currentEgg.destroy();
+  this.hp -= 1;
+  this.renderHpLabel();
+  this.checkIsGameOver();
+}
+checkIsGameOver() {
+  if (this.hp <= 0) {
+    console.log("Game Over");
+  }
+}
+```
+
+自此，整个游戏项目即以完结，GameRoot完整代码如下
+
+```typescript
+import {
+  _decorator,
+  Component,
+  input,
+  Node,
+  Input,
+  EventKeyboard,
+  KeyCode,
+  Prefab,
+  instantiate,
+  Collider2D,
+  BoxCollider2D,
+  Contact2DType,
+  Collider,
+  IPhysics2DContact,
+  director,
+  Director,
+  Label,
+} from "cc";
+const { ccclass, property } = _decorator;
+
+@ccclass("GameRoot")
+export class GameRoot extends Component {
+  @property(Node) player: Node;
+  @property(Node) chickenRoot: Node;
+  @property(Node) eggsRoot: Node;
+  @property(Prefab) eggPrefab: Prefab;
+
+  @property(Label) scoreLabel: Label;
+  @property(Label) hpLabel: Label;
+
+  playerPosIndex = 0;
+  chickenPosArr = [];
+
+  score = 0;
+  hp = 3;
+
+  initData() {
+    for (let i = 0; i < this.chickenRoot.children.length; i++) {
+      const currentChicken = this.chickenRoot.children[i];
+      this.chickenPosArr[i] = currentChicken.position.x;
+    }
+    this.renderPlayerPos();
+  }
+
+  start() {
+    this.initData();
+    this.initLabel();
+    this.openInputEvent();
+    this.startCreateEggs();
+    this.onCollider2DEvent();
+  }
+
+  initLabel() {
+    this.renderScoreLabel();
+    this.renderHpLabel();
+  }
+
+  renderHpLabel() {
+    this.hpLabel.string = `HP: ${this.hp}`;
+  }
+
+  renderScoreLabel() {
+    this.scoreLabel.string = `${this.score} 分`;
+  }
+
+  onCollider2DEvent() {
+    const comp = this.player.getComponent(Collider2D);
+    // 写boxCollider2D也可以，不过用Collider2D可以获取改节点下任何类型的碰撞体
+    // const comp = this.player.getComponent(BoxCollider2D);
+    comp.on(
+      Contact2DType.BEGIN_CONTACT,
+      (
+        selfCollider: Collider2D, // 当前碰撞组件
+        otherCollider: Collider2D, // 被其他碰撞体所碰撞的那个组件
+        contact: IPhysics2DContact | null // 当前碰撞中的信息
+      ) => {
+        director.once(
+          Director.EVENT_AFTER_PHYSICS,
+          () => {
+            otherCollider.node.destroy();
+          },
+          this
+        );
+        this.score += 1;
+        this.renderScoreLabel();
+      },
+      this
+    );
+  }
+
+  startCreateEggs() {
+    this.schedule(this.createSingleEgg, 2);
+  }
+
+  createSingleEgg() {
+    const randomIndex = Math.floor(Math.random() * this.chickenPosArr.length);
+    const egg = instantiate(this.eggPrefab);
+    this.eggsRoot.addChild(egg);
+    egg.setPosition(
+      this.chickenPosArr[randomIndex],
+      this.chickenRoot.position.y
+    );
+  }
+
+  openInputEvent() {
+    input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
+  }
+
+  onKeyDown(event: EventKeyboard) {
+    switch (event.keyCode) {
+      case KeyCode.KEY_A:
+        this.movePlayer(-1);
+        break;
+      case KeyCode.KEY_D:
+        this.movePlayer(1);
+        break;
+    }
+  }
+
+  movePlayer(dir: 1 | -1) {
+    this.playerPosIndex += dir;
+    if (this.playerPosIndex < 0) {
+      this.playerPosIndex = 0;
+    }
+    if (this.playerPosIndex > this.chickenRoot.children.length - 1) {
+      this.playerPosIndex = this.chickenRoot.children.length - 1;
+    }
+    this.renderPlayerPos();
+  }
+
+  renderPlayerPos() {
+    const x = this.chickenPosArr[this.playerPosIndex];
+    const y = this.player.position.y;
+    this.player.setPosition(x, y);
+  }
+
+  checkIsGameOver() {
+    if (this.hp <= 0) {
+      console.log("Game Over");
+    }
+  }
+
+  update(deltaTime: number) {
+    for (let i = 0; i < this.eggsRoot.children.length; i++) {
+      const currentEgg = this.eggsRoot.children[i];
+      const x = currentEgg.position.x;
+      const y = currentEgg.position.y - 150 * deltaTime;
+      currentEgg.setPosition(x, y);
+      if (y < -600) {
+        currentEgg.destroy();
+        this.hp -= 1;
+        this.renderHpLabel();
+        this.checkIsGameOver();
+      }
+    }
+  }
+}
+```
+
+
+
+
+
+## 物理系统
+
