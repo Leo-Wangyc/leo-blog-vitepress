@@ -697,6 +697,8 @@ checkIsGameOver() {
 }
 ```
 
+### 项目完整代码
+
 自此，整个游戏项目即以完结，GameRoot完整代码如下
 
 ```typescript
@@ -866,3 +868,70 @@ export class GameRoot extends Component {
 
 ## 物理系统
 
+### 刚体&碰撞体
+
+在项目中，新建三个白盒子
+
+<img src="../../../public/assets/cocos/image-20231127224237345.png" alt="image-20231127224237345" style="zoom:50%;" />
+
+随后，将底下这个设置为静态刚体，其他两个设置为动态刚体，均增加上碰撞体组件，即可实现自由落体
+
+<img src="../../../public/assets/cocos/image-20231127224337905.png" alt="image-20231127224337905" style="zoom:50%;" />
+
+
+
+### 物理关节
+
+#### 鼠标调试关节
+
+**MouseJoint2D**，使用该关节绑定到节点上，可以用鼠标任意拖拽节点
+
+<img src="../../../public/assets/cocos/image-20231127224914977.png" alt="image-20231127224914977" style="zoom:50%;" />
+
+效果如下
+
+<img src="../../../public/assets/cocos/image-20231127224956717.png" alt="image-20231127224956717" style="zoom:50%;" />
+
+
+
+
+
+#### 距离关节
+
+给box2添加上**DistanceJoint2D**,可以实现距离关节，用于保证两个节点之间的距离一致
+
+collide conneted用于控制是否为碰撞体
+
+connected body这里，需要把box1拖进来，令box1跟随box2移动
+
+取消auto calc distance，设定固定300长度，可以让盒子距离最大为300，**像是一根没有弹力的绳子**
+
+<img src="../../../public/assets/cocos/image-20231127225317461.png" alt="image-20231127225317461" style="zoom:50%;" />
+
+
+
+#### 弹簧关节
+
+弹簧关节比较重要，用到的地方很多
+
+给box2添加上**SpringJoint2D**
+
+同理，添加上碰撞体事件，设置好关节连接体
+
+frequency用于调节弹簧弹力大小
+
+<img src="../../../public/assets/cocos/image-20231127230829540.png" alt="image-20231127230829540" style="zoom:50%;" />
+
+
+
+#### 轮子关节
+
+利用轮子组件**WheelJoint2D**，我们可以让组件实现旋转
+
+connected body用于挂载轮子组件，此处不是挂box1,而是挂box2本身
+
+enable motor意为是否需要启动马达，启动马达后，组件会有动力进行自转
+
+motor speed和max motor torque用于设置马达的方向和力度，speed为负则为反方向转
+
+<img src="../../../public/assets/cocos/image-20231127231220912.png" alt="image-20231127231220912" style="zoom:50%;" />
