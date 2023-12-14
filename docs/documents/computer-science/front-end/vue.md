@@ -125,6 +125,111 @@ const color1 = 'red'
 
 
 
+## 自定义指令
+
+自定义指令`Custom Directives`
+
+除了vue自带的内置指令，例如v-if, v-show，我们还能自定义一些自己的指令
+以下是使用自定义指令实现鉴权的操作，真实场景下可以封装成一个hooks应该会更好
+
+```vue
+<template>
+	<div v-my-directive:aaa.leo={background: red}></div>
+</template>
+
+<script setup>
+  import { DirectiveBinding } from 'vue'
+  const vMyDirective = (el: HTMLElement, binding: DirectiveBinding) => {
+    el.firstElement.style.background = binding.value.background
+  }
+</script>
+```
+
+
+
+### 原生拖拽(Directives)
+通过自定义指令，可以绑定原生拖拽事件，从而实现绑定事件使得元素可被拖拽
+
+该案例中需要用到原生事件监听函数**addEventListener**和**removeEventListener**
+
+监听的事件为**mousemove**鼠标移动事件和**mouseup**鼠标抬起事件
+
+⚠️注意点：本案例中，绑定的div盒子必须要是**非static的定位**，可以是*relative, absolute, fixed, sticky*
+
+
+```vue
+<template>
+	<div class='draw-box' v-my-draw>draw box</div>
+</template>
+
+<script setup>
+  import { DirectiveBinding } from 'vue'
+  const vMyDraw = (el: HTMLElement, binding: DirectiveBinding) => {
+    const onMouseMove = (e: MouseEvent) => {
+      let x = e.clientX - el.offsetLeft
+      let y = e.clientY - el.offsetTop
+      el.style.left = e.clientX - x + 'px'
+      el.style.top = e.clientY - y + 'px'
+    }
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', ()=>{
+      document.removeEventListener('mousemove', onMouseMove)
+    })
+  }
+</script>
+
+<style>
+  .draw-box{
+    position: absolute;
+  }
+</style>
+```
+
+
+
+### 图片懒加载(Directives)
+
+代码和解析如下：
+
+```vue
+<template>
+	<img v-my-lazy-load="item" v-for="item in arr">lazy load</img>
+</template>
+```
+
+1. 这里定义了一个Vue模板，使用`v-for`指令循环遍历数组`arr`中的每个项。
+2. 自定义指令`v-my-lazy-load`用于实现图片的懒加载功能，它接受一个绑定值`item`，这个值是图片的URL
+
+```vue
+<script setup>
+  import { DirectiveBinding } from 'vue'
+  import imageList: Record<string, {default: string}> = import.meta.glob('./assets/images/*.*', {eager:true})
+  
+  let arr = Object.value(imageList).map(v=> v.default)
+  const vMyLazyLoad = (el: HTMLElement, binding: DirectiveBinding) => {
+    const def = await import ('./assets/ver.svg')
+    el.src = def.default
+    const observer = new IntersectionOvserver((entry)=>{
+      if(entry[0].intersectionRatio > 0){
+        el.src = binding.value
+        observer.unobserver(el)
+      }
+    })
+  }
+</script>
+```
+
+1. `DirectiveBinding`从Vue库中导入，它是自定义指令的类型。
+2. 使用`import.meta.glob`加载`./assets/images/`目录下的所有图片文件，返回一个对象，其中包含了所有匹配文件的模块，这是vite提供的一个批量引入的方式
+3. `imageList`对象的每个属性都是一个模块，这些模块具有一个`default`属性，该属性是图片的URL。
+4. `arr`是一个包含所有默认导出图片URL的数组。
+6. `await import('./assets/ver.svg')`动态导入一个默认的占位图，并将它设置为元素的`src`属性。
+7. `IntersectionObserver`用来观察元素何时进入视口。一旦观察到元素进入视口（`intersectionRatio > 0`），将图片的`src`设置为绑定值（即实际图片的URL），并停止观察元素。
+
+
+
+
+
 ## Composition API
 
 ### ref,reactive
@@ -396,6 +501,10 @@ Vue3 composition API中的组件
 	onUnmounted(()=>{})
 </script>
 ```
+
+
+
+
 
 
 
