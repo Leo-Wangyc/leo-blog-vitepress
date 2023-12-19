@@ -17,6 +17,19 @@ export default defineConfig({
     nav: [
       { text: "Home", link: "/" },
       {
+        text: "My Lair",
+        items: [
+          {
+            text: "Portal",
+            link: "/documents/computer-science/computer-science",
+          },
+          {
+            text: "CS50 Guidebook",
+            link: "/share/cs50",
+          },
+        ],
+      },
+      {
         text: "Documents",
         items: [
           {
