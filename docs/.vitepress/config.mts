@@ -21,7 +21,7 @@ export default defineConfig({
         items: [
           {
             text: "Portal",
-            link: "/documents/computer-science/computer-science",
+            link: "/",
           },
           {
             text: "CS50 Guidebook",
