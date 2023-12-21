@@ -23,10 +23,6 @@ export default defineConfig({
             text: "Portal",
             link: "/",
           },
-          {
-            text: "CS50 Guidebook",
-            link: "/share/cs50",
-          },
         ],
       },
       {
@@ -64,6 +60,15 @@ export default defineConfig({
           {
             text: "Career Trajectory",
             link: "/annual-summary/career-trajectory",
+          },
+        ],
+      },
+      {
+        text: "Public",
+        items: [
+          {
+            text: "CS50 Guidebook",
+            link: "/share/cs50",
           },
         ],
       },
