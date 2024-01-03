@@ -23,6 +23,10 @@ export default defineConfig({
             text: "Portal",
             link: "/",
           },
+          {
+            text: "Development Log",
+            link: "/documents/my-lair",
+          },
         ],
       },
       {
@@ -75,6 +79,21 @@ export default defineConfig({
     ],
 
     sidebar: {
+      "/documents/my-lair": [
+        {
+          text: "Development Log",
+          items: [
+            {
+              text: "Total WorkFlow",
+              link: "/documents/my-lair/workflow",
+            },
+            {
+              text: "Preparation",
+              link: "/documents/my-lair/step1-preparation",
+            },
+          ],
+        },
+      ],
       "/documents/computer-science": [
         {
           text: "Computer Science",
