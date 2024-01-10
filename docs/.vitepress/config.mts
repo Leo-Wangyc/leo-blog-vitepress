@@ -25,7 +25,7 @@ export default defineConfig({
           },
           {
             text: "Development Log",
-            link: "/documents/my-lair",
+            link: "/documents/my-lair/workflow",
           },
         ],
       },
