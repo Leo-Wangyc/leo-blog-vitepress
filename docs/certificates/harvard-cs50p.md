@@ -1,3 +1,3 @@
 ## Harvard CS50P
 
-<img src="../../../public/assets/harvard-cs50p/Wang Yongchang.png" alt="Wang Yongchang" style="zoom:50%;" />
+<img src="../public/assets/harvard-cs50p/wangyongchang.png" alt="wangyongchang" style="zoom:50%;" />
