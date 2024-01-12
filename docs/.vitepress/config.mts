@@ -210,6 +210,16 @@ export default defineConfig({
                 },
               ],
             },
+            {
+              text: "HarmonyOS",
+              collapsed: true,
+              items: [
+                {
+                  text: "HarmonyOS Basic",
+                  link: "/documents/computer-science/harmonyos/harmonyos",
+                },
+              ],
+            },
           ],
         },
       ],
