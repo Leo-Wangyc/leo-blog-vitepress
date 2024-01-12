@@ -19,3 +19,14 @@ For each part of your application, you will need to decide whether you will buil
 
 
 **React** is a JavaScript **library** for building **interactive user interfaces**.
+
+
+
+### What is Next.js?
+
+<img src="https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Flearn-ecosystem.png&w=3840&q=75&dpl=dpl_APzAEVHWNLKj6iaDUjQbByoTBRJh" alt="Diagram showing how Next.js spans the server and client, and provides additional features such as routing, data fetching, and rendering." style="zoom:50%;" />
+
+You can use React to build your UI, then incrementally adopt Next.js features to solve common application requirements such as routing, data fetching, and caching - all while improving the developer and end-user experience.
+
+
+
