@@ -56,7 +56,7 @@ export default defineConfig({
       },
       {
         text: "Certificates",
-        link: "/certificates",
+        link: "/certificates/harvard-cs50p",
       },
       {
         text: "Annual Summary",
@@ -252,8 +252,8 @@ export default defineConfig({
           text: "Certificates",
           items: [
             {
-              text: "Certificates",
-              link: "/certificates/todo",
+              text: "Harvard CS50P",
+              link: "/certificates/harvard-cs50p",
             },
           ],
         },
