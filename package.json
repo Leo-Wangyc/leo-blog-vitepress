@@ -5,12 +5,13 @@
   "author": "Leo <leo542507136@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "vitepress": "1.0.0-rc.24"
+    "mermaid": "^10.6.1",
+    "vitepress": "1.0.0-rc.24",
+    "vitepress-plugin-mermaid": "^2.0.16"
   },
   "scripts": {
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
-  },
-  "dependencies": {}
+  }
 }

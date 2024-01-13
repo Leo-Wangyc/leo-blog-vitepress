@@ -6,8 +6,6 @@
 
 ## ArkTS(Stage)目录结构
 
-
-
 ```mermaid
 graph LR
 AppScope --> app_json5["app.json5：应用的全局配置信息。"]
@@ -24,7 +22,7 @@ oh_modules["oh_modules：用于存放三方库依赖信息。"]
 build_profile_app["build-profile.json5：应用级配置信息，包括签名、产品配置等。"]
 hvigorfile_app["hvigorfile.ts：应用级编译构建任务脚本。"]
 
-classDef default fill:#e8f8f5,stroke:#2c3e50,stroke-width:1px;
+classDef default fill:#e0f7fa,stroke:#29b6f6,stroke-width:1px;
 class app_json5,build_profile,hvigorfile,module_json5,resources,entryability,pages,oh_modules,build_profile_app,hvigorfile_app default;
 ```
 

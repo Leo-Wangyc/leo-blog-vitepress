@@ -1,7 +1,8 @@
 import { defineConfig } from "vitepress";
+import { withMermaid } from "vitepress-plugin-mermaid";
 
 // https://vitepress.dev/reference/site-config
-export default defineConfig({
+export default withMermaid({
   title: "Leo's Blog",
   head: [
     [
@@ -11,6 +12,13 @@ export default defineConfig({
   ],
   description: "Leo's daily study",
   base: "/leo-blog-vitepress/",
+  mermaid: {
+    // refer https://mermaid.js.org/config/setup/modules/mermaidAPI.html#mermaidapi-configuration-defaults for options
+  },
+  // optionally set additional config for plugin itself with MermaidPluginConfig
+  mermaidPlugin: {
+    class: "mermaid my-class", // set additional css classes for parent container
+  },
   themeConfig: {
     logo: "/assets/boat.png",
     // https://vitepress.dev/reference/default-theme-config
@@ -109,6 +117,10 @@ export default defineConfig({
             {
               text: "Algorithm",
               link: "/documents/computer-science/algorithm",
+            },
+            {
+              text: "Vite Press",
+              link: "/documents/computer-science/front-end/vite-press",
             },
             {
               text: "C",
