@@ -30,3 +30,7 @@ You can use React to build your UI, then incrementally adopt Next.js features to
 
 
 
+
+
+## Rendering User Interfaces (UI)
+

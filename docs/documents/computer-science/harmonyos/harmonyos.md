@@ -2,9 +2,7 @@
 
 注册及安装步骤略
 
-
-
-## ArkTS(Stage)目录结构
+## ArkTS(Stage 模型)目录结构
 
 ```mermaid
 graph LR
@@ -26,5 +24,12 @@ classDef default fill:#e0f7fa,stroke:#29b6f6,stroke-width:1px;
 class app_json5,build_profile,hvigorfile,module_json5,resources,entryability,pages,oh_modules,build_profile_app,hvigorfile_app default;
 ```
 
+## 应用程序包
 
+### 概念
 
+用户应用程序泛指运行在设备的操作系统之上，为用户提供特定服务的程序，简称“应用”。一个应用所对应的软件包文件，称为“应用程序包”。
+
+### 结构
+
+![harmonyOSApp](../../../public/assets/harmonyos/harmonyOSApp.svg)
