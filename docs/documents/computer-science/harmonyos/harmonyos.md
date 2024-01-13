@@ -26,3 +26,5 @@ classDef default fill:#e0f7fa,stroke:#29b6f6,stroke-width:1px;
 class app_json5,build_profile,hvigorfile,module_json5,resources,entryability,pages,oh_modules,build_profile_app,hvigorfile_app default;
 ```
 
+
+
