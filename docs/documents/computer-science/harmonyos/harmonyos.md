@@ -62,3 +62,88 @@ class app_json5,build_profile,hvigorfile,module_json5,resources,entryability,pag
 
 
 
+
+
+## ArkTS
+
+### JS & TS & ArkTS
+
+TypeScript是JavaScript的超集，添加了静态类型的定义
+
+而ArkTS是TypeScript的超级，扩展了**声明式UI，状态管理，并发任务**等能力
+
+
+
+### ArkTS设计
+
+![img](../../../public/assets/harmonyos/0260086000103404958.20221102104405.81053425986211736818236644416294:50001231000000:2800:C4BDB880E1D7503824BBA83A0D6B298C45167CE3A25BE6CDEEB552C343EF8AE5.png)
+
+
+
+
+
+### ArkTS基础
+
+// TODO: 
+
+阅读好文档，并完成考试作业
+
+https://developer.huawei.com/consumer/cn/training/course/slightMooc/C101667356568959645
+
+相关知识点：
+
+@entry
+
+@component
+
+struct TodoList {
+}
+
+ForEach API
+
+@link 组件通信
+
+@state
+
+
+
+
+
+## UIAbility
+
+
+
+### 页面创建
+
+ets/pages下，直接右键新建pages
+
+
+
+### 页面跳转
+
+通过引入router，类似微信小程序的router.push和router.back
+
+
+
+### 生命周期
+
+ create -- onCreate
+
+ null -- windowStageCreate,
+
+foreground -- onForeground，UI 在前台展示前调用
+
+background -- onBackground，UI切换到后台之后调用
+
+null - windowStageDestroy
+
+destroy
+
+
+
+
+
+## 基础组件
+
+### Image
+
