@@ -82,36 +82,171 @@ TypeScript是JavaScript的超集，添加了静态类型的定义
 
 
 
-### ArkTS基础
+### ArkTS声明式开发范式
 
-// TODO: 
+```typescript
+// ---part 1
+@Entry
+@Component
+// ---
 
-阅读好文档，并完成考试作业
-
-https://developer.huawei.com/consumer/cn/training/course/slightMooc/C101667356568959645
-
-相关知识点：
-
-@entry
-
-@component
-
-struct TodoList {
+// ---part 2
+struct Hello {
+// ---
+  @State myText: string = 'World'
+  
+  // ---part 3
+  build(){
+    column{
+      Text('Hello')
+      	.fontSize(50)
+      Text(this.myText)
+      	.fontSize(50)
+      // ---part 4
+      Divider()
+      Button(){
+      // ---
+        Text('Click Me')
+        	.fontSize(30)
+			}
+      // ---part 5
+      .onClick(()=>{
+        this.myText = 'ArkUI'
+      })
+      // ---
+      // ---part 6
+      .width(200)
+      .height(50)
+      // ---
+    }
+	}
+  // ---
 }
+```
 
-ForEach API
+1. Part1: **装饰器**
 
-@link 组件通信
+   用来装饰类、结构体、方法以及变量，赋予其特殊的含义，如上述示例中 @Entry 、 @Component 、 @State 都是装饰器。具体而言， @Component 表示这是个自定义组件； @Entry 则表示这是个入口组件； @State 表示组件中的状态变量，此状态变化会引起 UI 变更。
 
-@state
+2. Part2: **自定义组件**
+
+   可复用的 UI 单元，可组合其它组件，如上述被 @Component 装饰的 struct Hello。
+
+3. Part3: **UI 描述**
+
+   声明式的方式来描述 UI 的结构，如上述 build() 方法内部的代码块。
+
+4. Part4: **内置组件**
+
+   框架中默认内置的基础和布局组件，可直接被开发者调用，比如示例中的 Column、Text、Divider、Button。
+
+5. Part5: **事件方法**
+
+   用于添加组件对事件的响应逻辑，统一通过事件方法进行设置，如跟随在Button后面的onClick()。
+
+6. Part6: **属性方法**
+
+   用于组件属性的配置，统一通过属性方法进行设置，如fontSize()、width()、height()、color() 等，可通过链式调用的方式设置多项属性。
+
+
+
+### 自定义组件
+
+ArkTS通过struct声明组件名，并通过@Component和@Entry装饰器，来构成一个自定义组件。
+
+使用@Entry和@Component装饰的自定义组件作为页面的入口，会在页面加载时首先进行渲染。
+
+```typescript
+@Entry
+@Component
+struct ToDoList {...}
+```
+
+build方法内可以容纳内置组件和其他自定义组件，如Column和Text都是内置组件，由ArkUI框架提供，ToDoItem为自定义组件，需要开发者使用ArkTS自行声明
+
+```typescript
+@Entry
+@Component
+struct ToDoList {
+  ...
+  build() {
+    Column(...) {
+      Text(...)
+        ...
+      ForEach(...{
+        TodoItem(...)
+      },...)
+    }
+  ...
+  }
+}
+```
+
+
+
+### 布局
+
+**Row布局**
+
+![img](https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20240111104605.93120900297637334462488161323853:50001231000000:2800:1AA8CA6A161F92DD29180F12AEE850BAC8C52E1EE4ECC4C30FEF159D48F7DA47.png?needInitFileName=true?needInitFileName=true)
+
+```typescript
+Row() {
+  Image($r('app.media.ic_default'))
+    ...
+  Text(this.content) 
+    ...
+}
+...
+```
+
+**Column布局**
+
+![img](https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20240111104605.63385695838810553969799111570592:50001231000000:2800:7BE4043F45BF4887705D6A40708EFD17FEAC0A0DFD18C2B2587D60B2EB2B9E04.png?needInitFileName=true?needInitFileName=true)
+
+```typescript
+Column() {
+   Text($r('app.string.page_title'))
+     ...
+
+   ForEach(this.totalTasks,(item) => {
+     TodoItem({content:item})
+   },...)
+ }
+```
+
+
+
+### 循环
+
+利用自带方法ForEach进行循环
+
+```typescript
+@Entry
+@Component
+struct ToDoList {
+   ...
+   build() {
+     Row() {
+       Column() {
+         Text(...)
+           ...
+         ForEach(this.totalTasks,(item) => {
+           TodoItem({content:item})
+         },...)
+       }
+       .width('100%')
+     }
+     .height('100%')
+   }
+ }
+```
 
 
 
 
 
 ## UIAbility
-
-
 
 ### 页面创建
 
