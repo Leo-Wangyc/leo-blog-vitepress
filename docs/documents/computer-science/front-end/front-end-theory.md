@@ -756,19 +756,78 @@ console.log(object.getN()());
 
 > https://juejin.cn/post/6844904100035821575
 
----
-
-此图失效
-
 HTTP 内容
+
+
+
+## Blob
+
+### Blob简介
+Blob 是 Binary Large Object 的缩写，表示二进制大对象。在Web开发中，Blob对象是一个不可变的、原始数据的类文件对象。Blob 表示的不仅限于二进制类型的数据，还可以包含文本内容。Blob 对象通常用来处理文件操作的数据内容，比如你可以通过 Blob 来处理和操作二进制文件，如图片、音频、视频等。
+
+Blob 对象含有以下几个关键的属性和方法：
+
+1. **size**：Blob 对象的大小，以字节为单位。
+2. **type**：Blob 对象的 MIME 类型，如果类型未知，则该值为空字符串。
+
+Blob 对象通常与 `File` 接口一起使用，`File` 接口继承自 `Blob`，增加了一些文件相关的属性，如 `name`（文件名）和 `lastModified`（文件的最后修改时间）。
+
+创建 Blob 对象的常用方法：
+
+```javascript
+const blob = new Blob(array, options);
+```
+
+1. `array` 是一个由 `ArrayBuffer`、`ArrayBufferView`、`Blob`、`String` 等对象构成的 `Array`，或者是以上类型的混合。它们将会被串联在一起，最终构成 Blob 的数据内容。
+2. `options` 是一个可选对象，包含了额外的配置选项，如 `type`，可以设置 Blob 的 MIME 类型。
+
+例如，创建一个包含文本内容的 Blob 对象：
+
+```javascript
+const text = 'Hello, World!';
+const blob = new Blob([text], { type: 'text/plain' });
+```
+
+在前端Web应用中，Blob 对象通常用于以下场景：
+
+1. 通过 AJAX 上传或下载二进制数据。
+2. 使用 `URL.createObjectURL()` 将 Blob 对象转换为一个 URL，这个 URL 可以用于 `<a>` 标签的 `href` 属性，实现无需上传服务器即可下载文件的功能。
+3. 在客户端创建和操作大型二进制数据，比如图片或视频编辑。
+4. 使用 `FileReader` 对象读取 Blob 对象的内容。
+
+Blob 对象因其能够处理大型的二进制数据而变得非常有用，特别是在需要在前端处理文件上传下载时。
+
+
+
+### Blob下载文件
+如果后端通过API以文本或二进制格式返回CSV内容，你可以使用JavaScript创建一个Blob对象，并生成一个URL，然后通过创建一个临时的`<a>`标签来模拟点击进行下载。
+
+```javascript
+// 假设csvData是后端返回的CSV文本数据
+const csvData = 'id,name,age\n1,John Doe,30\n2,Jane Smith,25';
+
+// 创建一个Blob对象
+const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+
+// 创建一个指向Blob的URL
+const url = URL.createObjectURL(blob);
+
+// 创建一个临时的a标签用于下载
+const link = document.createElement('a');
+link.href = url;
+link.setAttribute('download', 'filename.csv'); // 设置下载文件名
+document.body.appendChild(link); // 添加到DOM中
+link.click(); // 模拟点击
+document.body.removeChild(link); // 移除临时标签
+```
+
+### 
 
 ## 缓存
 
 `缓存 chache`
 
 > https://www.jianshu.com/p/256d0873c398
-
----
 
 ![1381649902262_.pic](../../../public/assets/front-end-theory/1381649902262_.pic.jpg)
 
@@ -867,9 +926,13 @@ http 缓存分为 **强缓存** 和 **协商缓存** 两种
 
 可使用 IndexDB，笔记后续补充
 
-## 网络通信
 
----
+
+
+
+
+
+## 网络通信
 
 ### 完整网络请求流程
 
@@ -893,8 +956,6 @@ http 缓存分为 **强缓存** 和 **协商缓存** 两种
 
 ## Ajax
 
----
-
 ### ajax 原理
 
 > 暂时可以先参考一下这个
@@ -903,11 +964,13 @@ http 缓存分为 **强缓存** 和 **协商缓存** 两种
 
 本质上就是 XMLHttpRequest 的封装
 
+
+
+
+
 ## 跨域
 
 `跨域问题 cross-domain issues`
-
----
 
 > 参考资料：https://segmentfault.com/a/1190000002647143?utm_source=Weibo&utm_medium=shareLink&utm_campaign=socialShare
 
@@ -945,9 +1008,9 @@ http://www.example.net/sample.aspx?callback=mycallback
 
 如果没有后面的 callback 参数，即不使用 JSONP 的模式，该服务的返回结果可能是一个单纯的 json 字符串，比如：`{ foo : 'bar' }`。但是如果使用 JSONP 模式，那么返回的是一个函数调用: `mycallback({ foo : 'bar' })`，这样我们在代码之中，定义一个名为 mycallback 的回调函数，就可以解决跨域问题了。
 
-## 深浅拷贝
 
----
+
+## 深浅拷贝
 
 ### 浅拷贝
 
