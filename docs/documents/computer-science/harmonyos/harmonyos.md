@@ -2,6 +2,8 @@
 
 注册及安装步骤略
 
+
+
 ## ArkTS(Stage 模型)目录结构
 
 ```mermaid
@@ -23,6 +25,10 @@ hvigorfile_app["hvigorfile.ts：应用级编译构建任务脚本。"]
 classDef default fill:#e0f7fa,stroke:#29b6f6,stroke-width:1px;
 class app_json5,build_profile,hvigorfile,module_json5,resources,entryability,pages,oh_modules,build_profile_app,hvigorfile_app default;
 ```
+
+
+
+
 
 ## 应用程序包
 
@@ -59,6 +65,16 @@ class app_json5,build_profile,hvigorfile,module_json5,resources,entryability,pag
 - resources.index是资源索引表，由IDE编译工程时生成。
 - module.json是HAP的配置文件，内容由工程配置中的module.json5和app.json5组成，该文件是HAP中必不可少的文件。IDE会自动生成一部分默认配置，开发者按需修改其中的配置。详细字段请参见[应用配置文件](https://developer.huawei.com/consumer/cn/doc/development/harmonyos-guides-V2/application-configuration-file-overview-stage-0000001428061460-V2)。
 - pack.info是Bundle中用于描述每个HAP属性的文件，例如app中的bundleName和versionCode信息、module中的name、type和abilities等信息，由IDE工具生成Bundle包时自动生成。
+
+
+
+### 多HAP机制
+
+多HAP构建视图
+
+![img](https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20240115191019.18853973237489651667072369103380:50001231000000:2800:8EBB09701032F3A121A0DBEF611E30467A111EC34F84A81F534E3EADF315A042.png?needInitFileName=true?needInitFileName=true)
+
+
 
 
 
@@ -186,7 +202,7 @@ struct ToDoList {
 
 ### 布局
 
-**Row布局**
+#### **Row布局**
 
 ![img](https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20240111104605.93120900297637334462488161323853:50001231000000:2800:1AA8CA6A161F92DD29180F12AEE850BAC8C52E1EE4ECC4C30FEF159D48F7DA47.png?needInitFileName=true?needInitFileName=true)
 
@@ -200,7 +216,7 @@ Row() {
 ...
 ```
 
-**Column布局**
+#### **Column布局**
 
 ![img](https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20240111104605.63385695838810553969799111570592:50001231000000:2800:7BE4043F45BF4887705D6A40708EFD17FEAC0A0DFD18C2B2587D60B2EB2B9E04.png?needInitFileName=true?needInitFileName=true)
 
@@ -214,6 +230,62 @@ Column() {
    },...)
  }
 ```
+
+#### Stack布局
+
+Stack组件为堆叠组件，可以包含一个或多个子组件，其特点是后一个子组件覆盖前一个子组件
+
+```typescript
+@Entry
+@Component
+struct MyComponent {
+  build() {
+    Stack() {
+        Image($rawfile('Tomato.png'))
+        Text('Tomato')
+            .fontSize(26)
+            .fontWeight(500)
+    }
+  }
+}
+```
+
+![img](https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20230612113736.49548347785396261575392167491374:50001231000000:2800:A363C974FBE85E6FBB0B09E63422D867ADD6C8B1D80FD72ED9B9578F731EE886.png?needInitFileName=true?needInitFileName=true)
+
+#### Flex布局
+
+
+
+
+
+
+
+### 条件
+
+ArkTS支持直接在声明式语法当中添加if条件判断语句，也支持通过三元表达式来进行条件判断，如下：
+
+```typescript
+build() {
+  Column() {
+    Text(this.isCountDown ? 'Count Down' : 'Stopwatch').fontSize(20).margin(20)
+    if (this.isCountDown) {
+      // 图片资源放在media目录下
+      Image($r("app.media.countdown")).width(120).height(120)
+      TimerComponent({ counter: 10, changePerSec: -1, showInColor: Color.Red })
+    } else {
+      // 图片资源放在media目录下
+      Image($r("app.media.stopwatch")).width(120).height(120)
+      TimerComponent({ counter: 0, changePerSec: +1, showInColor: Color.Black })
+    }
+    Button(this.isCountDown ? 'Switch to Stopwatch' : 'Switch to Count Down')
+      .onClick(() => {
+        this.isCountDown = !this.isCountDown
+      })
+  }.width('100%')
+}
+```
+
+
 
 
 
@@ -281,4 +353,10 @@ destroy
 ## 基础组件
 
 ### Image
+
+
+
+### Stack
+
+
 
