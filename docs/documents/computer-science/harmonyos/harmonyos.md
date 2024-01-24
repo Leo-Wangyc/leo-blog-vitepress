@@ -76,6 +76,10 @@ class app_json5,build_profile,hvigorfile,module_json5,resources,entryability,pag
 
 
 
+其他待补充
+
+// TODO
+
 
 
 
@@ -216,6 +220,8 @@ Row() {
 ...
 ```
 
+
+
 #### **Column布局**
 
 ![img](https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20240111104605.63385695838810553969799111570592:50001231000000:2800:7BE4043F45BF4887705D6A40708EFD17FEAC0A0DFD18C2B2587D60B2EB2B9E04.png?needInitFileName=true?needInitFileName=true)
@@ -230,6 +236,8 @@ Column() {
    },...)
  }
 ```
+
+
 
 #### Stack布局
 
@@ -253,6 +261,32 @@ struct MyComponent {
 ![img](https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20230612113736.49548347785396261575392167491374:50001231000000:2800:A363C974FBE85E6FBB0B09E63422D867ADD6C8B1D80FD72ED9B9578F731EE886.png?needInitFileName=true?needInitFileName=true)
 
 #### Flex布局
+
+利用flex(){}可以实现flex布局，其中，`flexGrow`表示填充满剩余空间, layoutWeight用于设置flex比例值
+
+```typescript
+@Component
+struct ContentTable {
+  build() {
+    Flex() {
+      Text('Calories')
+        .fontSize(17.4)
+        .fontWeight(FontWeight.Bold)
+        .layoutWeight(1)
+      Flex() {
+        Text('Calories')
+          .fontSize(17.4)
+          .flexGrow(1)
+        Text('17kcal')
+          .fontSize(17.4)
+      }
+      .layoutWeight(2)
+    }
+    .height(280)
+    .padding({ top: 30, right: 30, left: 30 })
+  }
+}
+```
 
 
 
