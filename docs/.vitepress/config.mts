@@ -183,10 +183,6 @@ export default withMermaid({
                   link: "/documents/computer-science/front-end/react",
                 },
                 {
-                  text: "Next",
-                  link: "/documents/computer-science/front-end/next",
-                },
-                {
                   text: "Mini App",
                   link: "/documents/computer-science/front-end/miniapp",
                 },
@@ -209,6 +205,16 @@ export default withMermaid({
                 {
                   text: "Special",
                   link: "/documents/computer-science/front-end/special",
+                },
+              ],
+            },
+            {
+              text: "Back-end",
+              collapsed: true,
+              items: [
+                {
+                  text: "Next",
+                  link: "/documents/computer-science/back-end/next",
                 },
               ],
             },
