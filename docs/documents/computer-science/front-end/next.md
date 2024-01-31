@@ -1,6 +1,8 @@
-## About React and Next.js
+## React & Next.js
 
-### Building blocks of a web application
+### Build Web
+
+**Building blocks of a web application**
 
 There are a few things you need to consider when building modern applications. Such as:
 
@@ -22,7 +24,7 @@ For each part of your application, you will need to decide whether you will buil
 
 
 
-### What is Next.js?
+### Next.js
 
 <img src="https://nextjs.org/_next/image?url=%2Flearn%2Flight%2Flearn-ecosystem.png&w=3840&q=75&dpl=dpl_APzAEVHWNLKj6iaDUjQbByoTBRJh" alt="Diagram showing how Next.js spans the server and client, and provides additional features such as routing, data fetching, and rendering." style="zoom:50%;" />
 
