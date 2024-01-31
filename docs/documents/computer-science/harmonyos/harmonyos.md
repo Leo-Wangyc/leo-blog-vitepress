@@ -172,6 +172,8 @@ struct Hello {
 
 ### 自定义组件
 
+#### @Entry/@Component
+
 ArkTS通过struct声明组件名，并通过@Component和@Entry装饰器，来构成一个自定义组件。
 
 使用@Entry和@Component装饰的自定义组件作为页面的入口，会在页面加载时首先进行渲染。
@@ -181,6 +183,10 @@ ArkTS通过struct声明组件名，并通过@Component和@Entry装饰器，来�
 @Component
 struct ToDoList {...}
 ```
+
+
+
+#### 基本组件
 
 build方法内可以容纳内置组件和其他自定义组件，如Column和Text都是内置组件，由ArkUI框架提供，ToDoItem为自定义组件，需要开发者使用ArkTS自行声明
 
@@ -201,6 +207,68 @@ struct ToDoList {
   }
 }
 ```
+
+
+
+#### 组件拆分
+
+```typescript
+// 首先拆分出FoodImageDisplay组件
+@Component
+struct FoodImageDisplay {
+  build() {
+    	// ...
+    }  
+  }
+}
+
+// 
+@Component
+struct ContentTable {
+  @Builder IngredientItem(title:string, name: string, value: string) {
+    Flex() {
+      Text(title)
+        .fontSize(17.4)
+        .fontWeight(FontWeight.Bold)
+        .layoutWeight(1)
+      Flex() {
+        Text(name)
+          .fontSize(17.4)
+          .flexGrow(1)
+        Text(value)
+          .fontSize(17.4)
+      }
+      .layoutWeight(2)
+    }
+  }
+
+  build() {
+    Flex({ direction: FlexDirection.Column, justifyContent: FlexAlign.SpaceBetween, alignItems: ItemAlign.Start }) {
+      this.IngredientItem('Calories', 'Calories', '17kcal')
+      this.IngredientItem('Nutrition', 'Protein', '0.9g')
+      this.IngredientItem('', 'Fat', '0.2g')
+      this.IngredientItem('', 'Carbohydrates', '3.9g')
+      this.IngredientItem('', 'VitaminC', '17.8mg')
+    }
+    .height(280)
+    .padding({ top: 30, right: 30, left: 30 })
+  }
+}
+
+@Entry
+@Component
+struct FoodDetail {
+    build() {
+        Column() {
+            FoodImageDisplay()
+            ContentTable()
+        }
+        .alignItems(HorizontalAlign.Center)
+    }
+}
+```
+
+
 
 
 
@@ -262,7 +330,7 @@ struct MyComponent {
 
 #### Flex布局
 
-利用flex(){}可以实现flex布局，其中，`flexGrow`表示填充满剩余空间, layoutWeight用于设置flex比例值
+利用flex(){}可以实现flex布局，其中，`flexGrow`表示填充满剩余空间, `layoutWeight`用于设置flex比例值
 
 ```typescript
 @Component
@@ -272,15 +340,15 @@ struct ContentTable {
       Text('Calories')
         .fontSize(17.4)
         .fontWeight(FontWeight.Bold)
-        .layoutWeight(1)
+        .layoutWeight(1)	// flex占一份
       Flex() {
         Text('Calories')
           .fontSize(17.4)
-          .flexGrow(1)
+          .flexGrow(1)	// 改元素填满剩余空间
         Text('17kcal')
           .fontSize(17.4)
       }
-      .layoutWeight(2)
+      .layoutWeight(2)	// flex占两份
     }
     .height(280)
     .padding({ top: 30, right: 30, left: 30 })
