@@ -223,6 +223,16 @@ export default withMermaid({
               ],
             },
             {
+              text: "Database",
+              collapsed: true,
+              items: [
+                {
+                  text: "MongoDB",
+                  link: "/documents/computer-science/database/mongodb",
+                },
+              ],
+            },
+            {
               text: "Python",
               collapsed: true,
               items: [
