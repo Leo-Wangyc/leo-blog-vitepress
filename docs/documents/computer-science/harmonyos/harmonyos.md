@@ -222,9 +222,10 @@ struct FoodImageDisplay {
   }
 }
 
-// 
+// 然后拆分出ContentTable
 @Component
 struct ContentTable {
+  // 利用builder，创建类似于jsx的带模板的组件
   @Builder IngredientItem(title:string, name: string, value: string) {
     Flex() {
       Text(title)
@@ -304,6 +305,71 @@ Column() {
    },...)
  }
 ```
+
+
+
+#### 间距设置
+
+在Row，Column组件中，可以传入space属性，来设置间距
+
+```typescript
+Row({space: 20}){
+  ...
+}
+```
+
+
+
+#### 对齐设置
+
+**主轴和交叉轴概念**
+
+在布局容器中，默认存在两根轴，分别是主轴和交叉轴，这两个轴始终是相互垂直的。不同的容器中主轴的方向不一样的。
+
+- **主轴**：在Column容器中的子组件是按照从上到下的垂直方向布局的，其主轴的方向是垂直方向；在Row容器中的组件是按照从左到右的水平方向布局的，其主轴的方向是水平方向。
+- **交叉轴**：与主轴垂直相交的轴线，如果主轴是垂直方向，则交叉轴就是水平方向；如果主轴是水平方向，则交叉轴是垂直方向。
+
+
+
+**主轴方向对齐 (justifyContent)**
+
+```typescript
+Row/Colum(){
+  ...
+}
+.justifyContent(FlexAlign.Start) // 首端对齐
+.justifyContent(FlexAlign.End)	 // 末端对齐
+.justifyContent(FlexAlign.Center)	// 中心对齐
+.justifyContent(FlexAlign.SpaceBetween)
+```
+
+
+
+**交叉轴方向对齐 (alignItems)**
+
+Column水平对齐
+
+```typescript
+Column(){
+  ...
+}
+.alignItems(HorizontalAlign.Start)	// 所有子组件左端对齐
+.alignItems(HorizontalAlign.Center)	// 所有子组件中心对齐
+.alignItems(HorizontalAlign.End)		// 所有子组件右端对齐
+```
+
+Row垂直对齐
+
+```typescript
+Row(){
+  ...
+}
+.alignItems(VerticalAlign.Top)	// 所有子组件顶端对齐
+.alignItems(VerticalAlign.Center)	// 所有子组件中心对齐
+.alignItems(VerticalAlign.Buttom)		// 所有子组件底部对齐
+```
+
+
 
 
 
@@ -458,7 +524,101 @@ destroy
 
 
 
-### Stack
+### List
+
+List一般搭配forEach和ListItem组件混合使用，如下：
+
+```typescript
+List(){
+  ForEach(this.listData, (item: ItemData)=>{
+    ListItem(){
+      this.buildListItemFunc(item)	// 这里是个@builder，获取单个item的UI组件
+    }
+  })
+}
+.divider({...})	// divider用于设置分割线
+```
+
+**divider**
+
+List中的divider分割线有一些属性，例如线宽，颜色，边距等，可以查看文档进行设置
+
+
+
+### Grid
+
+类比List，Grid也需要搭配GridItem进行混合使用，同时，使用rowsTmplate和columnsTemplate进行grid格式设置
+
+```typescript
+Grid(){
+  ForEach(this,gridData, (item: ItemData)=>{
+    GridItem(){...}
+  })
+}
+.rowsTemplate('1fr 1fr')	// rowsTemplate用于设置行，此处意味着grid共有两行，共占两份宽度，每行都占1份
+.columnsTemplate('1fr 1fr 1fr 1fr')	// rowsTemplate用于设置列，此处意味着grid共有四列，共占四份宽度，每列都占1份
+.rowsGap(12)	// 此处设置行间距
+.columnsGap(8)	// 此处设置列间距
+```
+
+此外，也可以不设置rowsTemplate，而是选择固定grid的高度
+
+```typescript
+Grid(){
+  ForEach(this,gridData, (item: ItemData)=>{
+    GridItem(){...}
+  })
+}
+.columnsTemplate('1fr 1fr 1fr 1fr')	// 不设置row
+.rowsGap(12)	
+.columnsGap(8)	
+.width(124) // 而是固定高度
+```
+
+在这种情况下，加入gridItem有十个，将会将已有的8个格子2x4填充满之后，另外两个换行，此时，可以通过拖动滚动条进行展示
+
+
+
+### Tabs
+
+**标准使用**
+
+```typescript
+Tabs({barPosition: BarPosition.End/ BarPosition.Left}){	// 此处用于设置tab页签的位置，底部or左侧
+  ...
+}
+.vertical(false)	// 此处用于设置tab是否为垂直排列
+.barWidth('100%')	// tab宽度
+.barHeight(60)		// tab高度
+```
+
+**自定义Tabs**
+
+用法类似于icon-tooltip，用`TabContent`来包裹Tab内的页面，然后挂一个`.tabBar(component)`，里面用于传入tab本身设计的自定义样式
+
+```typescript
+private tabsController: TabsController = new TabsController();
+
+build(){
+  Tabs({..., controller: this.tabsController}){
+    TabContent(){	// 利用TabContent包裹要展示的Tab内的界面内容
+      Home()	// 此处是home界面内容
+    }
+    .tabBar(this.TabBuilder(...))	// 挂一个.tabBar，里面是home界面对应的tab的样式
+            
+    TabContent(){
+      Profile()	
+    }
+    .tabBar(this.TabBuilder(...))   
+  }
+}
+.onchange((index: number)=> {
+  this.currentIndex = index
+})
+...
+```
+
+
 
 
 
