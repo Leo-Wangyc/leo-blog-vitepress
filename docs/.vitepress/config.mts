@@ -96,8 +96,20 @@ export default withMermaid({
               link: "/documents/my-lair/workflow",
             },
             {
-              text: "Preparation",
+              text: "Preparation & Environment",
               link: "/documents/my-lair/step1-preparation",
+            },
+            {
+              text: "Framework",
+              link: "/documents/todo",
+            },
+            {
+              text: "Core Development",
+              link: "/documents/todo",
+            },
+            {
+              text: "Test & CI/CD",
+              link: "/documents/todo",
             },
           ],
         },

@@ -1,5 +1,3 @@
-# Computer Science
-
 ## 逻辑门
 
 > 逻辑门*logic gate*
