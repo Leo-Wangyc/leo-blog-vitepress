@@ -66,15 +66,15 @@ export default withMermaid({
         text: "Certificates",
         link: "/certificates/harvard-cs50p",
       },
-      {
-        text: "Annual Summary",
-        items: [
-          {
-            text: "Career Trajectory",
-            link: "/annual-summary/career-trajectory",
-          },
-        ],
-      },
+      // {
+      //   text: "Annual Summary",
+      //   items: [
+      //     {
+      //       text: "Career Trajectory",
+      //       link: "/annual-summary/career-trajectory",
+      //     },
+      //   ],
+      // },
       {
         text: "Public",
         items: [
@@ -107,20 +107,16 @@ export default withMermaid({
           text: "Computer Science",
           items: [
             {
-              text: "Basic Computer Science",
+              text: "Hardware",
               link: "/documents/computer-science/computer-science",
             },
             {
-              text: "Git Guidebook",
+              text: "Git",
               link: "/documents/computer-science/git",
             },
             {
               text: "Algorithm",
               link: "/documents/computer-science/algorithm",
-            },
-            {
-              text: "Vite Press",
-              link: "/documents/computer-science/front-end/vite-press",
             },
             {
               text: "C",
@@ -251,6 +247,10 @@ export default withMermaid({
                   link: "/documents/computer-science/harmonyos/harmonyos",
                 },
               ],
+            },
+            {
+              text: "Vite Press",
+              link: "/documents/computer-science/front-end/vite-press",
             },
           ],
         },
