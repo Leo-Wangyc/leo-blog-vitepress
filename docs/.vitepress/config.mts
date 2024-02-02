@@ -107,7 +107,7 @@ export default withMermaid({
           text: "Computer Science",
           items: [
             {
-              text: "Hardware",
+              text: "Computer Architecture",
               link: "/documents/computer-science/computer-science",
             },
             {
