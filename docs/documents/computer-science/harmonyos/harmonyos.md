@@ -273,9 +273,9 @@ struct FoodDetail {
 
 
 
-### 布局
+## 布局
 
-#### **Row布局**
+### Row布局
 
 ![img](https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20240111104605.93120900297637334462488161323853:50001231000000:2800:1AA8CA6A161F92DD29180F12AEE850BAC8C52E1EE4ECC4C30FEF159D48F7DA47.png?needInitFileName=true?needInitFileName=true)
 
@@ -291,7 +291,7 @@ Row() {
 
 
 
-#### **Column布局**
+### Column布局
 
 ![img](https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20240111104605.63385695838810553969799111570592:50001231000000:2800:7BE4043F45BF4887705D6A40708EFD17FEAC0A0DFD18C2B2587D60B2EB2B9E04.png?needInitFileName=true?needInitFileName=true)
 
@@ -308,7 +308,7 @@ Column() {
 
 
 
-#### 间距设置
+### 间距设置
 
 在Row，Column组件中，可以传入space属性，来设置间距
 
@@ -320,7 +320,7 @@ Row({space: 20}){
 
 
 
-#### 对齐设置
+### 对齐设置
 
 **主轴和交叉轴概念**
 
@@ -373,7 +373,7 @@ Row(){
 
 
 
-#### Stack布局
+### Stack布局
 
 Stack组件为堆叠组件，可以包含一个或多个子组件，其特点是后一个子组件覆盖前一个子组件
 
@@ -394,7 +394,7 @@ struct MyComponent {
 
 ![img](https://alliance-communityfile-drcn.dbankcdn.com/FileServer/getFile/cmtyPub/011/111/111/0000000000011111111.20230612113736.49548347785396261575392167491374:50001231000000:2800:A363C974FBE85E6FBB0B09E63422D867ADD6C8B1D80FD72ED9B9578F731EE886.png?needInitFileName=true?needInitFileName=true)
 
-#### Flex布局
+### Flex布局
 
 利用flex(){}可以实现flex布局，其中，`flexGrow`表示填充满剩余空间, `layoutWeight`用于设置flex比例值
 
@@ -428,7 +428,7 @@ struct ContentTable {
 
 
 
-### 条件
+## 条件
 
 ArkTS支持直接在声明式语法当中添加if条件判断语句，也支持通过三元表达式来进行条件判断，如下：
 
@@ -457,7 +457,7 @@ build() {
 
 
 
-### 循环
+## 循环
 
 利用自带方法ForEach进行循环
 
@@ -481,6 +481,46 @@ struct ToDoList {
    }
  }
 ```
+
+
+
+## 组件状态&通信
+
+组件状态主要分为如下场景
+
+| **场景**               | **装饰器**         |
+| ---------------------- | ------------------ |
+| 组件内的状态管理       | @State             |
+| 从父组件单向同步状态   | @Prop              |
+| 与父组件双向同步状态   | @Link              |
+| 跨组件层级双向同步状态 | @Provide和@Consume |
+
+
+
+### @State
+
+@state用于定义组件内部的状态，用法类似vue中的ref()以及react中的useState()，用于定义本组件内的状态
+
+```typescript
+@Component
+export default struct Parent{
+  @State parentData: string = 'parentData'
+  
+  build(){
+    ...
+	}
+}
+```
+
+
+
+### @Prop
+
+@prop用于父组件单项传递值给子组件，
+
+
+
+
 
 
 
