@@ -309,6 +309,10 @@ export default withMermaid({
               text: "Harvard CS50P",
               link: "/certificates/harvard-cs50p",
             },
+            {
+              text: "HarmonyOS",
+              link: "/certificates/harmonyos",
+            },
           ],
         },
       ],

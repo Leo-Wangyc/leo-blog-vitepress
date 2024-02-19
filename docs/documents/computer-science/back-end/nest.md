@@ -12,6 +12,102 @@
 
 
 
+## Knowledge Base
+
+### LOC和依赖注入
+
+TODO
+
+
+
+### Decorator
+
+装饰器decorator是一种函数的语法糖，可理解为用于初始化函数，将一系列函数属性或者方法通过装饰器方式添加到某些特定的类/方法/属性上
+
+#### 类装饰器
+
+类装饰器的type为**classDecorator**，例如：
+
+```typescript
+const myClassDecorator: classDecorator = (target: any) => {
+	console.log(target)	// target指向实例类，即Leo
+  target.prototype.name = 'leo'
+}
+// 以下两种写法互相等价
+// 1:
+@myClassDecorator
+class Leo {
+  constructor(){}
+}
+// 2:
+class Leo {
+  constructor(){}
+}
+myClassDecorator(Leo)
+```
+
+
+
+#### 属性装饰器
+
+类装饰器的type为**propertyDecorator**，例如：
+
+```typescript
+const myPropertyDecorator: propertyDecorator = (target: any, key: string | symbol) => {
+	console.log(target, key)	// target指向原型对象。key指向属性的key值，即name
+}
+
+class Leo {
+  @myPropertyDecorator	// 属性装饰器用于装饰属性
+  public name:string
+  constructor(){}
+}
+```
+
+
+
+#### 方法装饰器
+
+类装饰器的type为**methodDecorator**，例如：
+
+```typescript
+const myMethodDecorator: methodDecorator = (target: any, key: string | symbol, descriptor: PropertyDescriptor) => {
+	console.log(target, key, descriptor)	// target指向原型对象。 key指向属性的key值，即getName。descriptor为方法的操作对象，{ writable, enumerable, configurable }
+}
+
+class Leo {
+  public name:string
+  constructor(){}
+  
+  @myMethodDecorator
+  getName(){}
+}
+```
+
+
+
+#### 参数装饰器
+
+类装饰器的type为**parameterDecorator**，例如：
+
+```typescript
+const myParameterDecorator: parameterDecorator = (target: any, key: string | symbol, index: number) => {
+	console.log(target, key, index)	// target指向原型对象。 key指向属性的key值，即getName。index为索引，参数所在位置，即1
+}
+
+class Leo {
+  public name:string
+  constructor(){}
+  
+  @myMethodDecorator
+  getName(name: string, @myParameterDecorator age: number){}
+}
+```
+
+
+
+
+
 ## Controllers
 
 ### 定义
