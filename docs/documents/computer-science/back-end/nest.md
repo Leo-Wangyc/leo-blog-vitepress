@@ -20,7 +20,7 @@ Controllers are responsible for handling incoming **requests** and returning **r
 
 
 
-### 快速创建
+### 快速创建CURD
 
 在nest.js中，使用
 
@@ -70,7 +70,7 @@ WebSockets 提供了全双工的通信通道，允许服务器和客户端之间
 
 当快速创建完毕之后，会在原本的src文件夹下创建出刚刚快速创建的文件夹src/user-info
 
-其中目录树结构如下：
+其中，目录树结构如下：
 
 ```md
 user-info
@@ -86,11 +86,27 @@ user-info
 └── user-info.service.ts
 ```
 
-这种目录结构在NestJS项目中很常见，其中：
-
 1. `dto` 目录用于存放数据传输对象（Data Transfer Objects），它们用于封装从客户端接收到的数据。
 2. `entities` 目录通常包含与数据库表直接映射的模型。
 3. `.controller.ts` 文件定义了与特定路由相关的处理逻辑。
 4. `.service.ts` 文件包含了业务逻辑。
 5. `.module.ts` 文件用于组织同一模块下的各种元素，如控制器和服务。
 6. `.spec.ts` 文件是单元测试文件，分别对应控制器和服务的测试。
+
+
+
+
+
+### Routing
+
+
+
+#### 快速创建controller
+
+在nest.js中，使用
+
+```bash
+nest g resource [name]
+```
+
+可以快速生成CRUD control

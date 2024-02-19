@@ -516,9 +516,131 @@ export default struct Parent{
 
 ### @Prop
 
-@prop用于父组件单项传递值给子组件，
+@Prop用于父组件单项传递值给子组件，如果需要进行双向绑定，需要用到下述的@Link装饰器
+
+```typescript
+@Component
+export default struct Parent{
+  @State parentData: string = 'parentData'	// 利用@State定义父组件的状态
+  
+  build(){
+    ...
+    SonComponent({propData: this.parentData})	// 向子组件传值
+	}
+}
+  
+@Component
+export default struct SonComponent {
+  @Prop propData: string;	// 子组件中，使用@Prop来获取传递进来的数据，这里不可改
+  
+  build(){
+    Text(this.propData)
+	}
+}
+```
 
 
+
+### @Link
+
+@Link主要用于给父子组件之间的状态进行双向绑定
+
+```typescript
+@Component
+export default struct Parent{
+  @State parentIndex: number = 0	// 利用@State定义父组件的状态
+  
+  build(){
+    ...
+    SonComponent({propIndex: parentIndex})	// 向子组件传值，$表示传递的是引用
+	}
+}
+  
+@Component
+export default struct SonComponent {
+  @Link @Watch('onIndexChange') propIndex: number;	// 子组件中，使用@Link来获取传递进来的数据，从而实现双向绑定
+  
+  onIndexChange(){	// @Watch的使用参考下面
+    ...
+  }
+  
+  build(){
+    Text(this.propIndex)
+	}
+}
+```
+
+
+
+### @Provide & @Consume
+
+Provide和Consume使用方式如下：
+
+```typescript
+// 通过相同的变量名绑定
+@Provide a: number = 0;
+@Consume a: number;
+
+// 通过相同的变量别名绑定
+@Provide('a') b: number = 0;
+@Consume('a') c: number;
+```
+
+Provide使用的时候需要注意
+
+1. ⚠️Provide装饰的变量类型**不能是any！**
+2. ⚠️Provide装饰的变量**必须指定初始值！**
+3. Provide装饰的变量为**双向绑定**
+
+```typescript
+@Component
+export default struct ParentComponent {
+  @Provide propIndex: number = 0; // 不能为any且必须有值
+  
+  build(){
+    SonComponent()
+	}
+}
+
+@Component
+export default struct SonComponent {
+  build(){
+    GrandsonComponent()
+	}
+}
+
+@Component
+export default struct GrandsonComponent {
+  @Consume propIndex;	// 必须与provide属性同名，或者同别名
+  
+  build(){
+    Text(this.propIndex)
+	}
+}
+```
+
+
+
+### @Watch
+
+@watch可以实现监听，从而触发回调函数
+
+类似于vue3中的`watch(value, callback())`，或者react中的`useEffect(callback(), value)`
+
+```typescript
+@Component
+export default struct SonComponent {
+  @Link @Watch('onIndexChange') propIndex: number; // 此处当propIndex发生变化的时候，会触发onIndexChange()回调
+  
+  onIndexChange(){	
+    ...
+  }
+  
+  build(){
+    Text(this.propIndex)
+	}
+}
+```
 
 
 
@@ -561,6 +683,51 @@ destroy
 ## 基础组件
 
 ### Image
+
+
+
+### Video
+
+基本使用及介绍
+
+```typescript
+Video({
+  src?: string | Resource, 
+  currentProgressRate?: number | string |PlaybackSpeed, 
+  previewUri?: string |PixelMap | Resource, 
+  controller?: VideoController
+})
+```
+
+- src: 地址，可以使用网络地址或者本地视频。使用网络地址记得在module.json5中申请网络权限。若为本地地址，可参考
+  https://developer.huawei.com/consumer/cn/training/course/slightMooc/C101680765314766141
+- currentProgressRate：视频播放倍速，取值支持0.75，1.0，1.25，1.75，2.0，默认值为1.0倍速
+- previewUri表示视频未播放时的预览图片路径；
+- controller表示视频控制器。
+
+```typescript
+@Component
+export struct VideoPlayer {
+  private source: string | Resource;
+  private controller: VideoController;
+  private previewUris: Resource = $r('app.media.preview');
+  ...
+
+  build() {
+    Column() {
+      Video({
+        src: this.source,
+        previewUri: this.previewUris,
+        controller: this.controller
+      })
+        ...
+      VideoSlider({ controller: this.controller })
+    }
+  }
+}
+```
+
+其余属性，回调部分，参考文档即可
 
 
 
@@ -657,4 +824,60 @@ build(){
 })
 ...
 ```
+
+
+
+### Dialog
+
+应用弹窗。包含确认，选择，日期，时间弹窗等
+
+不多解释了，直接看文档即可
+
+https://developer.huawei.com/consumer/cn/training/course/slightMooc/C101680765314766141
+
+
+
+
+
+## 动画
+
+直接看文档吧
+
+https://developer.huawei.com/consumer/cn/training/course/slightMooc/C101667368091091005
+
+
+
+
+
+## Web
+
+### Web组件
+
+接入web网页的方式，可直接使用web组件
+
+```typescript
+build() {
+    Column() {
+      Web({ src: 'https://developer.harmonyos.com/', controller: this.controller })
+    }
+  }
+```
+
+同时注意，访问网络的话，需要在module.json5中申明网络访问权限
+
+关于事件和属性，参考：https://developer.huawei.com/consumer/cn/training/course/slightMooc/C101667364948559963
+
+
+
+### HTTP请求
+
+参考文档：https://developer.harmonyos.com/cn/docs/documentation/doc-references/js-apis-http-0000001281201030#ZH-CN_TOPIC_0000001281201030__request-1
+
+
+
+
+
+## 首选项
+
+类似localStorage，参考文档：
 
