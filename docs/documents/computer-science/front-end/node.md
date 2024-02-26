@@ -55,7 +55,11 @@ module.export const demo1 = {
 
 ，那么会直接新建一个文件
 
-##path 模块
+
+
+
+
+## path 模块
 
 Q: 为什么需要 path 模块？
 

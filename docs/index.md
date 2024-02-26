@@ -12,7 +12,7 @@ hero:
       link: /documents/computer-science/computer-science
     - theme: alt
       text: Certificates
-      link: /certificates
+      link: /certificates/harvard-cs50p
     - theme: alt
       text: Annual Summary
       link: /annual-summary
