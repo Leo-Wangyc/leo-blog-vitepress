@@ -15,7 +15,7 @@ hero:
       link: /certificates/harvard-cs50p
     - theme: alt
       text: Annual Summary
-      link: /todo
+      link: /documents/todo
 
 features:
   - title: Documents
