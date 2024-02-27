@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: "Welcome back"
-  text: "Leo's Blog"
+  text: "Leo's Doc Vault"
   tagline: Thanks for your insisting on!
   actions:
     - theme: brand

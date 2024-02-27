@@ -3,7 +3,7 @@ import { withMermaid } from "vitepress-plugin-mermaid";
 
 // https://vitepress.dev/reference/site-config
 export default withMermaid({
-  title: "Leo's Blog",
+  title: "Leo's Doc Vault",
   head: [
     [
       "link",
