@@ -30,8 +30,8 @@ before 和 after 用于在元素的前面/后面插入一些指定的内容，ht
   width: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center;	// 主轴居中
+  justify-content: center;	// 交叉轴居中
 }
 ```
 
@@ -138,6 +138,36 @@ grid-template-columns: repeat(6, 100px);
 grid-row-gap: 20px;
 grid-column-gap: 10px;
 ```
+
+
+
+
+
+## 移动端适配
+
+1. 使用flex, grid进行弹性布局
+2. 使用视口单位**vw视口宽度百分比**, **vh视口高度百分比**，定义元素相对于视口的大小
+3. 使用rem
+
+
+
+
+
+## Rem单位
+
+一般，在html标签中直接设置的字体大小单位即为rem的默认单位
+
+例如
+
+```css
+html {
+	font-size: 10px;
+}
+```
+
+则可以设置默认字体大小为10px为1rem，对应的，2rem就是20px
+
+
 
 
 
