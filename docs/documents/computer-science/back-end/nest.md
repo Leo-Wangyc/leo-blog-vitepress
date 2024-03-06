@@ -46,6 +46,8 @@ TODO
 
 装饰器decorator是一种函数的语法糖，可理解为用于初始化函数，将一系列函数属性或者方法通过装饰器方式添加到某些特定的类/方法/属性上
 
+以类装饰器为例，原理就是接收一个class为参数，然后在class对应的**prototype**上添加各种属性
+
 #### 类装饰器
 
 类装饰器的type为**classDecorator**，例如：
@@ -125,6 +127,40 @@ class Leo {
   getName(name: string, @myParameterDecorator age: number){}
 }
 ```
+
+
+
+### 常用装饰器
+
+⚠️**注意，如果不添加装饰器的话，拿到的将会是undefiend**
+
+eg: 下面这种情况下，req的值为undefined
+
+```typescript
+@Get('user-info')
+findAll(req):string {
+  console.log('req', req)		// undefined
+}
+```
+
+#### @Request
+
+```typescript
+@Get('user-info')
+findAll(@Request() req):string {
+  console.log('IP Address', req.ip)
+  console.log('Request path', req.path)
+  console.log('HTTP method', req.method)
+  console.log('Request headers', req.headers)
+  console.log('Query params', req.query)
+}
+```
+
+#### @Response
+
+
+
+#### @HttpCode
 
 
 
