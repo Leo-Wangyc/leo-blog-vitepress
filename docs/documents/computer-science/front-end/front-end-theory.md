@@ -828,6 +828,28 @@ console.log(object.getN()());
 
 
 
+### 请求方法
+
+1. **GET**：请求指定的资源。GET请求应该只用于获取数据，并且应该是幂等的，这意味着多次发起同一个GET请求，其效果和一次请求应当相同。而且Get请求通常是可以被缓存的。
+2. **POST**：用于提交数据给指定的资源，通常导致资源的状态变化或者资源的创建。POST请求不是幂等的，意味着多次执行同一请求可能会产生不同的结果。
+3. **PUT**：替换指定资源的所有当前表示。PUT请求是幂等的，即多次执行同一个PUT请求应该与执行单次请求的效果相同。
+4. **DELETE**：删除指定的资源。DELETE请求也是幂等的，多次调用对资源的影响和单次调用相同，即资源被删除。
+5. **HEAD**：与GET方法相似，但服务器在响应中只返回头部信息而不返回实体的主体部分。这常用于检测资源的变化或获取资源的元数据。
+6. **OPTIONS**：用于获取目标资源所支持的通信选项。客户端可以通过这种方式来检查服务器的性能或者查询与资源相关的选项和需求。
+7. **PATCH**：用于对资源应用部分修改。与PUT不同，PATCH通常用于更新资源的一个小部分。PATCH不一定是幂等的，这取决于其实现。
+8. **CONNECT**：建立一个到由目标资源标识的服务器的隧道。常用于HTTPS协议通过HTTP代理的情况。
+9. **TRACE**：回显服务器收到的请求，主要用于测试或诊断。
+
+
+
+**Q：既然POST也具有GET,PUT等请求的功能，为什么开发中不直接用一个POST解决所有请求？**
+
+1. **语义清晰**：HTTP方法本身就带有明确的语义。例如，GET用于获取资源，POST用于创建资源，PUT用于更新资源，DELETE用于删除资源。这样的设计让API的行为更加直观易懂，有助于提高代码的可读性和维护性。
+2. **符合标准和约定**：遵循HTTP协议和RESTful API设计规范有助于确保API的设计能够被广泛理解和接受。这不仅有利于团队内部的沟通，也有助于第三方开发者快速理解和使用API。
+3. **利于缓存**：GET请求是可以被缓存的，这意味着通过适当的缓存策略，可以显著提高应用的性能和响应速度。而POST请求通常不会被缓存，因为它们通常用于产生或修改数据的操作。
+4. **幂等性**：在HTTP协议中，某些方法（如GET、PUT、DELETE）被定义为幂等的，意味着多次执行相同的请求应该得到相同的结果，而不会改变资源的状态。这有助于提高API的可靠性。而POST方法不是幂等的，它每次调用都可能产生新的资源或产生不同的效果。
+5. **安全性**：使用正确的HTTP方法还可以帮助提高应用的安全性。例如，通过限制对敏感资源的GET请求，可以防止敏感数据被不恰当地暴露。
+
 
 
 ## Blob
@@ -1052,15 +1074,154 @@ ETag: W/"e39f603a5ebcff23859d200f9c9dc20f"
 
 
 
-## Ajax
-
-### ajax 原理
+### Ajax
 
 > 暂时可以先参考一下这个
 >
 > https://blog.csdn.net/weixin_44750790/article/details/105253207?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0-105253207-blog-72725500.pc_relevant_default&spm=1001.2101.3001.4242.1&utm_relevant_index=2
 
-本质上就是 XMLHttpRequest 的封装
+**定义**
+
+AJAX 的全称是 Asynchronous JavaScript and XML，它允许网页在不重新加载整个页面的情况下，通过后台与服务器交换数据并更新部分网页内容。AJAX 不是一项新技术，而是利用了一组现有的技术标准和方法。
+
+**重要性**
+
+AJAX的出现极大地改善了用户体验。在AJAX出现之前，每次用户请求新数据时，整个页面都需要刷新。AJAX允许网页只更新必要的部分，使得操作更加流畅，减少了等待时间和网络资源的消耗。
+
+**工作原理**
+
+1. **用户在界面上进行操作**，如点击一个按钮，触发一个事件。
+2. **JavaScript 创建 XMLHttpRequest 对象**，并通过这个对象向服务器发送一个异步请求。
+3. **服务器处理请求**，并将结果发送回客户端。
+4. **XMLHttpRequest 对象接收服务器响应**，并将数据传递给一个JavaScript回调函数。
+5. **JavaScript回调函数处理数据**，可能会更新DOM，从而在不重新加载整个页面的情况下更新网页的某部分内容。
+
+**关键组成**
+
+1. **JavaScript**：编写逻辑来处理用户的交互，发送请求，以及处理响应数据。
+2. **XMLHttpRequest 对象**：提供了在JavaScript中发起HTTP请求的能力。虽然名称中包含XML，但它也可以处理其他格式的数据，如JSON、HTML或纯文本。
+3. **HTML/CSS**：构建用户界面，并在接收到数据后更新界面。
+4. **DOM（文档对象模型）**：通过JavaScript更新页面内容。
+
+
+
+### XMLHttpRequest
+
+完整的请求流程（以GET为例）
+
+```js
+// 定义一个XMLHttp请求
+const xhr = XMLHttpRequest()
+
+// 通过open，开启事件
+xhr.open('GET', 'http://test.com?name=Leo&age=18')
+xhr.open('GET', 'http://test.com')
+
+// 通过send，发送事件，才能得到服务器响应
+xhr.send()
+
+// 通过onreadystatechange来监听状态改变，包括open,send,done等
+xhr.onreadystatechange = () => {
+  // 监听当请求完成，且状态码为200成功的时候，打印响应数据
+	if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200){
+    console.log(JSON.parse(xhr.responseText))
+  }
+}
+```
+
+对于**post请求**来说，还需要额外设定请求头
+```js
+xhr.open('POST', url)
+xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+xhr.send('name=Leo&age=18')
+```
+
+
+
+### Axios
+
+#### 基本使用
+
+```js
+// GET
+const res1 = axios.get('http://test.com', {
+  params: {
+    name: 'Leo',
+    age: 18
+  }
+})
+console.log(res1.data)
+
+// POST
+const res2 = axios.post('http://test.com', {
+    name: 'Leo',
+    age: 18
+})
+console.log(res2.data)
+```
+
+#### 拦截器
+
+在axios中，可以使用请求拦截器或者响应拦截器，对请求发送前/响应接收前进行一波统一的拦截操作
+
+⚠️**在请求拦截器中，注意需要return config，不然请求不会发送！**
+
+```js
+const ins = axios.create()
+
+// 请求拦截器
+ins.interceptors.request.use(config => {
+  console.log('request is going to sending')
+  return config  // 注意要返回！
+})
+
+// 响应拦截器
+ins.interceptors.response.use(res => {
+  console.log('result is going to be returned')
+  return res  // 注意要返回！
+})
+```
+
+#### 取消请求
+
+TODO
+
+
+
+### Fetch
+
+GET
+
+```js
+fetch('http://test.com/get?name=Leo&age=18')
+	.then(res => {
+  	if(res.ok){
+      return res.json()
+    }
+})
+```
+
+POST
+
+```js
+fetch('http://test.com/post', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+  body: JSON.stringify({
+  	name: 'Leo',
+  	age: 18
+	})
+})
+	.then(res => {
+  	if(res.ok){
+      return res.json()
+    }
+})
+```
+
+
 
 
 
@@ -1071,6 +1232,8 @@ ETag: W/"e39f603a5ebcff23859d200f9c9dc20f"
 `跨域问题 cross-domain issues`
 
 > 参考资料：https://segmentfault.com/a/1190000002647143?utm_source=Weibo&utm_medium=shareLink&utm_campaign=socialShare
+
+### 跨域介绍
 
 **跨域场景**
 
@@ -1107,6 +1270,12 @@ http://www.example.net/sample.aspx?callback=mycallback
 ```
 
 如果没有后面的 callback 参数，即不使用 JSONP 的模式，该服务的返回结果可能是一个单纯的 json 字符串，比如：`{ foo : 'bar' }`。但是如果使用 JSONP 模式，那么返回的是一个函数调用: `mycallback({ foo : 'bar' })`，这样我们在代码之中，定义一个名为 mycallback 的回调函数，就可以解决跨域问题了。
+
+**缺点：只能是get请求**
+
+
+
+
 
 
 
