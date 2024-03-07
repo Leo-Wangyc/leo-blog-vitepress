@@ -1,6 +1,8 @@
 ## Introduce
 
 > 视频参考：https://www.bilibili.com/video/BV1Lg4y197u1/?spm_id_from=333.999.0.0&vd_source=6adac1d9bbd16466fad0c4ec156dc9b7
+>
+> 对应课件参考：https://www.yuque.com/u295415/xbahyh/wb7dz6ira0ebznvw?singleDoc#
 
 Nest是一个用于构建高效，可扩展的Node.js服务器端应用的框架
 
@@ -143,6 +145,23 @@ findAll(req):string {
 }
 ```
 
+Nest provides a set of useful **param decorators** that you can use together with the HTTP route handlers. Below is a list of the provided decorators and the plain Express (or Fastify) objects they represent
+
+| Decorator                  |                                      |
+| -------------------------- | ------------------------------------ |
+| `@Request(), @Req()`       | `req`                                |
+| `@Response(), @Res()`      | `res`                                |
+| `@Next()`                  | `next`                               |
+| `@Session()`               | `req.session`                        |
+| `@Param(param?: string)`   | `req.params` / `req.params[param]`   |
+| `@Body(param?: string)`    | `req.body` / `req.body[param]`       |
+| `@Query(param?: string)`   | `req.query` / `req.query[param]`     |
+| `@Headers(param?: string)` | `req.headers` / `req.headers[param]` |
+| `@Ip()`                    | `req.ip`                             |
+| `@HostParam()`             | `req.hosts`                          |
+
+
+
 #### @Request
 
 ```typescript
@@ -161,6 +180,8 @@ findAll(@Request() req):string {
 
 
 #### @HttpCode
+
+
 
 
 
@@ -276,3 +297,34 @@ nest g resource [name]
 ```
 
 可以快速生成CRUD control
+
+
+
+
+
+## Database
+
+数据库模块安装
+```bash
+yarn add @nest/typeorm typeorm mysql
+```
+
+安装上述三个库
+
+
+
+### TypeORM
+
+TypeORM 是一个运行在 Node.js 平台上的对象关系映射（ORM）库，它使得开发者能够以面向对象的方式来操作数据库。通过使用 TypeORM，开发者可以在 TypeScript 或 JavaScript 中定义模型作为类，并且可以很方便地执行数据库操作，如插入、查询、更新和删除等，而不需要编写繁琐的 SQL 语句。TypeORM 支持多种数据库，包括 PostgreSQL、MySQL、MariaDB、SQLite、MS SQL Server、Oracle 以及 MongoDB 等。
+
+TypeORM 的主要特点包括：
+
+1. **类型安全**：得益于 TypeScript 的强类型系统，TypeORM 提供了类型安全的数据库操作，可以减少开发中的一些常见错误。
+2. **数据模型**：开发者可以定义实体（Entity），这些实体代表了数据库中的表，并且可以通过装饰器（Decorator）来声明表的结构、关系等信息。
+3. **自动数据库同步**：TypeORM 可以根据模型自动创建或更新数据库结构，使得数据库结构与代码中定义的模型保持同步。
+4. **数据查询**：提供了丰富的查询 API，支持复杂的查询操作，包括联表查询、分组、排序、分页等，并且可以方便地实现条件查询和关系查询。
+5. **事务处理**：支持事务操作，确保数据的一致性和完整性。
+6. **迁移支持**：支持数据库迁移功能，可以帮助开发者在不同版本的数据库结构之间平滑迁移。
+7. **装饰器语法**：TypeORM 使用 TypeScript 装饰器来定义模型和模型之间的关系，代码简洁明了。
+
+通过以上特点，TypeORM 为开发者提供了一个强大而灵活的工具，以简化数据库操作并提高开发效率。尤其对于采用 TypeScript 的项目，TypeORM 提供了非常好的类型支持和开发体验。
