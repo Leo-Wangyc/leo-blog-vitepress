@@ -603,8 +603,66 @@ async findByName(name: string) {
 ## GraphQL
 
 > Graph-Q-L 分开读
+>
+> Nest js 网址 ：   https://nestjs.bootcss.com/graphql/quick-start.html
+>
+> graphQL官方地址： https://graphql.org/
+
+**介绍**
+
+GraphQL是一种用于**API的查询语言**，是由Facebook公司于2012年开发的一种新型的API架构方式。GraphQL旨在提高客户端应用程序的数据获取效率，通过定义数据的类型和结构使得API更加灵活和可扩展。与传统的API不同，GraphQL允许客户端指定需要哪些数据，从而减少了不必要的数据传输和处理，提高了API的效率和可用性。
+
+GraphQL的核心思想是**用一个API来代替多个API**，通过GraphQL API，客户端可以获取所需的所有数据，而不需要调用多个API或者进行多次请求。GraphQL还支持实时数据查询和订阅，使得客户端可以实时获取数据更新，从而更好地支持实时应用程序。
+
+**使用场景**
+
+GraphQL适用于处理复杂或经常变化的数据需求，因为它可以将数据请求的控制权交给客户端，让客户端在任何时间请求任何数据。这让在每次API变更迭代或从这些API请求的数据发生变化时更容易进行更新。与REST API相比，GraphQL允许客户端精确指定所需数据的结构和字段，从而避免了获取过度或获取不足的问题。因此，GraphQL可以提高数据传输的精确性和效率，使应用程序更加灵活和可扩展。
+
+
 
 ### RESTful API
 
+restful风格的API，通常是一个url可以干多件事儿
+
+例如，一个/student路径，通过调用的方法不同（GET/POST/DELETE）来实现不同的功能
+
 <img src="https://cdn.nlark.com/yuque/0/2023/png/467623/1700405690245-8ceb6c2f-8950-4848-a827-76edb3fc161c.png?x-oss-process=image%2Fresize%2Cw_1320%2Climit_0" alt="image.png" style="zoom:50%;" />
+
+
+
+
+
+### 接入GraphQL
+
+REST API 构建在请求方法（method）和端点（endpoint）之间的连接上，而 GraphQL API 被设计为只通过一个端点，即 /graphql，始终使用 POST 请求进行查询，其集中的 API 如 http://localhost:3000/graphql，所有的操作都通过这个接口来执行。
+
+1. 首先，进行下载安装
+
+   ```bash
+   npm i @nestjs/graphql @nestjs/apollo @apollo/server graphql
+   ```
+
+2. 然后，在根module下（app.module.ts），进行配置
+
+   ```typescript
+   ...
+   import { GraphQLModule } from '@nestjs/graphql';
+   import { ApolloDriverConfig, ApolloDriver } from '@nestjs/apollo';
+   import { join } from 'path';
+   
+   @Module({
+     imports: [
+       ...
+       GraphQLModule.forRoot<ApolloDriverConfig>({
+         driver: ApolloDriver,
+         autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+       }),
+     ],
+     ...
+   })
+   ```
+
+3. 然后，在/src下新建一个schema.gql文件
+
+4. 然后，通过nest g res新建一个graphQL code文件
 
