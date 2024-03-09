@@ -80,7 +80,7 @@ export default withMermaid({
         items: [
           {
             text: "CS50 Guidebook",
-            link: "/share/cs50",
+            link: "/todo",
           },
         ],
       },
