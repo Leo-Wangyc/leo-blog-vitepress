@@ -123,6 +123,10 @@ export default withMermaid({
               link: "/documents/computer-science/computer-science",
             },
             {
+              text: "General Knowledge",
+              link: "/documents/computer-science/general",
+            },
+            {
               text: "Git",
               link: "/documents/computer-science/git",
             },

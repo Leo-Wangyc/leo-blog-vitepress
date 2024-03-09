@@ -195,6 +195,18 @@ Controllers are responsible for handling incoming **requests** and returning **r
 
 
 
+### 命名规则
+
+在RESTful API设计中，URL路径的命名约定存在不同的实践，但最常见和广泛接受的方式是使用`kebab-case`（又称中划线、短横线）。这种风格对于URL路径而言具有良好的可读性，并且是多个单词组合时的自然选择。而`camelCase`（小驼峰式）通常更多用于编程语言中的变量和函数命名。
+
+**为什么选择中划线（kebab-case）**：
+
+1. **可读性**：中划线可以提高URL路径的可读性，使路径看起来更清晰。
+2. **兼容性**：某些浏览器和服务器可能对大小写敏感，使用中划线避免了因大小写不一致导致的问题。
+3. **约定俗成**：尽管没有强制的标准，但使用中划线作为URL路径的一部分已成为一种普遍实践。
+
+
+
 ### 快速创建CURD
 
 在nest.js中，使用
@@ -304,12 +316,27 @@ nest g resource [name]
 
 ## Database
 
+采用**MySQL** `读作：My-S-Q-L 或 my-sequel`进行说明
+
 数据库模块安装
+
 ```bash
-yarn add @nest/typeorm typeorm mysql
+yarn add @nest/typeorm typeorm mysql2
 ```
 
 安装上述三个库
+
+@nest/typeorm: 用于建立链接
+
+typeorm: 用于进行数据库操作
+
+mysql2: 数据库
+
+⚠️**注意！必须要install mysql2**，如果安装的是mysql，会出现连不上的情况
+
+```bash
+ [TypeOrmModule] Unable to connect to the database. Retrying ER_PARSE_ERROR
+```
 
 
 
@@ -328,3 +355,256 @@ TypeORM 的主要特点包括：
 7. **装饰器语法**：TypeORM 使用 TypeScript 装饰器来定义模型和模型之间的关系，代码简洁明了。
 
 通过以上特点，TypeORM 为开发者提供了一个强大而灵活的工具，以简化数据库操作并提高开发效率。尤其对于采用 TypeScript 的项目，TypeORM 提供了非常好的类型支持和开发体验。
+
+
+
+### 数据库连接
+
+通过TypeOrmModule，分两步进行
+
+1. 首先，需要在main.ts的根module(app.module.ts)中创建数据库的连接
+
+   ```typescript
+   import { TypeOrmModule } from '@nestjs/typeorm';
+   
+   @Module({
+     imports: [
+       TypeOrmModule.forRoot({
+         type: 'mysql', // 数据库类型
+         host: 'localhost',
+         database: 'nest-test',
+         port: 3306,
+         username: 'root',
+         password: 'leolairtest123',
+         entities: [__dirname + '/**/*.entity{.ts,.js}'], // 扫描本项目中.entity.ts或者.entity.js的文件
+         synchronize: false, // 定义数据库表结构与实体类字段同步(这里一旦数据库少了字段就会自动加入,根据需要来使用)
+       }),
+       UserInfoModule,
+     ],
+   ```
+
+2. 编辑entity.ts，创建实体ORM映射关系，在@Entity中写入表名
+
+   ```typescript
+   import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+   
+   // 表名
+   @Entity({ name: 'users' })
+   export class User {
+     @PrimaryGeneratedColumn()
+     id: number;
+   
+     @Column({ length: 30, nullable: true, comment: 'user name' })
+     name: string;
+   
+     @Column({ nullable: true, comment: 'user age' })
+     age: number;
+   
+     @CreateDateColumn({ name: 'created_at', type: 'datetime', comment: 'created time' })
+     createdAt: Date;
+   
+     @UpdateDateColumn({ name: 'updated_at', type: 'datetime', comment: 'updated time' })
+     updatedAt: Date;
+   }
+   ```
+
+3. 在业务module中，创建映射关系，以user-info resource为
+
+   ```typescript
+   ...
+   import { UserInfo } from './entities/user-info.entity';
+   import { TypeOrmModule } from '@nestjs/typeorm';
+   
+   @Module({
+     imports: [TypeOrmModule.forFeature([UserInfo])],
+   })
+   ```
+
+4. 在业务service中，通过constructor注册Repository，以便可以使用封装好的各种方法对数据库进行操作
+
+   ```typescript
+   ...
+   import { InjectRepository } from '@nestjs/typeorm';
+   import { Repository } from 'typeorm';
+   import { UserInfo } from './entities/user-info.entity';
+   
+   @Injectable()
+   export class UserInfoService {
+     constructor(
+       @InjectRepository(UserInfo)
+       private readonly userInfoResitory: Repository<UserInfo>,
+     ) {}
+     
+     // 调用方式
+     async findAll(): Promise<UserInfo[]> {
+       return await this.userInfoResitory.find();
+     }
+   }
+   ```
+
+   
+
+
+
+### CURD
+
+controller
+
+```typescript
+@Get()
+  findAll() {
+    return this.userInfoService.findAll();
+  }
+
+// 调用该方法，使用路径参数模式而不是查询参数模式，即：
+// 正确（路径参数）：http://127.0.0.1:3000/user-info/3
+// 错误（查询参数）：http://127.0.0.1:3000/user-info?id=3
+@Get(':id')
+findOne(@Param('id') id: string) {
+  return this.userInfoService.findOne(+id);
+}
+
+@Post('add-user')
+addUser(@Body() body) {
+  return this.userInfoService.addUser(body);
+}
+
+@Post('update-user')
+updateUser(@Body() body) {
+  return this.userInfoService.updateUser(body);
+}
+
+@Post('delete-user')
+deleteUser(@Body() params) {
+  return this.userInfoService.deleteUser(params);
+}
+```
+
+service
+
+```typescript
+async findAll(): Promise<UserInfo[]> {
+    return await this.userInfoResitory.find();
+  }
+
+  async findOne(id: number): Promise<UserInfo> {
+    return await this.userInfoResitory.findOne({ where: { id: id } });
+  }
+
+  async addUser(userInfo): Promise<UserInfo> {
+    return await this.userInfoResitory.save(userInfo);
+  }
+
+  async updateUser(userInfo): Promise<string> {
+    await this.userInfoResitory.update({ id: userInfo.id }, userInfo);
+    return 'update success';
+  }
+
+  async deleteUser(params): Promise<object> {
+    const res = await this.userInfoResitory.delete({ id: params.id });
+    if (res.affected > 0) {
+      return {
+        code: 0,
+        data: '',
+        msg: '删除成功',
+      };
+    } else {
+      return {
+        code: 0,
+        data: '',
+        msg: '删除失败',
+      };
+    }
+  }
+```
+
+
+
+### 分页查询
+
+要实现分页查询，仅需要改造一下findAll即可
+
+controller
+
+```typescript
+@Get()
+async findAll(
+  @Query('page') page?: number | string,
+  @Query('pageSize') pageSize?: number | string,
+) {
+  if (!!page && !!pageSize) {
+    const [users, total] = await this.userInfoService.findPage(
+      +page,
+      +pageSize,
+    );
+    return {
+      data: users,
+      total,
+      page: +page,
+      pageSize: +pageSize,
+    };
+  } else {
+    return await this.userInfoService.findAll();
+  }
+}
+```
+
+service
+
+```typescript
+async findAll(): Promise<UserInfo[]> {
+  return await this.userInfoResitory.find();
+}
+
+async findPage(
+  page: number = 1,
+  pageSize: number = 10,
+): Promise<[UserInfo[], number]> {
+	const [users, total] = await this.userInfoResitory.findAndCount({
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  });
+	return [users, total];
+}
+```
+
+
+
+### 条件查询
+
+利用传入的FindManyOptions类型的对象，可以进行条件查询
+
+controller
+
+```typescript
+@Get('by-name')
+async findByName(@Query('name') name: string) {
+  return await this.userInfoService.findByName(name);
+}
+```
+
+service
+
+```typescript
+async findByName(name: string) {
+  const findConditions: FindManyOptions<UserInfo> = {
+    where: {
+      name: name,
+    },
+  };
+  return await this.userInfoResitory.find(findConditions);
+}
+```
+
+
+
+
+
+## GraphQL
+
+> Graph-Q-L 分开读
+
+### RESTful API
+
+<img src="https://cdn.nlark.com/yuque/0/2023/png/467623/1700405690245-8ceb6c2f-8950-4848-a827-76edb3fc161c.png?x-oss-process=image%2Fresize%2Cw_1320%2Climit_0" alt="image.png" style="zoom:50%;" />
+
