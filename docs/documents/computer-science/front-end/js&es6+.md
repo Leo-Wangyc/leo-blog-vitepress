@@ -1,10 +1,12 @@
-# JS&ES6+
-
 ## Js 的组成
 
 - ECMAScript
 - DOM
 - BOM
+
+
+
+
 
 ## 严格模式
 
@@ -53,11 +55,126 @@
      }; // error
      ```
 
-  3. 待补充
+
+
+
+
+## 数据类型
+
+### 值类型
+
+- boolean
+- null
+- undefined
+- number
+- string
+- symbol
+
+### 引用类型
+
+引用类型可以说只有一个，即 Object，也可以说，有如下三个，加上两个特殊对象，正则和日期
+
+- Object
+- Function
+- Array
+- RegExp(正则)
+- Date(日期)
+
+### 虚值与真值
+
+简单的来说 **虚值** 就是 **在转换为布尔值时** 变为 **false** 的值，变为 **true** 的值则为 **真值** 。
+
+如何检查值是否虚值？使用 **Boolean 函数**或者 **!!** 运算符。
+
+虚值(`Falsy`)
+
+- 长度为 **0** 的字符串
+- 数字 **0**
+- `false`
+- `undefined`
+- `null`
+- `NaN`
+
+真值(`Truthy`)
+
+- 空数组
+- 空对象
+- 其他
+
+### 类型判断
+
+四种方式：
+
+- **typeof**
+
+  用于判断基本类型
+
+  缺点：只能判断基本类型，typeof null == object
+
+- **instanceof**
+
+  用于判断是谁的实例
+
+- **constructor**
+
+  笔记待补充
+
+- **Object.prototype.toStirng.call**
+
+  > 参考文档：
+  >
+  > https://zhuanlan.zhihu.com/p/118793721
+
+  这种方式会返回一个字符串，格式如下[Object xxx]，只需要截取后面一截即可，或者直接做判断
+
+  ```js
+  function isType(value, type) {
+    Object.prototype.toStirng.call(value) == `[object ${type}]`;
+  }
+  isType("123", String); // true
+  isType("123", Number); // false
+  ```
+
+**Object.prototype.toString.call()的原理**：
+
+`Object.prototype.toString` 的默认实现（在 ECMAScript 规范中）被设计为对任何对象执行时，都会返回一个包含其 `[[Class]]` 属性值的字符串。
+
+每个JavaScript对象在内部都有一个 `[[Class]]` 属性，这个属性不能直接被访问。这个属性基本上定义了对象的内部类型。例如，如果是一个数组，它的 `[[Class]]` 将是 `"Array"`；如果是一个日期对象，它的 `[[Class]]` 将是 `"Date"`。
+
+使用该方式的代码如下：
+
+```typescript
+let num = 10
+Object.prototype.toString.call(num)
+
+// 以上述代码为例，本质上，是通过call，先换成num的上下文环境
+// 然后，再调用Object.prototype.toString()方法，该方法会直接返回对象内部的 `[[Class]]` 属性
+```
+
+在 JavaScript 中，几乎所有的数据类型都有 `toString` 方法
+
+但是直接调用该方法不会返回对应的[[Class]]属性，是因为**每种不同的数据类型都对toString这个方法进行了覆写**
+
+例如:
+
+```typescript
+"Hello World".toString(); // "Hello World"
+(123).toString(); // "123"
+(10).toString(2); // "1010"（二进制表示）
+true.toString(); // "true"
+false.toString(); // "false"
+Symbol("desc").toString(); // "Symbol(desc)"
+BigInt(123).toString(); // "123"
+({}).toString(); // "[object Object]"
+Object.prototype.toString.call({}); // "[object Object]"
+[1, 2, 3].toString(); // "1,2,3"
+```
+
+
+
+
 
 ## 对象扩展
-
----
 
 ### 对象属性描述符
 
@@ -297,9 +414,11 @@
 const { subHisId = "", deptId = "", scheduleDate: date = "" } = item;
 ```
 
-## 函数扩展
 
----
+
+
+
+## 函数扩展
 
 ### arguments
 
@@ -312,6 +431,8 @@ function func() {
 }
 func(1, 2, "3");
 ```
+
+
 
 ### 箭头函数
 
@@ -342,6 +463,8 @@ func(1, 2, "3");
 - **箭头函数的 this 指向**
 
   **始终指向自身所在的代码块的对象**
+
+
 
 ### call,apply,bind
 

@@ -54,11 +54,11 @@ export default withMermaid({
           },
           {
             text: "Music",
-            link: "/documents/music/todo",
+            link: "/documents/todo",
           },
           {
             text: "Arts",
-            link: "/documents/arts/todo",
+            link: "/documents/todo",
           },
         ],
       },

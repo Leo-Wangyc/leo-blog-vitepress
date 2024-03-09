@@ -694,86 +694,6 @@ console.log(object.getN()());
 
 
 
-## 数据类型(js)
-
-### 值类型
-
-- boolean
-- null
-- undefined
-- number
-- string
-- symbol
-
-### 引用类型
-
-引用类型可以说只有一个，即 Object，也可以说，有如下三个，加上两个特殊对象，正则和日期
-
-- Object
-- Function
-- Array
-- RegExp(正则)
-- Date(日期)
-
-### 虚值与真值
-
-简单的来说 **虚值** 就是 **在转换为布尔值时** 变为 **false** 的值，变为 **true** 的值则为 **真值** 。
-
-如何检查值是否虚值？使用 **Boolean 函数**或者 **!!** 运算符。
-
-虚值(`Falsy`)
-
-- 长度为 **0** 的字符串
-- 数字 **0**
-- `false`
-- `undefined`
-- `null`
-- `NaN`
-
-真值(`Truthy`)
-
-- 空数组
-- 空对象
-- 其他
-
-### 类型判断
-
-四种方式：
-
-- **typeof**
-
-  用于判断基本类型
-
-  缺点：只能判断基本类型，typeof null == object
-
-- **instanceof**
-
-  用于判断是谁的实例
-
-- **constructor**
-
-  笔记待补充
-
-- **Object.prototype.toStirng.call**
-
-  > 参考文档：
-  >
-  > https://zhuanlan.zhihu.com/p/118793721
-
-  这种方式会返回一个字符串，格式如下[Object xxx]，只需要截取后面一截即可，或者直接做判断
-
-  ```js
-  function isType(value, type) {
-    Object.prototype.toStirng.call(value) == `[object ${type}]`;
-  }
-  isType("123", String); // true
-  isType("123", Number); // false
-  ```
-
-
-
-
-
 ## HTTP
 
 > https://juejin.cn/post/6844904100035821575
@@ -1617,7 +1537,15 @@ a | b; // 0111  --> 7
 
 - 概述
 
-- 代码实现
+  发布订阅模式可以理解成有一个**发布者**，一个**订阅者**和一个类似于发布订阅平台的**事件中心**
+
+  发布者通过调用事件中心的emit方法，即可通知所有订阅者最新发布的内容
+
+  订阅者本质为`回调函数`，发布者发布新内容的时候，会触发订阅者本身的函数体内容
+
+  订阅者通过eventBus的on方法，实现对发布者的订阅
+
+- 基本代码实现
 
   ```typescript
   // 此处引入node中的fs文件操作方法来进行模拟异步请求操作
@@ -1650,6 +1578,10 @@ a | b; // 0111  --> 7
     events.emit(name, data);
   });
   ```
+
+
+
+
 
 
 
@@ -1698,12 +1630,6 @@ a | b; // 0111  --> 7
   
   //  "name has changed",  "I am groot!"
   ```
-
-
-
-### 观察者模式
-
-`观察者模式 Observer pattern`
 
 
 
