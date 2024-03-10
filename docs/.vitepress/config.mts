@@ -29,7 +29,7 @@ export default withMermaid({
         items: [
           {
             text: "Portal",
-            link: "/",
+            link: "http://leolair.top",
           },
           {
             text: "Development Log",
@@ -75,15 +75,15 @@ export default withMermaid({
       //     },
       //   ],
       // },
-      {
-        text: "Public",
-        items: [
-          {
-            text: "CS50 Guidebook",
-            link: "/todo",
-          },
-        ],
-      },
+      // {
+      //   text: "Public",
+      //   items: [
+      //     {
+      //       text: "CS50 Guidebook",
+      //       link: "/todo",
+      //     },
+      //   ],
+      // },
     ],
 
     sidebar: {
