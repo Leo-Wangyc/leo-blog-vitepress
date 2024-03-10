@@ -32,6 +32,10 @@ export default withMermaid({
             link: "http://leolair.top",
           },
           {
+            text: "Resume",
+            link: "http://resume.leolair.top",
+          },
+          {
             text: "Development Log",
             link: "/documents/my-lair/workflow",
           },
