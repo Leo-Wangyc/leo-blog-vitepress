@@ -634,7 +634,7 @@ restful风格的API，通常是一个url可以干多件事儿
 
 ### 接入GraphQL
 
-REST API 构建在请求方法（method）和端点（endpoint）之间的连接上，而 GraphQL API 被设计为只通过一个端点，即 /graphql，始终使用 POST 请求进行查询，其集中的 API 如 http://localhost:3000/graphql，所有的操作都通过这个接口来执行。
+REST API 构建在请求方法（method）和端点（endpoint）之间的连接上，而 GraphQL API 被设计为只通过一个端点，即 /graphql，始终使用 POST 请求进行查询，其集中的 API 如 `localhost:3000/graphql`，所有的操作都通过这个接口来执行。
 
 1. 首先，进行下载安装
 
