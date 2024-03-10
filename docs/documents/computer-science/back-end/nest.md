@@ -160,8 +160,6 @@ Nest provides a set of useful **param decorators** that you can use together wit
 | `@Ip()`                    | `req.ip`                             |
 | `@HostParam()`             | `req.hosts`                          |
 
-
-
 #### @Request
 
 ```typescript
@@ -182,6 +180,22 @@ findAll(@Request() req):string {
 #### @HttpCode
 
 
+
+#### @Params
+
+param是路径参数，而不是请求参数！
+
+```typescript
+localhost:80/user-info/3
+```
+
+#### @Query
+
+和param不一样，query是请求参数
+
+```typescript
+localhost:80/user-info?id=3
+```
 
 
 
@@ -626,7 +640,7 @@ restful风格的API，通常是一个url可以干多件事儿
 
 例如，一个/student路径，通过调用的方法不同（GET/POST/DELETE）来实现不同的功能
 
-<img src="https://cdn.nlark.com/yuque/0/2023/png/467623/1700405690245-8ceb6c2f-8950-4848-a827-76edb3fc161c.png?x-oss-process=image%2Fresize%2Cw_1320%2Climit_0" alt="image.png" style="zoom:50%;" />
+<img src="../../../public/assets/nest/image-20240310111333830.png" alt="image-20240310111333830" style="zoom:50%;" />
 
 
 
