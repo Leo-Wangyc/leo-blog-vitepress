@@ -231,6 +231,18 @@ nest g resource [name]
 
 可以快速生成CRUD controller
 
+⚠️**注意：实测过程中发现有可能会报错**
+
+```bash
+zsh: command not found: nest
+```
+
+这时候，利用下述命令可以代替
+
+```bash
+npx @nestjs/cli g res [name]
+```
+
 生成过程中会询问两个问题
 
 ```bash
@@ -679,4 +691,17 @@ REST API 构建在请求方法（method）和端点（endpoint）之间的连接
 3. 然后，在/src下新建一个schema.gql文件
 
 4. 然后，通过nest g res新建一个graphQL code文件
+
+5. 通过快速命令`npx @nestjs/cli g res`进行生成
+
+   ```bash
+   leowangyc@wangyongchangdeMacBook-Pro leo-lair-backend (v1.2.0) $ npx @nestjs/cli g res
+   ? What name would you like to use for this resource (plural, e.g., "users")? student
+   ? What transport layer do you use? GraphQL (code first)
+   ? Would you like to generate CRUD entry points? Yes
+   ```
+
+   
+
+### GraphQL方式CURD
 
