@@ -712,7 +712,7 @@ console.log(object.getN()());
 1. **200 OK**：请求成功。一般用于GET与POST请求
 2. **201 Created**：已创建。成功请求并创建了新的资源
 3. **202 Accepted**：已接受。已经接受请求，但未处理完成
-4. **204 No Content**：无内容。服务器成功处理，但未返回内容
+4. **204 No Content**：无内容。服务器成功处理，但未返回内容，**一般用于跨域预检请求的返回**
 
 **3xx - 重定向**
 
@@ -1201,9 +1201,81 @@ http://www.example.net/sample.aspx?callback=mycallback
 
 ### Nginx代理
 
+**重点：Access-Control-Allow-Origin**
+
 原理图示：
 
 <img src="../../../public/assets/front-end-theory/IMG_2358.png" alt="IMG_2358"  />
+
+**步骤**
+
+1. **客户端请求**：客户端（例如一个运行在`127.0.0.1:3000`的前端应用）向Nginx服务器发起请求，请求的地址是Nginx服务器的地址，比如`127.0.0.1:5000`。
+2. **Nginx作为反向代理**：Nginx服务器配置为监听`5000`端口的请求，并根据配置将这些请求转发到后端的API服务器（假设实际运行在`127.0.0.1:4000`）。
+3. **处理请求**：API服务器（`127.0.0.1:4000`）接收到请求，处理这个请求，然后将响应返回给Nginx服务器。
+4. **Nginx转发响应**：Nginx服务器收到来自API服务器的响应后，将这个响应转发回最初的请求者，也就是`127.0.0.1:3000`的客户端。
+
+⚠️**注意！**在这个步骤中，客户端的3000端口请求5000端口的nginx服务器，**同样会触发浏览器的同源策略**，因此，需要在Nginx服务器上配置好响应头，允许3000端口传来的所有跨域请求，如下：
+
+```nginx
+server {
+    listen 5000;
+
+    location / {
+        # 将请求转发到后端服务
+        proxy_pass http://127.0.0.1:4000;
+
+        # 添加CORS响应头
+        add_header 'Access-Control-Allow-Origin' 'http://127.0.0.1:3000' always;
+    		...
+    }
+}
+```
+
+下面是一个Nginx配置的常用代理，可以进行参考：
+
+其中`if ($request_method = 'OPTIONS')`用于检测是否为预检请求
+
+`OPTIONS`预检请求是**由浏览器自动发起的**，而不是由前端代码直接发起。这是浏览器实现CORS（跨来源资源共享）策略的一部分。
+
+预检请求的目的是在实际发送跨域请求之前，先检查目标服务器是否允许该跨域请求的发生。
+
+```nginx
+server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Origin' '*';
+            #
+            # 其他CORS相关的头部字段，如：
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+            #
+            # 允许携带凭证
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Headers' 'Origin,Content-Type,Accept';
+            #
+            # 缓存预检请求的结果（秒）
+            add_header 'Access-Control-Max-Age' 1728000;
+            #
+            # 返回204状态码，而不是常规的200
+            add_header 'Content-Type' 'text/plain; charset=utf-8';
+            add_header 'Content-Length' 0;
+            return 204;
+        }
+        if ($request_method = 'POST') {
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Headers' 'Origin,Content-Type,Accept';
+        }
+        if ($request_method = 'GET') {
+            add_header 'Access-Control-Allow-Origin' '*';
+            add_header 'Access-Control-Allow-Credentials' 'true';
+            add_header 'Access-Control-Allow-Headers' 'Origin,Content-Type,Accept';
+        }
+    }
+}
+```
 
 
 
