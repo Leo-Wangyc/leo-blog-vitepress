@@ -843,6 +843,10 @@ document.body.removeChild(link); // 移除临时标签
 
 > https://www.jianshu.com/p/256d0873c398
 
+哪些资源可以被缓存？
+
+静态资源，例如 js,css, img等
+
 ![1381649902262_.pic](../../../public/assets/front-end-theory/1381649902262_.pic.jpg)
 
 ### HTTP 缓存
@@ -855,7 +859,7 @@ http 缓存分为 **强缓存** 和 **协商缓存** 两种
 
 1. **首次请求资源**：浏览器首次请求一个资源时，服务器会在响应头中包含`Cache-Control`和/或`Expires`字段，指示浏览器如何缓存该资源。
 2. **再次请求资源**：当浏览器需要再次请求相同的资源时，它会首先检查本地缓存中的资源是否有效（根据`Cache-Control`和`Expires`字段）。
-3. **缓存有效**：如果缓存有效，浏览器将直接从本地缓存加载资源，而不是从服务器请求。
+3. **缓存有效**：如果缓存有效，浏览器将直接从本地缓存加载资源，而不是从服务器请求，**故强缓存并不是每次都会向服务器发送请求！**
 4. **缓存失效**：如果缓存失效（例如，超过了`max-age`指定的时间或达到了`Expires`指定的日期），浏览器将向服务器发送请求，获取新的资源。
 
 #### **强缓存**
@@ -1398,6 +1402,64 @@ a | b; // 0111  --> 7
 
 
 ### node环境
+
+#### 一图流
+
+node环境下的事件循环目前版本有不少，也不知谁对谁错，先按这个版本讲解一下：具体流程看图3
+
+一图版本：
+
+<img src="../../../public/assets/front-end-theory/Snipaste_2024-03-11_23-06-51.jpg" alt="Snipaste_2024-03-11_23-06-51" style="zoom:50%;" />
+
+在上图中，介绍了node中的事件循环方式
+
+其中，灰色圆圈部分为操作系统相关，不需要了解，需要了解的仅为黄色，橙色以及中间部分，我们将上述流程划分成三部分，如下图
+
+<img src="../../../public/assets/front-end-theory/Snipaste_2024-03-11_23-07-09.jpg" alt="Snipaste_2024-03-11_23-07-09" style="zoom:50%;" />
+
+其中，和浏览器一样，node代码也是自上而下执行所有同步代码，称为主流程，然后，每个循环称为一个**Tick**，需要经历六个阶段：
+
+1. **timers：计时器（setTimeout、setInterval等的回调函数存放在里边）**
+2. pending callback
+3. idle prepare
+4. **poll：轮询队列（除timers、check之外的回调存放在这里）**
+5. **check：检查阶段（使用 setImmediate 的回调会直接进入这个队列）**
+6. close callbacks
+
+
+
+#### setImmediate
+
+setImmediate类似于setTimeout(()=>{}, 0)，不过执行时机不一样，因为setTimeout(()=>{}, 0)就算设置为0，在浏览器中实际上最小也为4ms，在node中最小为1ms，setImmediate也为1ms，所以具体谁先谁后并不确定，如果非要有具体顺序，可以将setImmediate和setTimeout(0)同时放在I/O操作函数中，这样，根据事件循环机制，setImmediate就一定会先于setTimeout执行
+
+
+
+#### 宏任务
+
+具体运行流程，首先忽略微任务和nextTick，先看看宏任务的执行：
+
+<img src="../../../public/assets/front-end-theory/Snipaste_2024-03-11_23-08-21.jpg" alt="Snipaste_2024-03-11_23-08-21" style="zoom: 25%;" />
+
+‼️**重点**！以上图为例
+
+1. 先自上而下同步执行所有同步代码，将两个log全部输出打印出来，并将所有异步时间压入异步模块内部，开始执行
+2. 然后，进入一个Tick事件循环，从上而下执行，先执行timer，但是由于定时器的回调时间需要10ms，并未触发回调，所以会运行到**poll阶段进行等待**，等待timer和check中出现回调时间再继续执行循环
+3. 10ms后，定时器函数回调生效，循环从poll开始，走到check，再走回timer，执行定时器的回调函数，然后再回到poll阶段，继续等待下一次回调事件
+4. 又过了10ms（共计20ms）后，I/O操作结束，回调函数出现在check阶段，事件循环将会运行到check阶段执行回调函数，最后绕一圈回到poll继续等待
+
+
+
+#### 微任务 + next tick
+
+以上为简单宏任务队列，当考虑到微任务事件，promise和nextTick后，情况会有一点不一样，如下图：
+
+<img src="../../../public/assets/front-end-theory/Snipaste_2024-03-11_23-09-42.jpg" alt="Snipaste_2024-03-11_23-09-42" style="zoom:25%;" />
+
+‼️**重点**！以上图为例
+
+1. 按照上面的流程，先执行同步代码
+2. 随后将三个回调分别压入对应的队列中，nextTick压入nextTick队列，promise压入微任务队列，setImmediate压入check队列
+3. 执行顺序方面，nextTick队列优先于微任务队列优先于check宏任务队列
 
 
 
