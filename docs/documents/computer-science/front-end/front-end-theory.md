@@ -1165,6 +1165,10 @@ fetch('http://test.com/post', {
 
 例如： http://www.a.com/a.js 和 http://70.32.92.74/b.js
 
+图示：
+
+<img src="../../../public/assets/front-end-theory/IMG_2356.png" alt="IMG_2356" style="zoom:50%;" />
+
 **解决方式**
 
 1. jsonp
@@ -1193,6 +1197,13 @@ http://www.example.net/sample.aspx?callback=mycallback
 
 **缺点：只能是get请求**
 
+
+
+### Nginx代理
+
+原理图示：
+
+<img src="../../../public/assets/front-end-theory/IMG_2358.png" alt="IMG_2358"  />
 
 
 
