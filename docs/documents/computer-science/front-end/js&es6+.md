@@ -6,8 +6,6 @@
 
 
 
-
-
 ## 严格模式
 
 > 严格模式 _strict model_
@@ -55,10 +53,6 @@
      }; // error
      ```
 
-
-
-
-
 ## 数据类型
 
 ### 值类型
@@ -68,6 +62,7 @@
 - undefined
 - number
 - string
+- bigInt
 - symbol
 
 ### 引用类型
@@ -139,13 +134,13 @@
 
 `Object.prototype.toString` 的默认实现（在 ECMAScript 规范中）被设计为对任何对象执行时，都会返回一个包含其 `[[Class]]` 属性值的字符串。
 
-每个JavaScript对象在内部都有一个 `[[Class]]` 属性，这个属性不能直接被访问。这个属性基本上定义了对象的内部类型。例如，如果是一个数组，它的 `[[Class]]` 将是 `"Array"`；如果是一个日期对象，它的 `[[Class]]` 将是 `"Date"`。
+每个 JavaScript 对象在内部都有一个 `[[Class]]` 属性，这个属性不能直接被访问。这个属性基本上定义了对象的内部类型。例如，如果是一个数组，它的 `[[Class]]` 将是 `"Array"`；如果是一个日期对象，它的 `[[Class]]` 将是 `"Date"`。
 
 使用该方式的代码如下：
 
 ```typescript
-let num = 10
-Object.prototype.toString.call(num)
+let num = 10;
+Object.prototype.toString.call(num);
 
 // 以上述代码为例，本质上，是通过call，先换成num的上下文环境
 // 然后，再调用Object.prototype.toString()方法，该方法会直接返回对象内部的 `[[Class]]` 属性
@@ -153,7 +148,7 @@ Object.prototype.toString.call(num)
 
 在 JavaScript 中，几乎所有的数据类型都有 `toString` 方法
 
-但是直接调用该方法不会返回对应的[[Class]]属性，是因为**每种不同的数据类型都对toString这个方法进行了覆写**
+但是直接调用该方法不会返回对应的[[Class]]属性，是因为**每种不同的数据类型都对 toString 这个方法进行了覆写**
 
 例如:
 
@@ -169,10 +164,6 @@ BigInt(123).toString(); // "123"
 Object.prototype.toString.call({}); // "[object Object]"
 [1, 2, 3].toString(); // "1,2,3"
 ```
-
-
-
-
 
 ## 对象扩展
 
@@ -414,10 +405,6 @@ Object.prototype.toString.call({}); // "[object Object]"
 const { subHisId = "", deptId = "", scheduleDate: date = "" } = item;
 ```
 
-
-
-
-
 ## 函数扩展
 
 ### arguments
@@ -431,8 +418,6 @@ function func() {
 }
 func(1, 2, "3");
 ```
-
-
 
 ### 箭头函数
 
@@ -463,8 +448,6 @@ func(1, 2, "3");
 - **箭头函数的 this 指向**
 
   **始终指向自身所在的代码块的对象**
-
-
 
 ### call,apply,bind
 
@@ -575,6 +558,10 @@ let describe = `My name is ${name}`;
 
 ## 解构赋值
 
+### 构赋值的拷贝性质
+
+解构赋值本质上是**浅拷贝**。当你从一个对象中解构出一个属性值，如果这个属性值是原始类型（如字符串、数字等），那么这相当于按值拷贝。但如果属性值是对象或数组，那解构出来的只是对原始对象的引用。因此，如果你修改这个解构出来的对象，原始对象也会被修改。
+
 ### 从对象中解构
 
 ```js
@@ -602,23 +589,19 @@ const [bill, peter] = demoArr;
 console.log(bill); // 'peter'
 ```
 
-
-
 ## 可选链操作符
 
 ### || 和 ?? 的区别
 
-??只用来区别undefined和null
+??只用来区别 undefined 和 null
 
 ```typescript
-0 ?? 123 // 0
-0 || 123 // 123
+0 ?? 123; // 0
+0 || 123; // 123
 
-undefined ?? 123 // 123
-undefined || 123 // 123
+undefined ?? 123; // 123
+undefined || 123; // 123
 ```
-
-
 
 ## for...in 与 for...of
 
@@ -692,26 +675,24 @@ for (let value of myArray) {
 // 7 number
 ```
 
-
-
 ## Promise
 
 ### Promise 简介
 
-promise可以简单理解为一种**立即执行的，拥有着错误检测机制的函数**
+promise 可以简单理解为一种**立即执行的，拥有着错误检测机制的函数**
 
 对普通普通函数来说，接收传入的值，经过处理后，返回所需要的返回值。而且函数分为了定义和使用两种场景，如下
 
 ```typescript
 // 定义
-const sum:number = (a:number, b: number) => a+b 
+const sum: number = (a: number, b: number) => a + b;
 // 使用
-sum(1,2) 
+sum(1, 2);
 ```
 
-而对promise来说，在new Promise的时候，它就会立即执行，所以，promise一般都是用于当作函数的返回值来使用。
+而对 promise 来说，在 new Promise 的时候，它就会立即执行，所以，promise 一般都是用于当作函数的返回值来使用。
 
-与函数不同的是，promise回根据内部执行情况，决定走resolve还是走reject，resolve的话，会调用外部的.then，reject的话，会调用外部的.catch
+与函数不同的是，promise 回根据内部执行情况，决定走 resolve 还是走 reject，resolve 的话，会调用外部的.then，reject 的话，会调用外部的.catch
 
 - promise 用来执行异步操作，有效地消除了回调地狱，并且增加了错误捕获机制，其本质上是一个函数对象，会**自行调用**，自身拥有着**all、reject、resolve**等方法，其原型上有**then、catch**等方法。示例如下：
 
@@ -745,8 +726,6 @@ sum(1,2)
 
   ！！！**注意，promise 会直接自调用**，所以一定要确保其中的改赋值的变量都已赋值！！！
 
-
-
 ### promise 在实际函数中的运用
 
 因为**只有 promise 才具有.then 的方法**，所以函数**必须返回一个 promise**，才能实现.then 的调用
@@ -776,8 +755,6 @@ fn(2) // 成功情况
     console.log("error");
   });
 ```
-
-
 
 ### promise.then
 
@@ -812,8 +789,6 @@ p.then((arg) => {
 });
 ```
 
-
-
 ### promise.catch
 
 Promise.then 是 promise 中的函数失败时的触发，会自动调用函数中的 reject 方法，then 接受的参数是一个函数，函数的参数就是 reject 中的参数，例如上述 then 中的例子
@@ -842,8 +817,6 @@ promiseClick()
     console.log("失败，原因为:", reason);
   });
 ```
-
-
 
 ### promise.all
 
@@ -889,8 +862,6 @@ promiseClick()
 
   > https://www.jianshu.com/p/7e60fc1be1b2
 
-
-
 ### promise.race
 
 - 说明
@@ -921,30 +892,26 @@ promiseClick()
     });
   ```
 
-
-
 ### promise.resolve
 
-当有些场景下，可能返回普通对象，也可能返回promise对象，如果需要进行统一处理，这时候就需要将普通对象解析为promise对象，这时候，可以使用`Promise.resolve`包裹，使其变成一个promise对象
+当有些场景下，可能返回普通对象，也可能返回 promise 对象，如果需要进行统一处理，这时候就需要将普通对象解析为 promise 对象，这时候，可以使用`Promise.resolve`包裹，使其变成一个 promise 对象
 
 ```typescript
-let myObj = { name: 'Leo', age: 18 }
-let alwaysReuturnPromise = Promise.resolve(myObj)
+let myObj = { name: "Leo", age: 18 };
+let alwaysReuturnPromise = Promise.resolve(myObj);
 ```
 
-这样，就可以通过.then进行调用了
+这样，就可以通过.then 进行调用了
 
 这种写法，本质上是下面这种写法的简写
 
 ```typescript
-Promise.resolve(value)
+Promise.resolve(value);
 // 等价于
-new Promise((resolve, reject) => resolve(value))
+new Promise((resolve, reject) => resolve(value));
 ```
 
-相当于直接调用resolve方法改变status状态为fullfilled
-
-
+相当于直接调用 resolve 方法改变 status 状态为 fullfilled
 
 ### promise 原理剖析
 
@@ -954,68 +921,116 @@ new Promise((resolve, reject) => resolve(value))
   >
   > https://zhuanlan.zhihu.com/p/58428287 图解 promise 原理
   >
+  > https://www.bilibili.com/video/BV1Tu411i72B/?spm_id_from=333.337.search-card.all.click&vd_source=292c7745eb30e2c00d6028dfa6d8c3c5 快速版
+  >
   > node --> promise
 
 - 简单原理实现
 
-  ```javascript
-  const PENDING = "PENDING"; // 对应上述所说的，promise有三大状态，等待态，成功态和失败态
-  const FULFILLED = "FULFILLED";
-  const REJECTED = "REJECTED";
-  class Promise {
-    constructor(executor) {
-      // executor是promise接收的那个函数，在promise中会立即执行
-      this.status = PENDING; // 初始默认状态为等待态
-      this.value = undefined; // value是接收到的executor中的resolve函数的参数
-      this.reason = undefined; // reason是接收到的executor中的reject函数的参数
-      this.onResolveCallbacks = []; // resolve后的then中的函数，会放在此数组中暂存，防止因为executor中有异步操作导致的状态改变异常（例如，executor中有个两秒的setTimeOut，等真正状态改变的时候，才去调用所有的后续then方法）
-      this.onRejectCallbacks = []; // 同理如上
-      let resolve = (value) => {
-        if (this.status === PENDING) {
-          // promise中只可能有一种状态改变，有一种状态后，就立刻结束，不可能从失败变成成功，只有从pending态发生改变才会真正引起状态的改变，从而调用暂存函数数组中的所有函数方法
-          this.value = value;
-          this.status = FULFILLED;
-          this.onResolveCallbacks.forEach((fn) => fn()); // 遍历暂存函数中的所有函数并全部执行
-        }
-      };
-      let reject = (reason) => {
-        if (this.status === PENDING) {
-          this.status = REJECTED;
-          this.reason = reason;
-          this.onRejectCallbacks.forEach((fn) => fn());
-        }
-      };
-      try {
-        executor(resolve, reject); // 对应上面说的，promise传入的函数会立刻执行
-      } catch (e) {
-        reject(e);
-      }
+  首先，以正常 promise 的使用入手
+
+  ```typescript
+  let p1 = new Promize((resolve, reject) => {
+    resolve(1);
+  });
+  
+  p1.then(
+    (res) => {
+      console.log(res);
+    },
+    (err) => {
+      console.log(err);
     }
-    then(onFulfilled, onRejected) {
-      // then方法实现，只是简单原理而已，实际上为了实现Promise的链式调用，then方法本身返回的其实是一个promise，所以才可以实现无限then
-      if (this.status === FULFILLED) {
-        // 此处的直接调用，是executor中代码是同步代码的情况
+  );
+  ```
+
+  可以看到，promise 接受一个函数(叫做 executor)当做参数，该函数包含 resolve 和 reject 两个函数，调用 resolve，会触发.then 的成功回调，调用 reject，会触发.then 的失败回调（也就是.catch，算是.then 失败回调的语法糖）
+
+  那么，开始实现
+
+  promise 能根据调用 resolve 和 reject 从而实现不同的.then，依赖于其中的三种 status，分别为 PENDING，FULLFILLED，REJECTED，promise 在实例化的时候，status 为 PENDING，当调用 resolve 的时候，会改为 FULLFILLED，当调用 reject 的时候，会改为 REJECTED，再加上，promise 在生成的时候会直接执行，所以 executor 需要直接执行
+
+  同时，resolve 和 reject 本身都会接收参数，将参数存储到类中
+
+  ```js
+  class MyPromise {
+    constructor(executor) {
+      this.status = "PENDING";
+      this.value = "";
+      this.error = "";
+  
+      this.resolve = (value) => {
+        this.status = "FULLFILLED";
+        this.value = value;
+      };
+      this.reject = (error) => {
+        this.status = "REJECTED";
+        this.error = error;
+      };
+      executor(this.resolve, this.reject); // 此处executor执行，根据外部调用情况，对应更改status的值
+    }
+  }
+  ```
+
+  接下来，来实现 then，then 接收两个函数作为参数，一个成功回调，一个失败回调
+
+  ```js
+  class MyPromise {
+    constructor(executor){
+      ...
+      this.resolve = (value) => {
+        this.status = 'FULLFILLED'
+        this.value = value
+        this.successFuncList.forEach((func) => func(this.value));	// 将暂存的函数进行调用
+      };
+      this.reject = (error) => {
+        this.status = 'REJECTED'
+        this.error = error
+        this.rejectFuncList.forEach((func) => func(this.error));
+      };
+      this.successFuncList = []
+      this.rejectFuncList = []
+    }
+  
+    then(onFulfilled, onRejected){
+      if (this.status === "FULLFILLED") {
         onFulfilled(this.value);
       }
-      if (this.status === REJECTED) {
-        onRejected(this.reason);
+      if (this.status === "REJECTED") {
+        onRejected(this.error);
       }
-      if (this.status === PENDING) {
-        // 这里是异步代码的情况，将onFulfilled函数压入onResolveCallbacks数组中，等待异步加载完毕，状态改变后，再进行调用
-        this.onResolveCallbacks.push(() => {
-          onFulfilled(this.value);
-        });
-        this.onRejectCallbacks.push(() => {
-          onRejected(this.reason);
-        });
+      // 如果then里面是setTimeout这类函数，可能状态不会及时更新，这时候需要将函数暂存
+      if (this.status === "PENDING") {
+        this.successFuncList.push(() => successFunc);
+        this.rejectFuncList.push(() => failFunc);
       }
     }
   }
   ```
 
+  第三步，来实现链式调用
 
+  很简单，仅需将.then 里面的内容用 promise 包裹，然后再状态改变的时候再次触发 resolve/reject 更改 promise 的状态即可，链式调用的.then 参数如何接收待补充
 
-
+  ```js
+  ...
+  then(onFulfilled, onRejected){
+    const p2 = new MyPromise((resolve, reject)=> {
+      if (this.status === "FULLFILLED") {
+        onFulfilled(this.value);
+        resolve()
+      }
+      if (this.status === "REJECTED") {
+        onRejected(this.error);
+        reject()
+      }
+      if (this.status === "PENDING") {
+        this.successFuncList.push(() => successFunc);
+        this.rejectFuncList.push(() => failFunc);
+      }
+    })
+  }
+  ```
 
 ## Async, Await
 
@@ -1025,20 +1040,20 @@ new Promise((resolve, reject) => resolve(value))
 
 **特点**：
 
-1. generator函数的特点是function后面会带个`*`
-2. 而且一般函数返回用的`return`，generator函数返回用的`yield`和`return`
-3. **generator函数调用后返回一个迭代器对象，而不是自己写函数体力的的return值**
-4. 每次调用迭代器对象的`next`，都会走到下一个`yield`处，直到所有yield都走完，或者走到`return`，才会把done变成true，之后再调用next()，将全部是undefined
-5. 调用`next()`方法的时候如果往里面传参，**参数会作为上一个yield的返回值**，如果在第一个next里传参，因为没有上一个yield，所以在第一个next里面传参是无效的
+1. generator 函数的特点是 function 后面会带个`*`
+2. 而且一般函数返回用的`return`，generator 函数返回用的`yield`和`return`
+3. **generator 函数调用后返回一个迭代器对象，而不是自己写函数体力的的 return 值**
+4. 每次调用迭代器对象的`next`，都会走到下一个`yield`处，直到所有 yield 都走完，或者走到`return`，才会把 done 变成 true，之后再调用 next()，将全部是 undefined
+5. 调用`next()`方法的时候如果往里面传参，**参数会作为上一个 yield 的返回值**，如果在第一个 next 里传参，因为没有上一个 yield，所以在第一个 next 里面传参是无效的
 
 **基本使用**
 
 ```javascript
 function* generatorFunction() {
-    console.log('开始执行');
-    yield 'Hello';
-    console.log('继续执行');
-    yield 'World';
+  console.log("开始执行");
+  yield "Hello";
+  console.log("继续执行");
+  yield "World";
 }
 
 const generator = generatorFunction(); // 调用生成器函数，直接返回生成器对象
@@ -1048,7 +1063,7 @@ console.log(generator.next()); // 继续执行，并打印 { value: 'World', don
 console.log(generator.next()); // 执行结束，并打印 { value: undefined, done: true }
 ```
 
-**当迭代器函数体内有return**
+**当迭代器函数体内有 return**
 
 ```typescript
 function* generatorFunction() {
@@ -1064,29 +1079,25 @@ console.log(generator.next()); // 第二次调用next()，到达return语句，�
 console.log(generator.next()); // 第三次调用next()，由于Generator已经结束，输出：{ value: undefined, done: true }
 ```
 
-**调用next()传参**
+**调用 next()传参**
 
 ```typescript
 function* generatorFunction() {
-    const value = yield 'Hello';
-    yield 'world'; 
-    console.log('value',value) 
+  const value = yield "Hello";
+  yield "world";
+  console.log("value", value);
 }
 
 const generator = generatorFunction();
 
-console.log(generator.next()) // 第一次调用next，启动生成器，到达第一个yield 'Hello'
-console.log(generator.next('passValue')) // 第二次调用next，会输出value为world，并将此次的passValue，传递给上一次yield，即yield Hello作为返回值
-console.log(generator.next()) // 第三次调用next
+console.log(generator.next()); // 第一次调用next，启动生成器，到达第一个yield 'Hello'
+console.log(generator.next("passValue")); // 第二次调用next，会输出value为world，并将此次的passValue，传递给上一次yield，即yield Hello作为返回值
+console.log(generator.next()); // 第三次调用next
 ```
-
-
 
 **底层实现**
 
-generator底层涉及涉及到了 JavaScript 引擎的内部机制，这使得直接在 JavaScript 中完全模拟其行为比较复杂。Generator 的核心特性是能够暂停和恢复执行。在 JavaScript 引擎层面，这需要引擎能够在函数执行中的任意时刻保存当前的执行上下文（包括变量状态、调用栈等），并在适当的时候恢复该上下文。
-
-
+generator 底层涉及涉及到了 JavaScript 引擎的内部机制，这使得直接在 JavaScript 中完全模拟其行为比较复杂。Generator 的核心特性是能够暂停和恢复执行。在 JavaScript 引擎层面，这需要引擎能够在函数执行中的任意时刻保存当前的执行上下文（包括变量状态、调用栈等），并在适当的时候恢复该上下文。
 
 ### async, await
 
@@ -1094,18 +1105,18 @@ generator底层涉及涉及到了 JavaScript 引擎的内部机制，这使得�
 
 > http://www.ruanyifeng.com/blog/2015/05/async.html
 
-⚠️**注意：async函数一定会返回一个promise对象**
+⚠️**注意：async 函数一定会返回一个 promise 对象**
 
 **基本使用**
 
 ```javascript
 // 此处模拟先从./name.txt中获取文件路径，再根据文件路径读取文件内容
-async function read(){
-  let filePath = await readFile('./name.txt', 'utf8')
-  return await readFile(filePath, 'utf8')
+async function read() {
+  let filePath = await readFile("./name.txt", "utf8");
+  return await readFile(filePath, "utf8");
 }
 // async函数返回一个promize，要获取值的话，直接使用.then获取
-read().then(res => console.log(res))
+read().then((res) => console.log(res));
 ```
 
 **核心原理**
@@ -1113,30 +1124,30 @@ read().then(res => console.log(res))
 > https://www.bilibili.com/video/BV1W94y1Q7Bo/?spm_id_from=333.337.search-card.all.click&vd_source=6adac1d9bbd16466fad0c4ec156dc9b7
 
 ```js
-function* read(){
-  let filePath = yield readFile('./name.txt', 'utf8')
-  return yield readFile(filePath, 'utf8')
+function* read() {
+  let filePath = yield readFile("./name.txt", "utf8");
+  return yield readFile(filePath, "utf8");
 }
 
-let it = read() // 此处，先获取迭代器对象
-const { value, done } = it.next()  // 此处value返回的会是一个promise
+let it = read(); // 此处，先获取迭代器对象
+const { value, done } = it.next(); // 此处value返回的会是一个promise
 
 // 为了拿到value里面的值，需要.then取出来
-value.then(filePath=>{
+value.then((filePath) => {
   // 此处，我们需要把.then拿到的文件名，传递到迭代器函数里面去，根据generator里面写的第五条，我们通过next传参，可以将参数传递给上一次的yield作为返回值，所以，此处传入filePath，会直接当做上一次yield的filePath的返回值进行接收了。我们同样进行结构，就可以拿到最终文件数据了
-  const { value, done } = it.next(filePath)
+  const { value, done } = it.next(filePath);
   // 因为第二个yield返回的也是个promise，所以用then获取数据
-  value.then(fileContent=>{
-    console.log(fileContent)
-  })
-})
+  value.then((fileContent) => {
+    console.log(fileContent);
+  });
+});
 ```
 
 
 
 
 
-## try...catch...finally
+## try...catch
 
 - 作用
 
@@ -1172,6 +1183,10 @@ value.then(filePath=>{
   }
   ```
 
+
+
+
+
 ## 类
 
 类就是一类相似物体的总和，例如
@@ -1179,6 +1194,8 @@ value.then(filePath=>{
 类：苹果， 对象：你的苹果，我的苹果
 
 类：汽车， 对象：你的宝马 A6， 我的奔驰 s7
+
+
 
 ### 构造方法 constructor
 
@@ -1193,6 +1210,8 @@ class Animal {
 let cat = new Animal(); // '执行了'
 ```
 
+
+
 ### 构造函数
 
 - 说明
@@ -1205,6 +1224,8 @@ let cat = new Animal(); // '执行了'
   }
   console.log(Animal.prototype.constructor === Animal); // true
   ```
+
+
 
 ### 类的介绍
 
@@ -1245,6 +1266,10 @@ let cat = new Animal(); // '执行了'
   let cat = new Cat("Tom");
   cat.speak();
   ```
+
+
+
+
 
 ## 数组方法
 
@@ -1333,6 +1358,8 @@ let cat = new Animal(); // '执行了'
    | some    | boolean   | 否                                        |
    | every   | boolean   | 否                                        |
    | forEach | \         | 是，无返回值                              |
+
+
 
 ### 数组操作
 
@@ -1524,11 +1551,17 @@ let cat = new Animal(); // '执行了'
     | slice   | 截取后的 array  | 否             |
     | splice  | new array       | 是             |
 
+
+
+
+
 ### Array.reduce
+
+> https://www.jianshu.com/p/e375ba1cfc47
 
 reduce 方法有很多的骚操作，类似于对数组进行一波 map，每个值都可以进行一些操作，然后实现一些逼格比较高的功能
 
-1. **reduce 函数介绍**
+**reduce 函数介绍**
 
    - array.reduce 是数组函数的方法，接受两个参数，第一个是对每个值进行操作的一个**回调函数**，第二个是设置回调函数开始执行的**初始 index**，第二个参数可传可不传，若不传，则默认 index 从**1**开始，一般都会需要设置为 0。
 
@@ -1538,7 +1571,7 @@ reduce 方法有很多的骚操作，类似于对数组进行一波 map，每个
    array.reduce(callback, initialValue);
    ```
 
-2. **reduce 第一个参数，回调函数的介绍**
+**reduce 第一个参数，回调函数的介绍**
 
    从 1 中得知，reduce 接受的第一个参数是一个回调函数，该函数拥有四个入参，分别是
 
@@ -1558,64 +1591,87 @@ reduce 方法有很多的骚操作，类似于对数组进行一波 map，每个
    }, 0)
    ```
 
-3. **arr 为空的情况**
+**arr 为空的情况**
 
-   如果 arr 为空，而没有设置初始值，那么将会直接报错，如果设置了初始值为 0，那么会返回 0
+如果 arr 为空，而没有设置初始值，那么将会直接报错，如果设置了初始值为 0，那么会返回 0
 
-4. **reduce 的相关骚操作用法**
+**reduce 的相关骚操作用法**
 
-   - 简单求和
+- 简单求和
 
-     ```typescript
-     let arr = [1, 2, 3, 4];
-     arr.reduce((x, y) => x + y);
-     ```
+  ```typescript
+  let arr = [1, 2, 3, 4];
+  arr.reduce((x, y) => x + y);
+  ```
 
-   - 求每个元素出现的次数
+- 求每个元素出现的次数
 
-     ```typescript
-     let arr = ["a", "a", "b", "b", "b", "c"];
-     arr.reduce((pre, cur) => {
-       if (cur in pre) {
-         pre[cur]++;
-       } else {
-         pre[cur] = 1;
-       }
-       return pre;
-     }, {}); // {a: 2, b: 3, c: 1}
-     ```
+  ```typescript
+  let arr = ["a", "a", "b", "b", "b", "c"];
+  arr.reduce((pre, cur) => {
+    if (cur in pre) {
+      pre[cur]++;
+    } else {
+      pre[cur] = 1;
+    }
+    return pre;
+  }, {}); // {a: 2, b: 3, c: 1}
+  ```
 
-     该案例中有几个注意点
+  该案例中有几个注意点
 
-     ① 只有当操作的对象 pre 是一个对象时，使用 cur in pre 才会成功获取到内容，如果 pre 是一个数组，那么会出现一个神奇的数组结构，如下，披着数组的皮，但是实际上是一个对象
+  ① 只有当操作的对象 pre 是一个对象时，使用 cur in pre 才会成功获取到内容，如果 pre 是一个数组，那么会出现一个神奇的数组结构，如下，披着数组的皮，但是实际上是一个对象
 
-     详细关于 in 关键字的操作，可见 ES6+章 2.7
+  详细关于 in 关键字的操作，可见 ES6+章 2.7
 
-     ② 一定要把 pre 给返回出来，pre 函数如果没有返回值，走到下一个循环内就会直接报错！
+  ② 一定要把 pre 给返回出来，pre 函数如果没有返回值，走到下一个循环内就会直接报错！
 
-   - 对象数组里的属性求和
+- 对象数组里的属性求和
 
-     ```typescript
-     let arr = [
-       {
-         name: "Leo",
-         salary: 30000,
-       },
-       {
-         name: "Vivien",
-         salary: 20000,
-       },
-     ];
-     arr.reduce((pre, cur) => {
-       return pre + cur.salary;
-     }, 0); // 50000
-     ```
+  ```typescript
+  let arr = [
+    {
+      name: "Leo",
+      salary: 30000,
+    },
+    {
+      name: "Vivien",
+      salary: 20000,
+    },
+  ];
+  arr.reduce((pre, cur) => {
+    return pre + cur.salary;
+  }, 0); // 50000
+  ```
 
-5. **参考文档**
+**reduce 原理**
 
-   写得非常详细，而且简单易懂，强推
+首先查看一下基本的使用方式，接收一个回调函数，返回一个操作过后的累计值
 
-   > https://www.jianshu.com/p/e375ba1cfc47
+```js
+[1, 2, 3, 4, 5].reduce((pre, cur) => {
+  return pre + cur;
+});
+```
+
+根据使用方式倒推实现原理，核心是通过 this 拿到当前调用的 array 本身，然后循环调用传进来的回调函数
+
+```js
+Array.prototype.myReduce = function (cb, initialValue = 0) {
+  let value = initialValue;
+  let array = this;
+
+  array.forEach((item) => {
+    value = cb(value, item);
+  });
+
+  return value;
+};
+```
+
+
+
+
 
 ### 类数组
 
@@ -1634,19 +1690,20 @@ reduce 方法有很多的骚操作，类似于对数组进行一波 map，每个
   // 方法三（骚操作）：
   [].slice.call(arrObj)
   // 结果	['Mary', 'bill', 'guy', 'trueman']
-
-
   // 如有其他情况，例如，少了数字，或者键值不为数字或者数字样式的字符串，或者没有length，都会导致转换出问题，如下
   // 情况一： 无length
   let arrObj = { 1: 'bill', 2: 'guy', 3: 'trueman'}
-  				// 结果  []
+  // 结果  []
   // 情况二： length与实际不符
   let arrObj = { 1: 'bill', 2: 'guy', 3: 'trueman', length: 3}
-  				// 结果  [undefined, 'bill', 'guy']
+  // 结果  [undefined, 'bill', 'guy']
   // 情况二： 键值为字符串，而非数字
   let arrObj = { name: 'bill', '2': 'guy', 3: 'trueman', length: 3}
-  				// 结果  (3) [undefined, undefined, 'guy']， 数字字符串可以隐式转换，是支持的
-  ```
+  // 结果  (3) [undefined, undefined, 'guy']， 数字字符串可以隐式转换，是支持的
+
+
+
+
 
 ## 字符串方法
 
@@ -1660,6 +1717,8 @@ reduce 方法有很多的骚操作，类似于对数组进行一波 map，每个
 
    search 用于检查字符串中某一段字符串所出现的位置，如果有，返回索引值，否则返回-1，与 indexOf 不同的是，search 支持正则
 
+
+
 ### 字符串提取
 
 1. **slice**
@@ -1669,26 +1728,26 @@ reduce 方法有很多的骚操作，类似于对数组进行一波 map，每个
    ```javascript
    var str = "Apple, Banana, Mango";
    var res = str.slice(7, 13); // Banana
-  ```
-
 2. **subString**
 
-   用法类似 slice，不过不支持负数
+ 用法类似 slice，不过不支持负数
 
 3. **substr**
 
-   接受两个参数，第一个为起点索引，第二个为截取的长度
+ 接受两个参数，第一个为起点索引，第二个为截取的长度
+
+
 
 ### 数字和字符串的转化
 
 - 数字转字符串
 
-  ```js
-  let num = 41;
-  num.toString(); // '41'
-  num.toString(2); // '101001'		转二进制
-  num.toString(16); // '29'	转十六进制
-  ```
+```js
+let num = 41;
+num.toString(); // '41'
+num.toString(2); // '101001'		转二进制
+num.toString(16); // '29'	转十六进制
+````
 
 - 字符串转数字
 
@@ -1703,11 +1762,19 @@ reduce 方法有很多的骚操作，类似于对数组进行一波 map，每个
   let num = parseInt(str, "16"); // 41
   ```
 
+
+
+
+
 ## setTimeout&setInterval
 
 ### setTimeout
 
 ### setInterval
+
+
+
+
 
 ## throw
 
@@ -1794,6 +1861,8 @@ let newArr = [...new Set(arr)]; // [1,2,3,4]
 
 
 
+
+
 ## Proxy
 
 Proxy 可以对目标对象的读取、函数调用等操作进行拦截，然后进行操作处理。它不直接操作对象，而是像代理模式，通过对象的代理对象进行操作，在进行这些操作时，可以添加一些需要的额外操作。
@@ -1824,26 +1893,28 @@ proxy.age = 25; // 实际执行 handler.set
 
 
 
+
+
 ## Reflect
 
-Reflect说人话就是，提供了对对象的一系列操作，可以用于对对象进行操作的统一处理
+Reflect 说人话就是，提供了对对象的一系列操作，可以用于对对象进行操作的统一处理
 
 例如，用来赋值，获取值
 
 **Reflect.get**
 
-````js
+```js
 const obj = { name: "John", age: 30 };
 const key = "name";
 
 // 使用 Reflect.get 获取属性值
 const value = Reflect.get(obj, key);
 console.log(value); // 输出 "John"
-````
+```
 
 **Reflect.set**
 
-````js
+```js
 const obj = { name: "John", age: 30 };
 const key = "age";
 const newValue = 35;
@@ -1851,31 +1922,29 @@ const newValue = 35;
 // 使用 Reflect.set 设置属性值
 Reflect.set(obj, key, newValue);
 console.log(obj.age); // 输出 35
-````
+```
 
 **Reflect.has**
 
-````js
+```js
 const obj = { name: "John", age: 30 };
 const key = "name";
 
 // 使用 Reflect.has 检查属性是否存在
 const hasProperty = Reflect.has(obj, key);
 console.log(hasProperty); // 输出 true
-````
+```
 
 **Reflect.deleteProperty**
 
-````js
+```js
 const obj = { name: "John", age: 30 };
 const key = "name";
 
 // 使用 Reflect.deleteProperty 删除属性
 Reflect.deleteProperty(obj, key);
 console.log(obj); // 输出 { age: 30 }
-````
-
-
+```
 
 
 
@@ -1899,7 +1968,7 @@ console.log(m.a); // 1
 console.log(m.b); // 2
 ```
 
-####es6
+### es6
 
 ```javascript
 // 导出语法-------------文件a.js
@@ -1920,4 +1989,3 @@ console.log(demo.c)  // 3
 console.log(demo.d)  // 4
 ```
 
-####
