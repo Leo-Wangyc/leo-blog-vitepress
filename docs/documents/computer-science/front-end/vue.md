@@ -888,6 +888,14 @@ TODO
 
 ## 源码分析
 
+### 整理框架设计思路
+
+<img src="../../../public/assets/vue/image-20240313234119788.png" alt="image-20240313234119788"  />
+
+
+
+
+
 ### 整体模块划分
 
 整体模块划分为三大块，**compiler-module，renderer-module，reactivity-module**

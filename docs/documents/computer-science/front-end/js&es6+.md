@@ -921,6 +921,31 @@ promiseClick()
     });
   ```
 
+
+
+### promise.resolve
+
+当有些场景下，可能返回普通对象，也可能返回promise对象，如果需要进行统一处理，这时候就需要将普通对象解析为promise对象，这时候，可以使用`Promise.resolve`包裹，使其变成一个promise对象
+
+```typescript
+let myObj = { name: 'Leo', age: 18 }
+let alwaysReuturnPromise = Promise.resolve(myObj)
+```
+
+这样，就可以通过.then进行调用了
+
+这种写法，本质上是下面这种写法的简写
+
+```typescript
+Promise.resolve(value)
+// 等价于
+new Promise((resolve, reject) => resolve(value))
+```
+
+相当于直接调用resolve方法改变status状态为fullfilled
+
+
+
 ### promise 原理剖析
 
 - 参考资料
@@ -988,146 +1013,128 @@ promiseClick()
   }
   ```
 
+
+
+
+
 ## Async, Await
 
 ### generator
 
-- 说明：
+> https://www.liaoxuefeng.com/wiki/1022910821149312/1023024381818112
 
-  一般的函数只有一个返回值，遇见 return 的情况下，会直接结束函数的调用，但是 generator 函数，允许函数有多个返回值，每一次返回，都会返回一个 generator 对象，需要使用.next()的方式对其进行调用。
+**特点**：
 
-- 参考资料
+1. generator函数的特点是function后面会带个`*`
+2. 而且一般函数返回用的`return`，generator函数返回用的`yield`和`return`
+3. **generator函数调用后返回一个迭代器对象，而不是自己写函数体力的的return值**
+4. 每次调用迭代器对象的`next`，都会走到下一个`yield`处，直到所有yield都走完，或者走到`return`，才会把done变成true，之后再调用next()，将全部是undefined
+5. 调用`next()`方法的时候如果往里面传参，**参数会作为上一个yield的返回值**，如果在第一个next里传参，因为没有上一个yield，所以在第一个next里面传参是无效的
 
-  > https://www.liaoxuefeng.com/wiki/1022910821149312/1023024381818112
+**基本使用**
 
-- 语法
+```javascript
+function* generatorFunction() {
+    console.log('开始执行');
+    yield 'Hello';
+    console.log('继续执行');
+    yield 'World';
+}
 
-  ```javascript
-  // 生成阶段
-  function* fib(max) {
-    var t,
-      a = 0,
-      b = 1,
-      n = 0;
-    while (n < max) {
-      yield a;
-      [a, b] = [b, a + b];
-      n++;
-    }
-    return;
-  }
-  // 调用阶段
-  var f = fib(5);
-  f.next(); // {value: 0, done: false}
-  f.next(); // {value: 1, done: false}
-  f.next(); // {value: 1, done: false}
-  f.next(); // {value: 2, done: false}
-  f.next(); // {value: 3, done: false}
-  f.next(); // {value: undefined, done: true}
-  // 也可以使用for of的方式进行循环调用
-  for (var x of fib(10)) {
-    console.log(x); // 依次输出0, 1, 1, 2, 3, ...
-  }
-  ```
+const generator = generatorFunction(); // 调用生成器函数，直接返回生成器对象
 
-- 异步操作的同步写法：
+console.log(generator.next()); // 开始执行，并打印 { value: 'Hello', done: false }
+console.log(generator.next()); // 继续执行，并打印 { value: 'World', done: false }
+console.log(generator.next()); // 执行结束，并打印 { value: undefined, done: true }
+```
 
-  ```javascript
-  var fs = require("fs");
-  
-  var readFile = function (fileName) {
-    return new Promise(function (resolve, reject) {
-      fs.readFile(fileName, function (error, data) {
-        if (error) reject(error);
-        resolve(data);
-      });
-    });
-  };
-  // -----------------------------markLine----------------------------
-  var gen = function* () {
-    // *（星号）表示函数里有异步操作
-    var f1 = yield readFile("/etc/fstab"); // yield 表示紧跟在后面的表达式需要等待结果
-    var f2 = yield readFile("/etc/shells");
-    console.log(f1.toString());
-    console.log(f2.toString());
-  };
-  // -----------------------------markLine----------------------------
-  ```
+**当迭代器函数体内有return**
+
+```typescript
+function* generatorFunction() {
+    yield 'Hello';
+    return 'Goodbye'; // Generator 函数在这里结束
+    yield '!'; // 这行代码不会被执行
+}
+
+const generator = generatorFunction();
+
+console.log(generator.next()); // 第一次调用next()，输出：{ value: 'Hello', done: false }
+console.log(generator.next()); // 第二次调用next()，到达return语句，输出：{ value: 'Goodbye', done: true }
+console.log(generator.next()); // 第三次调用next()，由于Generator已经结束，输出：{ value: undefined, done: true }
+```
+
+**调用next()传参**
+
+```typescript
+function* generatorFunction() {
+    const value = yield 'Hello';
+    yield 'world'; 
+    console.log('value',value) 
+}
+
+const generator = generatorFunction();
+
+console.log(generator.next()) // 第一次调用next，启动生成器，到达第一个yield 'Hello'
+console.log(generator.next('passValue')) // 第二次调用next，会输出value为world，并将此次的passValue，传递给上一次yield，即yield Hello作为返回值
+console.log(generator.next()) // 第三次调用next
+```
+
+
+
+**底层实现**
+
+generator底层涉及涉及到了 JavaScript 引擎的内部机制，这使得直接在 JavaScript 中完全模拟其行为比较复杂。Generator 的核心特性是能够暂停和恢复执行。在 JavaScript 引擎层面，这需要引擎能够在函数执行中的任意时刻保存当前的执行上下文（包括变量状态、调用栈等），并在适当的时候恢复该上下文。
+
+
 
 ### async, await
 
-- 异步的“终极解决方式”
+参考资料
 
-  js 的异步操作处理，从最开始的回调函数，到后来的 promise，再到 generator，每次都有改进，但是都感觉不彻底，直到出现了 async, await 函数，异步操作变得简单了起来，借用阮一峰老师的一句话“**异步编程的最高境界，就是根本不用关心它是不是异步**”
+> http://www.ruanyifeng.com/blog/2015/05/async.html
 
-- 参考资料
+⚠️**注意：async函数一定会返回一个promise对象**
 
-  > http://www.ruanyifeng.com/blog/2015/05/async.html
+**基本使用**
 
-- generator 函数
+```javascript
+// 此处模拟先从./name.txt中获取文件路径，再根据文件路径读取文件内容
+async function read(){
+  let filePath = await readFile('./name.txt', 'utf8')
+  return await readFile(filePath, 'utf8')
+}
+// async函数返回一个promize，要获取值的话，直接使用.then获取
+read().then(res => console.log(res))
+```
 
-  async, await，**本质上是 generator 函数的语法糖**
+**核心原理**
 
-- **async, await 语法**
+> https://www.bilibili.com/video/BV1W94y1Q7Bo/?spm_id_from=333.337.search-card.all.click&vd_source=6adac1d9bbd16466fad0c4ec156dc9b7
 
-  在上例的代码中，如果按照 async，await 的语法规则，可改写成如下
+```js
+function* read(){
+  let filePath = yield readFile('./name.txt', 'utf8')
+  return yield readFile(filePath, 'utf8')
+}
 
-  ```javascript
-  // -----------------------------markLine----------------------------
-  var asyncReadFile = async function () {
-    // async 表示函数里有异步操作
-    var f1 = await readFile("/etc/fstab"); // await 表示紧跟在后面的表达式需要等待结果
-    var f2 = await readFile("/etc/shells");
-    console.log(f1.toString());
-    console.log(f2.toString());
-  };
-  // -----------------------------markLine----------------------------
-  ```
+let it = read() // 此处，先获取迭代器对象
+const { value, done } = it.next()  // 此处value返回的会是一个promise
 
-  不难看出，写法区别仅仅是将\*换成了 async，yield 换成了 await
+// 为了拿到value里面的值，需要.then取出来
+value.then(filePath=>{
+  // 此处，我们需要把.then拿到的文件名，传递到迭代器函数里面去，根据generator里面写的第五条，我们通过next传参，可以将参数传递给上一次的yield作为返回值，所以，此处传入filePath，会直接当做上一次yield的filePath的返回值进行接收了。我们同样进行结构，就可以拿到最终文件数据了
+  const { value, done } = it.next(filePath)
+  // 因为第二个yield返回的也是个promise，所以用then获取数据
+  value.then(fileContent=>{
+    console.log(fileContent)
+  })
+})
+```
 
-- **async, await 优点**
 
-  async 函数对 generator 函数的改进，体现在以下三点
 
-  1. **内置执行器**
 
-     Generator 函数的执行必须靠执行器，所以才有了 co 函数库，而 async 函数自带执行器。也就是说，async 函数的执行，与普通函数一模一样
-
-  2. **更好的语义**
-
-     async 和 await，比起星号和 yield，语义更清楚了
-
-  3. **更广的适用性**
-
-     co 函数库约定，yield 命令后面只能是 Thunk 函数或 Promise 对象，而 async 函数的 await 命令后面，可以跟 Promise 对象和原始类型的值（数值、字符串和布尔值，但这时等同于同步操作）
-
-- **async 函数用法**
-
-  await 函数后面接 promise 对象，要等待 promise 对象有返回结果了，才会继续调用函数后面的内容
-
-- **promise 返回 reject 的情况**
-
-  因为 await 后面接的是 promise，所以有可能会出现 reject 的情况，所以建议把 await 命令放在 try...catch 命令中，示例如下
-
-  ```javascript
-  async function myFunction() {
-    try {
-      await somethingThatReturnsAPromise();
-    } catch (err) {
-      console.log(err);
-    }
-  }
-  
-  // 也可以写成
-  async function myFunction() {
-    await somethingThatReturnsAPromise().catch(function (err) {
-      console.log(err);
-    });
-  }
-  ```
-
-  具体的 try...catch 的用法，请见#3.7
 
 ## try...catch...finally
 
