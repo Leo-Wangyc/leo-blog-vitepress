@@ -68,6 +68,7 @@
 - undefined
 - number
 - string
+- bigInt
 - symbol
 
 ### 引用类型
@@ -564,6 +565,10 @@ func(1, 2, "3");
   };
   ```
 
+
+
+
+
 ## 模板字符串
 
 即通过反引号，添加$符号表示变量的方式
@@ -573,7 +578,17 @@ let name = "leo";
 let describe = `My name is ${name}`;
 ```
 
+
+
+
+
 ## 解构赋值
+
+### 构赋值的拷贝性质
+
+解构赋值本质上是**浅拷贝**。当你从一个对象中解构出一个属性值，如果这个属性值是原始类型（如字符串、数字等），那么这相当于按值拷贝。但如果属性值是对象或数组，那解构出来的只是对原始对象的引用。因此，如果你修改这个解构出来的对象，原始对象也会被修改。
+
+
 
 ### 从对象中解构
 
@@ -601,6 +616,8 @@ const demoArr = ["peter", "bill"];
 const [bill, peter] = demoArr;
 console.log(bill); // 'peter'
 ```
+
+
 
 
 
@@ -929,64 +946,117 @@ promiseClick()
   >
   > https://zhuanlan.zhihu.com/p/58428287 图解 promise 原理
   >
+  > https://www.bilibili.com/video/BV1Tu411i72B/?spm_id_from=333.337.search-card.all.click&vd_source=292c7745eb30e2c00d6028dfa6d8c3c5 快速版
+  >
   > node --> promise
 
 - 简单原理实现
 
-  ```javascript
-  const PENDING = "PENDING"; // 对应上述所说的，promise有三大状态，等待态，成功态和失败态
-  const FULFILLED = "FULFILLED";
-  const REJECTED = "REJECTED";
-  class Promise {
-    constructor(executor) {
-      // executor是promise接收的那个函数，在promise中会立即执行
-      this.status = PENDING; // 初始默认状态为等待态
-      this.value = undefined; // value是接收到的executor中的resolve函数的参数
-      this.reason = undefined; // reason是接收到的executor中的reject函数的参数
-      this.onResolveCallbacks = []; // resolve后的then中的函数，会放在此数组中暂存，防止因为executor中有异步操作导致的状态改变异常（例如，executor中有个两秒的setTimeOut，等真正状态改变的时候，才去调用所有的后续then方法）
-      this.onRejectCallbacks = []; // 同理如上
-      let resolve = (value) => {
-        if (this.status === PENDING) {
-          // promise中只可能有一种状态改变，有一种状态后，就立刻结束，不可能从失败变成成功，只有从pending态发生改变才会真正引起状态的改变，从而调用暂存函数数组中的所有函数方法
-          this.value = value;
-          this.status = FULFILLED;
-          this.onResolveCallbacks.forEach((fn) => fn()); // 遍历暂存函数中的所有函数并全部执行
-        }
-      };
-      let reject = (reason) => {
-        if (this.status === PENDING) {
-          this.status = REJECTED;
-          this.reason = reason;
-          this.onRejectCallbacks.forEach((fn) => fn());
-        }
-      };
-      try {
-        executor(resolve, reject); // 对应上面说的，promise传入的函数会立刻执行
-      } catch (e) {
-        reject(e);
+  首先，以正常promise的使用入手
+  
+  ```typescript
+  let p1 = new Promize((resolve, reject)=> {
+    resolve(1)
+  })
+  
+  p1.then((res)=>{
+    console.log(res)
+  }, (err)=>{
+    console.log(err)
+  })
+  ```
+  
+  可以看到，promise接受一个函数(叫做executor)当做参数，该函数包含resolve和reject两个函数，调用resolve，会触发.then的成功回调，调用reject，会触发.then的失败回调（也就是.catch，算是.then失败回调的语法糖）
+  
+  那么，开始实现
+  
+  promise能根据调用resolve和reject从而实现不同的.then，依赖于其中的三种status，分别为PENDING，FULLFILLED，REJECTED，promise在实例化的时候，status为PENDING，当调用resolve的时候，会改为FULLFILLED，当调用reject的时候，会改为REJECTED，再加上，promise在生成的时候会直接执行，所以executor需要直接执行
+  
+  同时，resolve和reject本身都会接收参数，将参数存储到类中
+  
+  ```js
+  class MyPromise {
+    constructor(executor){
+      this.status = 'PENDING'
+      this.value = ''
+      this.error = ''
+     
+      this.resolve = (value) => {
+        this.status = 'FULLFILLED'
+        this.value = value
       }
+      this.reject = (error) => {
+        this.status = 'REJECTED'
+        this.error = error
+      }
+      executor(this.resolve, this.reject)	// 此处executor执行，根据外部调用情况，对应更改status的值
     }
-    then(onFulfilled, onRejected) {
-      // then方法实现，只是简单原理而已，实际上为了实现Promise的链式调用，then方法本身返回的其实是一个promise，所以才可以实现无限then
-      if (this.status === FULFILLED) {
-        // 此处的直接调用，是executor中代码是同步代码的情况
+  }
+  ```
+  
+  接下来，来实现then，then接收两个函数作为参数，一个成功回调，一个失败回调
+  
+  ```js
+  class MyPromise {
+    constructor(executor){
+      ...
+      this.resolve = (value) => {
+        this.status = 'FULLFILLED'
+        this.value = value
+        this.successFuncList.forEach((func) => func(this.value));	// 将暂存的函数进行调用
+      };
+      this.reject = (error) => {
+        this.status = 'REJECTED'
+        this.error = error
+        this.rejectFuncList.forEach((func) => func(this.error));
+      };
+      this.successFuncList = []
+      this.rejectFuncList = []
+    }
+    
+    then(onFulfilled, onRejected){
+      if (this.status === "FULLFILLED") {
         onFulfilled(this.value);
       }
-      if (this.status === REJECTED) {
-        onRejected(this.reason);
+      if (this.status === "REJECTED") {
+        onRejected(this.error);
       }
-      if (this.status === PENDING) {
-        // 这里是异步代码的情况，将onFulfilled函数压入onResolveCallbacks数组中，等待异步加载完毕，状态改变后，再进行调用
-        this.onResolveCallbacks.push(() => {
-          onFulfilled(this.value);
-        });
-        this.onRejectCallbacks.push(() => {
-          onRejected(this.reason);
-        });
+      // 如果then里面是setTimeout这类函数，可能状态不会及时更新，这时候需要将函数暂存
+      if (this.status === "PENDING") {
+        this.successFuncList.push(() => successFunc);
+        this.rejectFuncList.push(() => failFunc);
       }
     }
   }
   ```
+  
+  第三步，来实现链式调用
+  
+  很简单，仅需将.then里面的内容用promise包裹，然后再状态改变的时候再次触发resolve/reject更改promise的状态即可，链式调用的.then参数如何接收待补充
+  
+  ```js
+  ...
+  then(onFulfilled, onRejected){
+    const p2 = new MyPromise((resolve, reject)=> {
+      if (this.status === "FULLFILLED") {
+        onFulfilled(this.value);
+        resolve()
+      }
+      if (this.status === "REJECTED") {
+        onRejected(this.error);
+        reject()
+      }
+      if (this.status === "PENDING") {
+        this.successFuncList.push(() => successFunc);
+        this.rejectFuncList.push(() => failFunc);
+      }
+    })
+  }
+  ```
+  
+  
+
+
 
 ## Async, Await
 
@@ -1053,6 +1123,8 @@ promiseClick()
   };
   // -----------------------------markLine----------------------------
   ```
+
+
 
 ### async, await
 
@@ -1129,7 +1201,9 @@ promiseClick()
 
   具体的 try...catch 的用法，请见#3.7
 
-## try...catch...finally
+
+
+## try...catch
 
 - 作用
 
@@ -1519,6 +1593,8 @@ let cat = new Animal(); // '执行了'
 
 ### Array.reduce
 
+> https://www.jianshu.com/p/e375ba1cfc47
+
 reduce 方法有很多的骚操作，类似于对数组进行一波 map，每个值都可以进行一些操作，然后实现一些逼格比较高的功能
 
 1. **reduce 函数介绍**
@@ -1604,11 +1680,36 @@ reduce 方法有很多的骚操作，类似于对数组进行一波 map，每个
      }, 0); // 50000
      ```
 
-5. **参考文档**
 
-   写得非常详细，而且简单易懂，强推
 
-   > https://www.jianshu.com/p/e375ba1cfc47
+**reduce原理**
+
+首先查看一下基本的使用方式，接收一个回调函数，返回一个操作过后的累计值
+
+```js
+[1,2,3,4,5].reduce((pre, cur)=>{
+  return pre + cur
+})
+```
+
+根据使用方式倒推实现原理，核心是通过this拿到当前调用的array本身，然后循环调用传进来的回调函数
+
+```js
+Array.prototype.myReduce = function(cb, initialValue = 0){
+  let value = initialValue
+  let array = this
+  
+  array.forEach(item=>{
+    value = cb(value, item)
+  })
+  
+  return value
+}
+```
+
+
+
+
 
 ### 类数组
 
