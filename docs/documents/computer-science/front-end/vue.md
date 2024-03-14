@@ -16,6 +16,87 @@ v-once包裹的内容，只会渲染一次，后续值的更新不会触发组�
 
 
 
+## 修饰符
+
+### 事件修饰符
+
+事件修饰符使得事件处理更简单，无需在方法内部手动调用函数如`event.preventDefault()`或`event.stopPropagation()`。
+
+**.stop **调用`event.stopPropagation()`，停止事件冒泡
+
+```html
+<button v-on:click.stop="doThis">点击我</button>
+```
+
+**.prevent** \- 调用`event.preventDefault()`，阻止默认事件行为
+
+以submit按钮提交为例，当不添加prevent事件时候，点击会直接触发原生方法，包括a标签也是，会直接跳转，通过prevent，可以阻止原生方法的执行
+
+```html
+<form v-on:submit.prevent="onSubmit">提交</form>
+<a href="xxx" @click.prevent="handleClick">跳转</a>
+```
+
+**.capture** - 添加事件侦听器时使用事件捕获模式。
+
+```html
+<div v-on:click.capture="doThis">点击我</div>
+```
+
+**.self** - 只当在 event.target 是当前元素自身时触发处理函数。
+
+```html
+<div v-on:click.self="doThat">点击我</div>
+```
+
+**.once** \- 事件只触发一次。
+
+```html
+<button v-on:click.once="doThis">点击我</button>
+```
+
+**.passive** \- 以 `{ passive: true }`模式添加侦听器，常用于提高滚动性能。
+
+```html
+<div v-on:scroll.passive="onScroll">滚动我</div>
+```
+
+**.native** \- 已在vue3中移除，`.native`修饰符用于监听组件根元素的原生事件。
+
+假设你有一个按钮组件`<my-button>`，这个组件内部渲染了一个`<button>`标签。如果你想在使用`<my-button>`时监听这个按钮的点击事件（一个原生的`click`事件），你需要使用`.native`修饰符。
+
+```html
+<div v-on:scroll.passive="onScroll">滚动我</div>
+```
+
+
+
+
+
+### 按键修饰符
+
+用于键盘事件，使得只有在特定按键被按下时才触发事件。
+
+```html
+<!-- 只有在按下 Enter 键时才调用 vm.submit() -->
+<input v-on:keyup.enter="submit">
+```
+
+
+
+### 鼠标按钮修饰符
+
+Vue 2.2.0+ 新增，用于指定鼠标按钮。
+
+```html
+<!-- 只有在使用鼠标左键点击时才会触发 -->
+<button v-on:click.left="doThis">点击我</button>
+```
+
+
+
+
+
 # Vue3
 
 ## Vue2的缺点

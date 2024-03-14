@@ -1277,78 +1277,84 @@ let cat = new Animal(); // '执行了'
 
 > 数组遍历 _Array traversal_
 
-1. for 循环 (for loop)
+**for 循环 (for loop)**
 
-   普通写法： for(let i=0; i < arr.length; i++){}
+普通写法： for(let i=0; i < arr.length; i++){}
 
-   优化写法： for(let i=0, len= arr.length; i < len; i++){}
+优化写法： for(let i=0, len= arr.length; i < len; i++){}
 
-2. map 遍历
+**map 遍历**
 
-   遍历每个元素，并对每个元素都进行操作，会**改变原数组中的引用类型的值，不改变值类型的值**，返回值是更改后的数组
+遍历每个元素，并对每个元素都进行操作，会**改变原数组中的引用类型的值，不改变值类型的值**
 
-   ```typescript
-   let arr = [1, { a: 2 }];
-   arr.map((item, index) => {
-     return item * 2; // map需要有返回值
-   });
-   ```
+返回值是**更改后的数组**
 
-3. filter 过滤
+```typescript
+let arr = [1, { a: 2 }];
+arr.map((item, index) => {
+  return item * 2; // map需要有返回值
+});
+```
 
-   对数组中指定的一些元素进行筛选过滤，返回值为**过滤后满足条件的新数组，不改变原数组**
+**filter 过滤**
 
-   ```typescript
-   let arr = [1, 2, 3];
-   arr.filter((item, index) => {
-     return item > 2;
-   }); // [3]
-   ```
+对数组中指定的一些元素进行筛选过滤
 
-4. some
+返回值为**过滤后满足条件的新数组，不改变原数组**
 
-   对数组中的每项进行遍历，如果其中有一项满足所给出的条件，则**返回为 true，不改变原数组**
+```typescript
+let arr = [1, 2, 3];
+arr.filter((item, index) => {
+  return item > 2;
+}); // [3]
+```
 
-   ```typescript
-   let arr = [1, 2, 3];
-   arr.some((item, index) => {
-     return item > 2;
-   }); // true
-   ```
+**some**
 
-5. every
+对数组中的每项进行遍历，如果其中有一项满足所给出的条件，则**返回为 true，不改变原数组**
 
-   对数组中的每项进行遍历，如果其中所有项都满足所给出的条件，则**返回为 true，不改变原数组**
+```typescript
+let arr = [1, 2, 3];
+arr.some((item, index) => {
+  return item > 2;
+}); // true
+```
 
-   ```typescript
-   let arr = [1, 2, 3];
-   arr.some((item, index) => {
-     return item > 2;
-   }); // false
-   ```
+**every**
 
-6. forEach
+对数组中的每项进行遍历，如果其中所有项都满足所给出的条件，则**返回为 true，不改变原数组**
 
-   遍历每个元素，并对每个元素都进行操作，会**改变原数组中的所有值，且无返回值**
+```typescript
+let arr = [1, 2, 3];
+arr.some((item, index) => {
+  return item > 2;
+}); // false
+```
 
-   ```js
-   let arr = [1, 2, 3];
-   arr.forEach((item, index) => {
-     return (arr[index] = item * 2); // 此处写法和map略有不同
-   }); // arr: [2, 4, 6]
-   // 错误示范：
-   arr.forEach((item, index) => {
-     return item * 2; // 直接写return item*2，并不会有任何效果，原数组不变
-   });
-   ```
+**forEach**
 
-   **和 map 的区别**
+遍历每个元素，并对每个元素都进行操作，**不改变原数组中的值**
 
-   - map 返回新数组，不改变原数组中的基本类型的值
-   - foreach 会改变原数组中的值
-   - map 运行速度比 foreach 快，foreach 运行速度比 for 循环快
+**无返回值！**
 
-7. 遍历方法总结
+```js
+let arr = [1, 2, 3];
+arr.forEach((item, index) => {
+  return (arr[index] = item * 2); // 此处写法和map略有不同
+}); // arr: [2, 4, 6]
+// 错误示范：
+arr.forEach((item, index) => {
+  return item * 2; // 直接写return item*2，并不会有任何效果，原数组不变
+});
+```
+
+**和 map 的区别**
+
+- map 返回新数组，不改变原数组中的基本类型的值
+- foreach 会改变原数组中的值
+- map 运行速度比 foreach 快，foreach 运行速度比 for 循环快
+
+1. 遍历方法总结
 
    | 方法名  | 返回值    | 是否改变原数组                            |
    | ------- | --------- | ----------------------------------------- |
@@ -1709,38 +1715,77 @@ Array.prototype.myReduce = function (cb, initialValue = 0) {
 
 ### 字符串检索
 
-1. **indexOf**
+**indexOf**
 
-   indexOf 用于检查字符串中是否有某一段字符串，如果有，返回索引值，否则返回-1
+indexOf 用于检查字符串中是否有某一段字符串，如果有，返回索引值，否则返回-1
 
-2. **search**
+**search**
 
-   search 用于检查字符串中某一段字符串所出现的位置，如果有，返回索引值，否则返回-1，与 indexOf 不同的是，search 支持正则
+search 用于检查字符串中某一段字符串所出现的位置，如果有，返回索引值，否则返回-1，与 indexOf 不同的是，search 支持正则
 
 
 
 ### 字符串提取
 
-1. **slice**
+**slice**
 
-   slice 接收两个参数，起始的索引和终止的索引，如果只传一个，那么会返回裁剪点到之后的全部内容
+slice 接收两个参数，起始的索引和终止的索引，如果只传一个，那么会返回裁剪点到之后的全部内容
 
-   ```javascript
-   var str = "Apple, Banana, Mango";
-   var res = str.slice(7, 13); // Banana
-2. **subString**
+```javascript
+var str = "Apple, Banana, Mango";
+var res = str.slice(7, 13); // Banana
+```
+
+**subString**
 
  用法类似 slice，不过不支持负数
 
-3. **substr**
+**substr**
 
  接受两个参数，第一个为起点索引，第二个为截取的长度
 
 
 
+### 字符串补充
+
+**padStart**
+
+用于在字符串前面补位，接收两个参数，第一个是字符串总位数，第二个是补位字符
+
+```js
+let str = '2'
+str.padStart(5, '0')	// 00002
+```
+
+**padEnd**
+
+用于在字符串后面补位，接收两个参数，第一个是字符串总位数，第二个是补位字符
+
+```js
+let str = '2'
+str.padStart(5, '0')	// 20000
+```
+
+padEnd如果需要和小数补位结合，给小数补位数的话，则需要动态调整，因为整数部分的长度并不固定，如下
+
+```js
+// 定义一个函数
+function formatDecimal(str, decimal) {
+  const [int, dec = ''] = String(str).split('.')
+  return `${int}.${dec.padEnd(decimal, '0')}`
+}
+// 使用
+const str = 0.2
+formatDecimal(str, 5) // '0.20000'
+```
+
+
+
+
+
 ### 数字和字符串的转化
 
-- 数字转字符串
+**数字转字符串**
 
 ```js
 let num = 41;
@@ -1749,18 +1794,18 @@ num.toString(2); // '101001'		转二进制
 num.toString(16); // '29'	转十六进制
 ````
 
-- 字符串转数字
+**字符串转数字**
 
-  ```js
-  let str = "0x29";
-  let num = parseInt(str); // 16
-  
-  let str = "101001";
-  let num = parseInt(str, "2"); // 41
-  
-  let str = "29";
-  let num = parseInt(str, "16"); // 41
-  ```
+```js
+let str = "0x29";
+let num = parseInt(str); // 16
+
+let str = "101001";
+let num = parseInt(str, "2"); // 41
+
+let str = "29";
+let num = parseInt(str, "16"); // 41
+```
 
 
 
