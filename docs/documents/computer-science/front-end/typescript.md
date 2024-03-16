@@ -2,9 +2,9 @@
 
 > 深入理解 typescript: https://jkchao.github.io/typescript-book-chinese/#why
 
-## ts 数据类型
 
----
+
+## ts 数据类型
 
 ### 常见数据类型
 
@@ -186,8 +186,6 @@ BigInt 和 Number 是 js 中的类型，bigint 和 number 是 ts 中的类型
    ```
 
 ## 断言
-
----
 
 ### as
 

@@ -971,7 +971,84 @@ TODO
 
 ### 整理框架设计思路
 
+整体的框架思路就是一个进阶版的发布订阅系统从而实现的双向绑定系统
+
 <img src="../../../public/assets/vue/image-20240313234119788.png" alt="image-20240313234119788"  />
+
+
+
+### 基本框架搭建
+
+**基本使用**
+
+根据手写代码的逻辑，根据使用，来反推写法，vue2的基本使用如下
+
+```html
+...
+<div id="app">
+  <h1>Title: {{ title }}</h1>
+  <p>Content: {{ content }}</p>
+</div>
+...
+
+<script src='vue cdn address'></script>
+<script>
+	const vm = new Vue({
+    el: '#app',
+    data(){
+      return {
+        title: 'title',
+        content: 'content',
+      }
+		}
+  })
+</script>
+```
+
+可以看到，new了一个Vue实例，传入了一个配置对象`options`，其中包含了要挂在的位置`el`，还包含了`data`，即vue实例中的状态
+
+**实现Vue class**
+
+```js
+class Vue{
+  constructor(options){
+    this.$options = options
+    this.$data = options.data
+    const el = options.el
+    this.$el = typeof el = string ? document.querySelector(el) : el // 这里默认el要么是string，要么是HTMLElement
+	}
+}
+```
+
+上面就是一个基本的Vue的结构了，我们需要再往里面补充逻辑
+
+1. 将属性注入到vue实例
+2. 创建observer对data的属性变化进行监听
+3. 视图的解析
+
+**功能实现**
+
+下面来分别进行讲解
+
+第一步，将属性注入到Vue的实例中，为的是直接this.name就可以拿到上面vm实例中，$data里面的值，相当于是为了实现直接通过`this.name`可以拿到`this.$data.name`的值，这一步，vue2采用的是defineProperty来实现
+
+这里
+
+```js
+class Vue {
+  constructor(){...}
+  
+  ...
+  
+  proxyVm(this, this.$data)
+}
+  
+function proxyVm (target, data){
+  
+}
+```
+
+
 
 
 
