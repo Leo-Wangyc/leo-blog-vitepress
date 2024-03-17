@@ -977,7 +977,7 @@ TODO
 
 
 
-### 基本框架搭建
+### 响应式原理
 
 **基本使用**
 
@@ -1022,9 +1022,9 @@ class Vue{
 
 上面就是一个基本的Vue的结构了，我们需要再往里面补充逻辑
 
-1. 将属性注入到vue实例
-2. 创建observer对data的属性变化进行监听
-3. 视图的解析
+1. **将属性注入到vue实例**
+2. **创建observer对data的属性变化进行监听**
+3. **视图的解析**
 
 **功能实现**
 
@@ -1032,21 +1032,151 @@ class Vue{
 
 第一步，将属性注入到Vue的实例中，为的是直接this.name就可以拿到上面vm实例中，$data里面的值，相当于是为了实现直接通过`this.name`可以拿到`this.$data.name`的值，这一步，vue2采用的是defineProperty来实现
 
-这里
+⚠️**注意！**这里，我们不能直接用`Object.assign(target, source)`的方式进行处理，因为这样**对于值类型来说是深拷贝**。这么做，并不是通过this.name拿到this.$data.name，而是直接复制一个值，当我们尝试更改this.name的时候，并不是更改的this.$data.name
 
 ```js
 class Vue {
   constructor(){...}
   
   ...
-  
+  // 将属性注入到vue实例
   proxyVm(this, this.$data)
 }
   
-function proxyVm (target, data){
-  
+function proxyVm (target, source){
+  // 先通过Object.keys拿到source里面的所有key，进行循环
+  Object.keys(data).forEach(key => {
+    // 将每个属性，都添加到vue实例上
+    Object.defineProperty(target, key, {
+      enumerable: true,
+      configurable: true,
+      get(){
+        return source[key]
+			}
+      set(newValue){
+      	source[key] = value
+    	}
+    })
+  })
 }
 ```
+
+第二步，创建Observer实现对data里面属性的监听，这是通过创建一个Observer类来实现的
+
+要实现这个Observer，我们需要将data传进去，并分别对里面的每个属性进行监听，如果属性的值本身是个对象，则需要递归进行监听
+
+```js
+class Vue {
+  constructor(){...}
+  
+  ...
+  // 创建一个新的Observer，来实现对data里面所有数据的响应式
+  new Observer(data)
+}
+
+class Observer {
+  constructor(data){
+    this.data = data
+    // 这个walk用来实现具体的监听逻辑
+		this.walk(data)
+  }
+  
+  // 将整个data,单个属性key以及值value，也就是data[key]传入
+  walk(data){
+    Object.keys(data).forEach(key => defineReactive(data, key, data[key]))
+  }
+}
+
+// 该方法用于设置响应式
+function defineReactive(data, key, value){
+  // 如果data中的某个属性本身也是个对象，那么就需要进行递归创建响应式
+  if (typeof value === 'object' && value !== null){
+    return new Observer(value)
+  }
+  // 
+  Object.defineProperty({
+    enumerable: true,
+    configurable: true,
+    get(){
+      // 逻辑待补充
+    }	
+    set(){
+    	// 逻辑待补充
+		}
+	})
+}
+```
+
+上面就创建了一个响应式监听的框架，但是具体响应式get和set的时候应该需要进行什么额外的逻辑呢
+
+首先，我们的data里面的数据和页面模板template中的数据是需要双向绑定的，因此，创建响应式**实际上就是teplate里面用到的data数据，和data数据本身的一个双向绑定关系**，类似于一个双向的发布订阅模式，data变，template变，template变，data也要变
+
+所以，我们需要记录一下template里面，哪些地方用到了data里面的数据，将其全部进行记录，进行存储管理，当data和template任意一个地方发生变化后，都需要通知另一方同样发生变化，而这个存储管理的地方，就类似于发布订阅中的eventBus的功能，在vue里面，这个地方就叫做`Dep`
+
+故而，我们new一个Dep用于管理发布和订阅，**它里面会记录使用了当前的响应式数据的所有的template的区域，以及每个区域需要对应更新的方式（即eventbus中subscriber的回调函数）**
+
+对应的，每个Observer都会需要new一个Dep，用于通知dep当前Observer发生了变化，需要通知其他地方，我们在Observer中添加
+
+```js
+class Observer {
+  constructor(data){
+    this.data = data
+		this.walk(data)
+    // 添加eventBus
+    this.dep = new Dep()
+  }
+  
+  walk(data){
+    const dep = this.dep
+    Object.keys(data).forEach(key => defineReactive(data, key, data[key], dep))
+  }
+}
+```
+
+然后，defineReactive中，这一块对于响应式逻辑的处理也可以添加逻辑了
+
+```js
+Object.defineProperty({
+  enumerable: true,
+  configurable: true,
+  get(){
+    // 当响应式数据被读取，我们要通过dep记录一下读取的位置，方便到时候响应式数据进行变更的时候可以通知这里进行更改
+    dep.addSubscriber()
+  }	
+  set(newValue){
+    // 通过dep，通知所有使用到了当前属性的地方，对这个值的变更进行更新
+  	dep.notify()
+  }
+})
+```
+
+好，接下里，我们可以实现这个`Dep`了，和eventBus一样，定义一个`subscribers`，用于存储每个使用到该响应式数据的地方，然后实现一下上面提到的`addSubscriber`和`notify`，这就和发布订阅模式保持一致了
+
+```js
+class Dep{
+  constructor(){
+    this.subscribers = []
+	}
+  
+  // 此时，我们还不确定这个subscriber的形态
+  addSubscriber(...){
+    this.subscribers.push(...)
+	}
+  
+  notify(){
+    // update就是 subscriber的更新回调
+    this.subscribers.forEach(sub => sub.update())
+  }
+}
+```
+
+下一步，我们需要确认的就是这个subscribers里面应该存什么，怎么描述这个subscriber的位置？这样就引申到了第三部分，视图的解析
+
+**第三步，视图解析compiler**
+
+定义一个compiler类，用于解析template，看看哪些地方用到了响应式数据，并在对应的地方创建一个`watcher`，和响应式数据Observer相关联，这样就可以在Observer更新的时候，同时进行更新了
+
+
 
 
 
@@ -1059,7 +1189,7 @@ function proxyVm (target, data){
 整体模块划分为三大块，**compiler-module，renderer-module，reactivity-module**
 
 + 编译器模块compiler将视图模板编译成一个**渲染函数**
-+ 数据响应式模块reactivity将模板中使用到的**数据对象变为为响应式对象**
++ 数据响应式模块reactivity将模板中使用到的**数据对象变为为响应式对象**，就是上面提到的响应式原理
 + 渲染模块开始进入渲染阶段(render phase)，调用刚刚生成的**渲染函数**，观察响应式数据对象的变化，并返回一个**虚拟的DOM节点**
 + 然后在挂载阶段(mount phase)，调用`mount`函数，使用**虚拟DOM节点**来创建web页面
 + 当观察的响应式对象发生变化时，渲染模块会再次调用**渲染函数**创建一个新的虚拟DOM节点，然后发送到`patch`函数中，进行DOM diff，然后更新视图
