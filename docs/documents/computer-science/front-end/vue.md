@@ -69,6 +69,20 @@ v-once包裹的内容，只会渲染一次，后续值的更新不会触发组�
 <div v-on:scroll.passive="onScroll">滚动我</div>
 ```
 
+**.sync** \- 用于简化父子组件中对于传值属性的双向绑定
+
+例如，父组件中，将parentTitle数据传给子组件，
+
+```js
+<child-component :title.sync="parentTitle"></child-component>
+```
+
+子组件中，可以通过$emit，update这个数据，从而实现父组件的响应
+
+```js
+this.$emit('update:title', newValue);
+```
+
 
 
 
