@@ -1174,6 +1174,21 @@ const routes = [
 
 
 
+### 路由守卫
+
+通过路由守卫，可以实现在路由跳转前进行一些处理
+
+⚠️**注意：如果使用路由守卫，一定要调用next()，不然不会进行组件渲染**
+
+```js
+router.beforeEach((to, from, next)=>{
+	console.log('路由跳转前执行了')
+  next()	// 需要执行next通知渲染路由
+})
+```
+
+
+
 
 
 
@@ -1182,7 +1197,152 @@ const routes = [
 
 > vuex /vju x/
 
+vuex一般放在store文件夹里，基本结构如下
 
+```js
+// store/index.js
+import Vue from 'vue'
+import Vuex from 'vuex'
+
+Vue.use(vuex)
+
+export default new Vuex.Store({
+  state: {},
+  getters: {},
+  mutations: {},
+  actions: {},
+  modules: {},
+})
+```
+
+
+
+### State
+
+**定义**
+
+用于存放所有组件中都共同的值，定义方式如下，建议采用类似data的方式，用函数进行返回
+
+```js
+state() {
+  return {
+    loginStatus: '用户登录',
+    count: 0,
+  }
+},
+```
+
+**使用方式**
+
+直接this.$store即可
+
+```js
+this.$store.state.loginStatus
+```
+
+
+
+### Mutations
+
+**定义**
+
+虽然可以通过this.$store.state.xxx的方式直接对值进行更改，不过这样不符合设计规范，而且也不清楚到底哪里进行了更改，所以，更推荐使用mutation的方式对vuex定义的状态值进行更改
+
+```js
+mutations: {
+  changeCount(state, num){
+    state.count += num
+  }
+},
+```
+
+**使用**
+
+通过commit来提交mutation
+
+```js
+this.$store.commit('changeCount', 1)
+```
+
+
+
+### Actions
+
+**定义**
+
+actions主要也是用来通过方法，修改state的，不过与mutation不同的是，actions主要掌管的是具有异步逻辑的一些操作，而且最终在拿到异步返回值后，还是需要通过`store.commit`调用mutation进行修改
+
+```js
+atcions: {
+  // 注意，此处是store，不是state
+  asyncChangeCount (store, num){
+    setTimeout(()=>{
+      store.commit('changeCount', num)
+    }, 3000)
+  }
+},
+```
+
+**使用**
+
+通过dispatch来提交action
+
+```js
+this.$store.dispatch('asyncChangeCount', 10)
+```
+
+
+
+### Getter
+
+**定义**
+
+getter实现的其实就是vue文件中的computed功能，具有缓存性
+
+```js
+getters: {
+  len(state){
+    return state.loginStatus.length
+  }
+},
+```
+
+**使用**
+
+和computed一样，当属性直接使用即可
+
+```js
+this.$store.getters.len
+```
+
+
+
+### Modules
+
+**定义**
+
+modules用于配置不同的模块使用方式
+
+```js
+modules: {
+  a: {
+    state,
+    mutations,
+  },
+  b: {
+    state, 
+    actions
+  }
+},
+```
+
+**使用**
+
+用的时候，相当于多包了一层
+
+```js
+this.$store.a.state.loginStatus
+```
 
 
 
