@@ -585,6 +585,47 @@ Vue3 composition API中的组件
 
 
 
+### 父子组件生命周期顺序
+
+**挂载（Mounting）**
+
+1. **父组件** `beforeCreate`
+2. **父组件** `created`
+3. **父组件** `beforeMount`在这一步之后，Vue开始处理子组件。
+4. **子组件** `beforeCreate`
+5. **子组件** `created`
+6. **子组件** `beforeMount`
+7. **子组件** `mounted`到这一步，子组件已经挂载完成。
+8. **父组件** `mounted`最后，父组件挂载完成。
+
+这表明，Vue首先完全初始化父组件（直到`beforeMount`），然后开始处理子组件，直到子组件完全挂载（`mounted`），最后父组件完成挂载。
+
+
+
+**更新（Updating）**
+
+当响应式数据发生变化，需要重新渲染时：
+
+1. **父组件** `beforeUpdate`
+2. **子组件** `beforeUpdate`
+3. **子组件** `updated`
+4. **父组件** `updated`
+
+更新过程首先从父组件开始，但实际的渲染更新会先处理子组件，然后是父组件。
+
+
+
+**销毁（Unmounting/Destruction）**
+
+当组件销毁时：
+
+1. **父组件** `beforeDestroy`/`beforeUnmount`（Vue 3.x中为`beforeUnmount`）
+2. **子组件** `beforeDestroy`/`beforeUnmount`
+3. **子组件** `destroyed`/`unmounted`
+4. **父组件** `destroyed`/`unmounted`
+
+销毁过程首先触发父组件的`beforeDestroy`/`beforeUnmount`，然后是子组件的同名钩子，接着子组件被完全销毁，最后是父组件。
+
 
 
 
@@ -904,7 +945,32 @@ const comId = shallowRef(ACom)
 
 ### 异步组件
 
-#### 异步组件和懒加载
+```vue
+<template>
+  <button @click="loadComponent">Load Component</button>
+  <div v-if="dynamicComponent">
+    <Component :is="dynamicComponent" />
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      dynamicComponent: null,
+    };
+  },
+  methods: {
+    async loadComponent() {
+      // 异步导入组件
+      this.dynamicComponent = (await import('./DynamicComponent.vue')).default;
+    },
+  },
+};
+</script>
+```
+
+
 
 
 
@@ -962,6 +1028,155 @@ const slotName = ref('header')
 ### 插槽传值
 
 TODO
+
+
+
+## vue-router
+
+> route   / rut/ /raot/ 都可以
+>
+> router  /rao der/ 基本上只读rao音
+
+### 懒加载
+
+Vue 路由懒加载是一种优化技术，其核心思想是将 Vue 应用分割成多个代码块（chunk），然后在路由访问时才动态加载对应的组件代码块。这样做的好处是减少应用的初始加载时间，特别是在大型应用中，可以显著提升用户体验。
+
+懒加载是通过动态导入（Dynamic Imports）实现的，这是 ES2015 (ES6) 提出的一个功能
+
+**使用懒加载**
+
+```typescript
+import { createRouter, createWebHistory } from 'vue-router';
+
+const routes = [
+  {
+    path: '/home',
+    name: 'Home',
+    // 使用动态导入实现按需加载
+    component: () => import('./views/Home.vue')
+  },
+  {
+    path: '/about',
+    name: 'About',
+    // 使用动态导入实现按需加载
+    component: () => import('./views/About.vue')
+  }
+];
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
+export default router;
+```
+
+**不使用懒加载**
+
+```js
+import Home from './views/Home.vue';
+import About from './views/About.vue';
+
+const routes = [
+  {
+    path: '/',
+    name: 'Home',
+    component: Home
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: About
+  },
+  // 更多路由...
+];
+```
+
+
+
+### 动态路由
+
+通过动态路由，可以实现一个根path后面拼接`:param`的方式，采用同一个组件，如下
+
+```typescript
+// router/index.js
+{
+  path: '/video/:id',
+  name: 'Video',
+  component: () => import('./views/Video.vue')
+}
+```
+
+这种情况下，通过router-link去跳转到对应的组件内部，下面两种写法都可以
+
+```vue
+// parent component 任意父组件
+<template>
+  <div>
+    <router-link :to="`video/${id}`"
+    <router-link :to="{name: video, params: {id: '30'}}">
+  </div>
+</template>
+```
+
+而组件内部的props可以拿到对应的值
+
+```vue
+// Video.vue
+<template>
+	{{id}}
+</template>
+
+<script>
+  export default {
+    name: 'VideoView',
+    props: ['id']
+  }
+</script>
+```
+
+
+
+### 嵌套路由
+
+通过`children`可以实现路由嵌套
+
+```js
+// router/index.js
+{
+  path: '/video/:id',
+  name: 'Video',
+  component: () => import('./views/Video.vue')
+  children: [
+    {
+      path: '/video/:id',
+      name: 'Video',
+      component: () => import('./views/Video1.vue')
+    }
+    ...
+  ]
+}
+```
+
+
+
+
+
+
+
+## Vuex
+
+> vuex /vju x/
+
+
+
+
+
+
+
+## Pinia
+
+
 
 
 
@@ -1142,6 +1357,7 @@ Object.defineProperty({
   get(){
     // 当响应式数据被读取，我们要通过dep记录一下读取的位置，方便到时候响应式数据进行变更的时候可以通知这里进行更改
     dep.addSubscriber()
+    return value
   }	
   set(newValue){
     // 通过dep，通知所有使用到了当前属性的地方，对这个值的变更进行更新
@@ -1174,9 +1390,83 @@ class Dep{
 
 **第三步，视图解析compiler**
 
-定义一个compiler类，用于解析template，看看哪些地方用到了响应式数据，并在对应的地方创建一个`watcher`，和响应式数据Observer相关联，这样就可以在Observer更新的时候，同时进行更新了
+定义一个compiler类，用于解析template，看看哪些地方用到了响应式数据，并在对应的地方创建一个`watcher`，和响应式数据Observer相关联，这样就可以在Observer更新的时候，同时进行更新了。
 
+首先，创建Compiler类，通过传入this，即vue实例，前面我们在vue实例中定义了el属性，通过`this.$el`可以拿到实例的DOM元素，对其进行解析操作，写一个解析函数
 
+```typescript
+class Vue({
+  constructor(){...}
+  
+  new Compiler(this)
+})
+```
+
+解析函数中，拿到el，即template中的所有子节点，根据子节点的对应不同类型，进行不同的处理
+
+⚠️**注意！template中的实际上是一段模板语法，并不是真实DOM，template是交给compiler进行解析再渲染用的**
+
+```typescript
+class Compiler(
+	constructor(vm){
+  	this.vm = vm
+  	this.el = vm.$el
+  	this.compile(this.el)
+  }
+  
+  compiler(el){
+    const childNodes = el.childNodes
+    Array.from(childNodes).forEach(node => {
+      if(node.nodeType  === 3){
+        // 进行文本解析
+        this.compileText(node)
+      }else if(node.nodeType ===1){
+        // TODO
+        this.compileXXX
+      }
+      if(node.childNodes && node.childNotes.length){
+        // TODO
+        this.compile(node)
+			}
+    })
+  }
+)
+```
+
+compile内容，里面会新建watcher
+
+```typescript
+compileText(node){
+  const reg = /\{\{(.+?\}\}/
+  ...
+  new Watcher(this.vm, key, newValue => {
+    ...
+  })
+}
+```
+
+watcher
+
+```js
+class Watcher {
+  constructor(vm, key, callback){
+    this.vm = vm
+    this.key = key
+    this.callback = callback
+    
+    Dep.target = this
+    this.oldvalue = vm[key]
+    Dep.target = null
+  }
+  
+  update() {
+    const newValue = this.vm[this.key]
+    if(newValue === this.oldValue) return
+    this.callback(newValue)
+    this.oldValue = newValue
+  }
+}
+```
 
 
 

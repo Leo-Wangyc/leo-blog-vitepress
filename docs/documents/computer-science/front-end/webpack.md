@@ -1,8 +1,4 @@
-Webpack
-
-# 1 前端模块化
-
-## 1.1 早期模块化实现
+##  早期模块化实现
 
 由于 js 的语言特性，var 变量是直接挂载到 window 的顶级对象上，早期写 js 代码的时候，用 export 导出，再在总的 app.js 中导入的时候，很容易就出现了变量命名冲突的问题，而当初，js 并没有 let 这种定义特定作用域的语法，所以，如果当时要解决命名冲突的问题，往往人们使用导出一个对象的方式
 
@@ -29,13 +25,21 @@ export var a = {
 })(window); // 1.传入window全局对象
 ```
 
-## 1.2 模块化优点
+
+
+
+
+## 模块化优点
 
 - 作用域封装
 - 代码重用
 - 解除耦合
 
-## 1.3 模块化进化过程
+
+
+
+
+## 模块化进化过程
 
 > 详细的模块化语法可见 ES6.md 中的模块化笔记
 
@@ -43,7 +47,11 @@ export var a = {
 - AMD
 - ES6 Module（export/ import）
 
-# 2 Webpack 打包机制
+
+
+
+
+## Webpack 打包机制
 
 > 先简单讲一下打包的原理，关于 webpack 的源码，可后续做笔记补充！
 
@@ -75,9 +83,13 @@ Webpack 的打包机制其实和 1.1 中所提到的立即执行函数是一样�
 >
 > https://www.bilibili.com/video/BV1a741197Hn/?spm_id_from=333.788.recommend_more_video.-1
 
-# 3 package.json
 
-## 3.1 语义化版本
+
+
+
+## package.json
+
+### 语义化版本
 
 - ^version：保证中版本和小版本
 
@@ -87,83 +99,162 @@ Webpack 的打包机制其实和 1.1 中所提到的立即执行函数是一样�
 
   ^1.0.1 --> 1.0.x
 
-# 4 webpack.config.json
 
-## 4.1 核心概念
 
-1. webpack 的默认配置文件是**webpack.config.json**
+##  webpack.config.json
 
-   ```javascript
-   // 整体一览------------------------------------
-   const path = require("path");
+###  核心概念
 
-   module.export = {
-     entry: "./src/index.js",
-     output: {
-       path: path.resolve(__dirname, "dist"), // 指定输出的目录，目录必须为绝对路径，不能是相对路径
-       filename: "main.js", // 指定输出的文件名
-     },
-     mode: "production",
-     devtool: "source-map",
-     module: {
-       rules: [
-         {
-           test: /\.css$/,
-           use: ["style-loader", "css-loader"], // 例如此处，先执行css-loader再实行style-loader
-         },
-       ],
-     },
-   };
-   ```
+webpack 的默认配置文件是**webpack.config.json**
 
-2. **entry**
+```javascript
+// 整体一览------------------------------------
+const path = require("path");
 
-   用于指定 webpack 的入口文件，从哪个文件开始打包，如果不设置，则默认为 src/index.js
+module.export = {
+  entry: "./src/index.js",
+  output: {
+    path: path.resolve(__dirname, "dist"), // 指定输出的目录，目录必须为绝对路径，不能是相对路径
+    filename: "main.js", // 指定输出的文件名
+  },
+  mode: "production",
+  devtool: "source-map",
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"], // 例如此处，先执行css-loader再实行style-loader
+      },
+    ],
+  },
+};
+```
 
-   ```javascript
-   entry: "./src/index.js";
-   ```
+**entry**
 
-3. **output**
+用于指定 webpack 的入口文件，从哪个文件开始打包，如果不设置，则默认为 src/index.js
 
-   用于指定项目打包的输出，默认为 dist
+```javascript
+entry: "./src/index.js";
+```
 
-   ```javascript
-   const path = require('path')
-   output: {
-     path: path.resolve(__dirname, 'dist'), 		// 指定输出的目录，目录必须为绝对路径，不能是相对路径
-     filename: 'main.js', 	// 指定输出的文件名
-   }
-   ```
+**output**
 
-4. **mode**
+用于指定项目打包的输出，默认为 dist
 
-   代表当前编译的环境
+```javascript
+const path = require('path')
+output: {
+  path: path.resolve(__dirname, 'dist'), 		// 指定输出的目录，目录必须为绝对路径，不能是相对路径
+  filename: 'main.js', 	// 指定输出的文件名
+}
+```
 
-   有三个值【none, development, production】，默认为 production，会对代码进行压缩，development 则不会
+**mode**
 
-5. **devtool**
+代表当前编译的环境
 
-   ```javascript
-   devtool: 'source-map',
-   ```
+有三个值【none, development, production】，默认为 production，会对代码进行压缩，development 则不会
 
-6. **module**
+**devtool**
 
-   webpack 只能打包 js 和 json 文件，其他类型，如 css, sass, less 等需要编译器协助打包，前提，**需要先下载依赖包 style-loader 和 css-loader**
+用于反编译代码，方便开发过程中调试
 
-   - rules
+```javascript
+devtool: 'source-map',
+```
 
-     ```javascript
-     // 用于给指定文件后缀名的文件添加loader协助编译，loader执行顺序从右到左
-     module: {
-       rules: [
-         {
-           test: /\.css$/,
-           use: ["style-loader", "css-loader"], // 例如此处，先执行css-loader再实行style-loader
-         },
-       ];
-     }
-     ```
+**module**
 
-7.
+**modules即webpack loader，专注于转换模块或文件类型，工作在单个文件级别**，Loader 用于对模块的源代码进行转换
+
+webpack 只能打包 js 和 json 文件，其他类型，如 css, sass, less 等需要编译器协助打包，前提，**需要先下载依赖包 style-loader 和 css-loader**
+
+- rules，加载css
+
+  ```javascript
+  // 用于给指定文件后缀名的文件添加loader协助编译，loader执行顺序从右到左
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,	// 匹配文件结尾，，用i忽略大小写
+        use: ["style-loader", "css-loader"], 
+      },
+    ];
+  }
+  ```
+  
+- rules，加载图片
+
+  ```js
+  module: {
+    rules: [
+    // ...
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource', // 资源类型
+      }
+    ],
+  }
+  ```
+  
+- rules，通过use，将匹配所有js文件中的es6+内容转译到es5
+
+  ```js
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env'],
+          }
+        }
+      }
+    ]
+  }
+  ```
+
+**plugins**
+
+**Plugins影响整个构建过程，工作在构建流程级别，有能力执行更广泛的任务**，Plugin 通过钩子机制直接访问 Webpack 的编译系统（Compiler）和编译过程（Compilation），可以执行更宽泛的任务，如打包优化、资源管理和环境变量注入等
+
+以html-webpack-plugin为例
+
+```js
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+module.exports = {
+  entry: {},
+  plugins: [new HtmlWebpackPlugin({title: "博客列表"})],
+};
+```
+
+**optimization**
+
+用于配置压缩js代码
+
+```js
+const TerserPlugin = require("terser-webpack-plugin");
+
+module.exports = {
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()],
+  },
+};
+```
+
+**resolve**
+
+设置路径别名
+
+```js
+resolve: {
+  alias: {
+    utils: path.resolve(__dirname, '@/utils/'),
+  },
+},
+```
+
