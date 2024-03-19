@@ -16,6 +16,42 @@ v-once包裹的内容，只会渲染一次，后续值的更新不会触发组�
 
 
 
+
+
+## 常用方法
+
+### *$nextTick*
+
+`this.$nextTick`方法允许你在DOM更新完成后执行某个操作。它接受一个回调函数作为参数，Vue将在DOM更新完成后执行这个回调函数。
+
+这在实际开发中非常有用，比如：
+
+1. 需要基于更新后的DOM状态来执行操作时（比如滚动到一个新添加到列表的元素）。
+2. 在测试中需要等待Vue完成DOM更新后，才能进行断言检查。
+
+```js
+export default {
+  data() {
+    return {
+      message: 'Hello'
+    }
+  },
+  methods: {
+    updateMessage() {
+      this.message = 'Hello, Vue!';
+      this.$nextTick(() => {
+        // 这里的代码会在DOM更新后执行
+        console.log('DOM已经更新');
+      });
+    }
+  }
+}
+```
+
+
+
+
+
 ## 修饰符
 
 ### 事件修饰符

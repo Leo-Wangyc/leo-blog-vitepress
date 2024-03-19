@@ -10,48 +10,52 @@
 
 > 严格模式 _strict model_
 
-严格模式语法
+**严格模式语法**
 
-- 若是整个文件都使用，则定义在文件第一行，若仅在某一函数中使用，则定义在该函数内的第一行
+若是整个文件都使用，则定义在文件第一行，若仅在某一函数中使用，则定义在该函数内的第一行
 
-  ```javascript
-  "use strict"; //全局
+```javascript
+"use strict"; //全局
 
-  function func() {
-    "use strict"; //仅在函数内部
-  }
-  ```
+function func() {
+  "use strict"; //仅在函数内部
+}
+```
 
-- 严格模式区别
+**严格模式区别**
 
-  1. 严格模式下，不允许未声明就直接赋值
+1. 严格模式下，不允许未声明就直接赋值
 
-     ```javascript
-     a = 10; // ok
-     ```
+   ```javascript
+   a = 10; // ok
+   ```
 
-     ```javascript
-     "use strict";
-     a = 10; // error
-     var a = 10; // ok
-     ```
+   ```javascript
+   "use strict";
+   a = 10; // error
+   var a = 10; // ok
+   ```
 
-  2. 严格模式下，不允许属性重名
+2. 严格模式下，不允许属性重名
 
-     ```javascript
-     var obj = {
-       a: "hello",
-       a: "world",
-     }; // ok
-     ```
+   ```javascript
+   var obj = {
+     a: "hello",
+     a: "world",
+   }; // ok
+   ```
 
-     ```javascript
-     "use strict";
-     var obj = {
-       a: "hello",
-       a: "world",
-     }; // error
-     ```
+   ```javascript
+   "use strict";
+   var obj = {
+     a: "hello",
+     a: "world",
+   }; // error
+   ```
+
+
+
+
 
 ## 数据类型
 
@@ -65,6 +69,8 @@
 - bigInt
 - symbol
 
+
+
 ### 引用类型
 
 引用类型可以说只有一个，即 Object，也可以说，有如下三个，加上两个特殊对象，正则和日期
@@ -74,6 +80,28 @@
 - Array
 - RegExp(正则)
 - Date(日期)
+
+
+
+### Infinity
+
+`Infinity` 是 JavaScript 中的一个特殊常量，表示无穷大
+
+```javascript
+console.log(Infinity + 1); // Infinity
+console.log(Infinity * Infinity); // Infinity
+console.log(Infinity - Infinity); // NaN
+console.log(0 * Infinity); // NaN
+```
+
+`Infinity` 也可以在数组方法中使用
+
+```js
+var arr = [1, [2, [3, [4, 5]]]];
+console.log(arr.flat(Infinity)); // [1, 2, 3, 4, 5]
+```
+
+
 
 ### 虚值与真值
 
@@ -261,129 +289,135 @@ Object.prototype.toString.call({}); // "[object Object]"
 
 ### Object.create
 
-- **说明**：
+**说明**：
 
-  Object.create 用于创建一个新的对象并添加新的属性，可以用来实现**对象的继承**
+Object.create 用于创建一个新的对象并添加新的属性，可以用来实现**对象的继承**
 
-- **语法**：
+**语法**：
 
-  ```javascript
-  Object.create(obj, newProperty);
-  ```
+```javascript
+Object.create(obj, newProperty);
+```
 
-  ```javascript
-  let obj = { foo: 123 };
-  let obj2 = Object.create(obj, {
-    name: {
-      value: 'hello',
-      writable: false
-      ...
-    }
-  })	// 这里obj2就继承了obj的所有属性，并添加上了新的属性，obj中的属性将会全部存在于obj2的__proto__中
-  ```
+```javascript
+let obj = { foo: 123 };
+let obj2 = Object.create(obj, {
+  name: {
+    value: 'hello',
+    writable: false
+    ...
+  }
+})	// 这里obj2就继承了obj的所有属性，并添加上了新的属性，obj中的属性将会全部存在于obj2的__proto__中
+```
 
-- **与 new Object 继承的区别**
+**与 new Object 继承的区别**
 
-  - new object 实现的继承，父对象的属性会直接添加到子类中，子类可以直接通过点属性(.xxx)的方式点出来，继承的属性存在在子类上
+new object 实现的继承，父对象的属性会直接添加到子类中，子类可以直接通过点属性(.xxx)的方式点出来，继承的属性存在在子类上
 
-    ```javascript
-    // new Object() 方式创建
-    var a = { rep: "apple" };
-    var b = new Object(a);
-    console.log(b); // {rep: "apple"}
-    console.log(b.__proto__); // {}
-    console.log(b.rep); // {rep: "apple"}
-    ```
+```javascript
+// new Object() 方式创建
+var a = { rep: "apple" };
+var b = new Object(a);
+console.log(b); // {rep: "apple"}
+console.log(b.__proto__); // {}
+console.log(b.rep); // {rep: "apple"}
+```
 
-  - 而 create 实现的继承，父对象的属性会添加到子类的原型上，子类也可以直接点出来，但是继承的属性不会存在于子类上
+而 create 实现的继承，父对象的属性会添加到子类的原型上，子类也可以直接点出来，但是继承的属性不会存在于子类上
 
-    ```javascript
-    // Object.create() 方式创建
-    var a = { rep: "apple" };
-    var b = Object.create(a);
-    console.log(b); // {}
-    console.log(b.__proto__); // {rep: "apple"}
-    console.log(b.rep); // {rep: "apple"}
-    ```
+```javascript
+// Object.create() 方式创建
+var a = { rep: "apple" };
+var b = Object.create(a);
+console.log(b); // {}
+console.log(b.__proto__); // {rep: "apple"}
+console.log(b.rep); // {rep: "apple"}
+```
+
+
 
 ### obj.hasOwnProperty
 
-- 说明
+**说明**
 
-  用于判断对象自身是否存在某一**非继承**的属性
+用于判断对象自身是否存在某一**非继承**的属性
 
-- 语法
+**语法**
 
-  ```javascript
-  function foo() {
-    this.name = "foo";
-    this.sayHi = function () {
-      console.log("Say Hi");
-    };
-  }
-  
-  foo.prototype.sayGoodBy = function () {
-    console.log("Say Good By");
+```javascript
+function foo() {
+  this.name = "foo";
+  this.sayHi = function () {
+    console.log("Say Hi");
   };
-  
-  let myPro = new foo();
-  
-  console.log(myPro.name); // foo
-  console.log(myPro.hasOwnProperty("name")); // true
-  console.log(myPro.hasOwnProperty("toString")); // false
-  console.log(myPro.hasOwnProperty("hasOwnProperty")); // fasle
-  console.log(myPro.hasOwnProperty("sayHi")); // true
-  console.log(myPro.hasOwnProperty("sayGoodBy")); // false
-  console.log("sayGoodBy" in myPro); // true
-  ```
+}
+
+foo.prototype.sayGoodBy = function () {
+  console.log("Say Good By");
+};
+
+let myPro = new foo();
+
+console.log(myPro.name); // foo
+console.log(myPro.hasOwnProperty("name")); // true
+console.log(myPro.hasOwnProperty("toString")); // false
+console.log(myPro.hasOwnProperty("hasOwnProperty")); // fasle
+console.log(myPro.hasOwnProperty("sayHi")); // true
+console.log(myPro.hasOwnProperty("sayGoodBy")); // false
+console.log("sayGoodBy" in myPro); // true
+```
+
+
 
 ### in 关键字
 
 可以用 in 进行循环，也可以用于做一些判断
 
-1. **用作循环的情况**
+**用作循环的情况**
 
-   用作循环即是 for..in 循环，可以实现类似数组 map 的功能，但是 for..in 可以循环对象，也可以循环数组
+用作循环即是 for..in 循环，可以实现类似数组 map 的功能，但是 for..in 可以循环对象，也可以循环数组
 
-   - 用作循环数组的时候，循环出来的内容是**数组的 id**
+- 用作循环数组的时候，循环出来的内容是**数组的 id**
 
-     ```typescript
-     let arr2 = ["Tom", "Jerry", "Bob"];
-     for (let i in arr2) {
-       console.log(i);
-     } // 0 1 2
-     ```
+  ```typescript
+  let arr2 = ["Tom", "Jerry", "Bob"];
+  for (let i in arr2) {
+    console.log(i);
+  } // 0 1 2
+  ```
 
-   - 用作循环对象的时候，循环出来的内容是**对象的 Key**
+- 用作循环对象的时候，循环出来的内容是**对象的 Key**
 
-     ```typescript
-     let obj = { name: "leo", height: "180" };
-     for (let i in obj) {
-       console.log(i);
-     } // name  height
-     ```
+  ```typescript
+  let obj = { name: "leo", height: "180" };
+  for (let i in obj) {
+    console.log(i);
+  } // name  height
+  ```
 
-2. **用作判断某一个值是否在数组/对象内**
+**用作判断某一个值是否在数组/对象内**
 
-   注意，用于判断的时候，同样遵循上述的原则，数组为 id，对象为 key
+注意，用于判断的时候，同样遵循上述的原则，数组为 id，对象为 key
 
-   ```typescript
-   let arr = ["a", "b", "c"];
-   console.log("b" in arr); // false
-   console.log(2 in arr); // true
-   
-   let obj = { name: "leo", age: 18 };
-   console.log(18 in obj); // false
-   console.log("name" in obj); // true, 同时要注意，此处的key必须为字符串格式，若不加''，则会判断为变量
-   ```
+```typescript
+let arr = ["a", "b", "c"];
+console.log("b" in arr); // false
+console.log(2 in arr); // true
+
+let obj = { name: "leo", age: 18 };
+console.log(18 in obj); // false
+console.log("name" in obj); // true, 同时要注意，此处的key必须为字符串格式，若不加''，则会判断为变量
+```
 
 > 参考文档：
 >
 > https://www.cnblogs.com/memphis-f/p/12073013.html
 
-## 变量扩展
 
----
+
+
+
+## 变量扩展
 
 ### let, const
 
@@ -405,6 +439,10 @@ Object.prototype.toString.call({}); // "[object Object]"
 const { subHisId = "", deptId = "", scheduleDate: date = "" } = item;
 ```
 
+
+
+
+
 ## 函数扩展
 
 ### arguments
@@ -418,6 +456,8 @@ function func() {
 }
 func(1, 2, "3");
 ```
+
+
 
 ### 箭头函数
 
@@ -449,6 +489,8 @@ func(1, 2, "3");
 
   **始终指向自身所在的代码块的对象**
 
+
+
 ### call,apply,bind
 
 > 参考视频：
@@ -457,95 +499,97 @@ func(1, 2, "3");
 
 这三个函数本质上都是一样的，都是函数方法，用于改变函数的 this 的指向，区别及使用方法如下
 
-- 函数用法
+**call**
 
-  1. **call**
+函数方法，用于改变 this 指向，且会**直接调用！**无返回值
 
-     函数方法，用于改变 this 指向，且会**直接调用！**无返回值
-
-     ```typescript
-     let cat = {
-     	name: '喵喵',
-     }
-     let dog = {
-       name: '汪汪',
-       sayName(){		// 注意，此处不可以使用箭头函数，箭头函数会改变This指向到该函数定义的时候的作用域指向的对象，而js中作用域仅有函数才会存在，对象不存在作用域，所以，dog对象没有作用域，sayName的外部作用域就是window，所以this会指向window
-         console.log('My name is' + this.name)
-       }
-       eat(food1, food2){
-         console.log('I like eat' + food1 + 'and' + food2)
-     	}
-     }
-     // call方法会把函数中的This指向后面的第一个参数
-     dog.sayName.call(cat); // My name is 喵喵
-     dog.eat.call(cat, '鱼', '猫饼干')
-     ```
-
-  2. **apply**
-
-     与 call 其他基本一致，函数也会**直接调用**，但是，apply 传参接受的参数是一个数组，无返回值
-
-     ```typescript
-     //......  // 和上面一致
-     dog.eat.call(cat, ["鱼", "猫饼干"]);
-     ```
-
-  3. **bind**
-
-     bind 与 call 和 apply 不同，bind**不会直接调用函数！**，而是把函数当做返回值，方便后续持续调用，而省略掉每次要改 this 都要 call 一次的问题
-
-     ```typescript
-     // .......   // 其他一致
-     let fun = dog.sayName.bind(cat);
-     fun();
-     ```
-
-- 函数实现原理
-
-  实现原理很简单，只需要把需要执行的函数挂载到需要绑定 this 的对象上，然后进行相关操作后，删除掉对象上的函数即可，以 call 和 bind 为例
-
-  ```javascript
-  // call
-  let age = 1;
-  let gender = female;
-  let obj = {
-    age: 2,
-    gender: "male",
-  };
-  function logInfo() {
-    console.log(age, gender);
-    console.log(this.age, this.gender);
+```typescript
+let cat = {
+	name: '喵喵',
+}
+let dog = {
+  name: '汪汪',
+  sayName(){		// 注意，此处不可以使用箭头函数，箭头函数会改变This指向到该函数定义的时候的作用域指向的对象，而js中作用域仅有函数才会存在，对象不存在作用域，所以，dog对象没有作用域，sayName的外部作用域就是window，所以this会指向window
+    console.log('My name is' + this.name)
   }
-  // 原生方法：
-  logInfo.call(obj);
-  // 1, female  2, male
-  
-  // 自己实现一个call
-  Function.prototype.myCall = function (obj, ...args) {
-    // 第一步， 将函数挂载到obj上，此时的this是调用myCall方法的函数本身。例如，logInfo.myCall，那么this和obj.func就是logInfo
-    obj.func = this;
-    // 第二步，因为call函数会自调用，所以直接调用该函数即可，此时因为是obj调用的，所以函数内的this也指向obj
+  eat(food1, food2){
+    console.log('I like eat' + food1 + 'and' + food2)
+	}
+}
+// call方法会把函数中的This指向后面的第一个参数
+dog.sayName.call(cat); // My name is 喵喵
+dog.eat.call(cat, '鱼', '猫饼干')
+```
+
+**apply**
+
+与 call 其他基本一致，函数也会**直接调用**，但是，apply 传参接受的参数是一个数组，无返回值
+
+```typescript
+//......  // 和上面一致
+dog.eat.call(cat, ["鱼", "猫饼干"]);
+```
+
+**bind**
+
+bind 与 call 和 apply 不同，bind**不会直接调用函数！**，而是把函数当做返回值，方便后续持续调用，而省略掉每次要改 this 都要 call 一次的问题
+
+```typescript
+// .......   // 其他一致
+let fun = dog.sayName.bind(cat);
+fun();
+```
+
+**函数实现原理**
+
+实现原理很简单，只需要把需要执行的函数挂载到需要绑定 this 的对象上，然后进行相关操作后，删除掉对象上的函数即可，以 call 和 bind 为例
+
+```javascript
+// call
+let age = 1;
+let gender = female;
+let obj = {
+  age: 2,
+  gender: "male",
+};
+function logInfo() {
+  console.log(age, gender);
+  console.log(this.age, this.gender);
+}
+// 原生方法：
+logInfo.call(obj);
+// 1, female  2, male
+
+// 自己实现一个call
+Function.prototype.myCall = function (obj, ...args) {
+  // 第一步， 将函数挂载到obj上，此时的this是调用myCall方法的函数本身。例如，logInfo.myCall，那么this和obj.func就是logInfo
+  obj.func = this;
+  // 第二步，因为call函数会自调用，所以直接调用该函数即可，此时因为是obj调用的，所以函数内的this也指向obj
+  obj.func(...args);
+  // 第三步，函数执行完毕后，删除该函数，保持obj不改变
+  delete obj.func;
+  // 最后，因为call函数没有返回值，所以直接return即可
+  return;
+};
+
+// 自己实现一个bind
+Function.prototype.myBind = function (obj, ...args) {
+  // 第一步，与上述所说一致，挂载函数到obj上
+  obj.func = this;
+  // 第二步，bind不调用函数，而是返回一个函数，所以，直接返回一个函数出去
+  return function () {
+    // 第三步，逻辑同上
     obj.func(...args);
-    // 第三步，函数执行完毕后，删除该函数，保持obj不改变
+    // 最后别忘了删除
     delete obj.func;
-    // 最后，因为call函数没有返回值，所以直接return即可
     return;
   };
-  
-  // 自己实现一个bind
-  Function.prototype.myBind = function (obj, ...args) {
-    // 第一步，与上述所说一致，挂载函数到obj上
-    obj.func = this;
-    // 第二步，bind不调用函数，而是返回一个函数，所以，直接返回一个函数出去
-    return function () {
-      // 第三步，逻辑同上
-      obj.func(...args);
-      // 最后别忘了删除
-      delete obj.func;
-      return;
-    };
-  };
-  ```
+};
+```
+
+
+
+
 
 ## 模板字符串
 
@@ -555,6 +599,10 @@ func(1, 2, "3");
 let name = "leo";
 let describe = `My name is ${name}`;
 ```
+
+
+
+
 
 ## 解构赋值
 
@@ -602,6 +650,10 @@ console.log(bill); // 'peter'
 undefined ?? 123; // 123
 undefined || 123; // 123
 ```
+
+
+
+
 
 ## for...in 与 for...of
 
@@ -674,6 +726,10 @@ for (let value of myArray) {
 // ...
 // 7 number
 ```
+
+
+
+
 
 ## Promise
 
@@ -1676,6 +1732,18 @@ Array.prototype.myReduce = function (cb, initialValue = 0) {
 ```
 
 
+
+### Array.flat
+
+为了打平一个数组，可以使用 ES2019 引入的 `Array.prototype.flat()` 方法：
+
+```javascript
+var arr = [1, [2, [[3, 4], 5], 6]];
+var flatArr = arr.flat(Infinity); // 使用 Infinity 作为深度，以确保数组完全被打平
+console.log(flatArr); // 输出: [1, 2, 3, 4, 5, 6]
+```
+
+在这个例子中，`flat` 方法接受一个参数，指定要打平的深度。将其设置为 `Infinity` 可以确保无论数组有多深都会被完全打平
 
 
 
