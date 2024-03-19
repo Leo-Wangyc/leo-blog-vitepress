@@ -565,11 +565,11 @@ Function.prototype.myCall = function (obj, ...args) {
   // 第一步， 将函数挂载到obj上，此时的this是调用myCall方法的函数本身。例如，logInfo.myCall，那么this和obj.func就是logInfo
   obj.func = this;
   // 第二步，因为call函数会自调用，所以直接调用该函数即可，此时因为是obj调用的，所以函数内的this也指向obj
-  obj.func(...args);
+  const res = obj.func(...args);
   // 第三步，函数执行完毕后，删除该函数，保持obj不改变
   delete obj.func;
-  // 最后，因为call函数没有返回值，所以直接return即可
-  return;
+  // 最后，return原函数本身的返回值即可
+  return res;
 };
 
 // 自己实现一个bind
@@ -579,10 +579,10 @@ Function.prototype.myBind = function (obj, ...args) {
   // 第二步，bind不调用函数，而是返回一个函数，所以，直接返回一个函数出去
   return function () {
     // 第三步，逻辑同上
-    obj.func(...args);
+    const res = obj.func(...args);
     // 最后别忘了删除
     delete obj.func;
-    return;
+    return res;
   };
 };
 ```
@@ -1749,31 +1749,32 @@ console.log(flatArr); // 输出: [1, 2, 3, 4, 5, 6]
 
 ### 类数组
 
-- 类数组的定义：
+**定义**
 
-  要包含 Length，否则无法转换
+要包含 Length，否则无法转换
 
-- 类数组转数组
+**类数组转数组**
 
-  ```javascript
-  let arrObj = {0: 'Mary', 1: 'bill', 2: 'guy', 3: 'trueman', length: 4}
-  // 方法一：
-  Array.from(arrObj)
-  // 方法二：
-  Array.prototype.slice.call(arrObj)
-  // 方法三（骚操作）：
-  [].slice.call(arrObj)
-  // 结果	['Mary', 'bill', 'guy', 'trueman']
-  // 如有其他情况，例如，少了数字，或者键值不为数字或者数字样式的字符串，或者没有length，都会导致转换出问题，如下
-  // 情况一： 无length
-  let arrObj = { 1: 'bill', 2: 'guy', 3: 'trueman'}
-  // 结果  []
-  // 情况二： length与实际不符
-  let arrObj = { 1: 'bill', 2: 'guy', 3: 'trueman', length: 3}
-  // 结果  [undefined, 'bill', 'guy']
-  // 情况二： 键值为字符串，而非数字
-  let arrObj = { name: 'bill', '2': 'guy', 3: 'trueman', length: 3}
-  // 结果  (3) [undefined, undefined, 'guy']， 数字字符串可以隐式转换，是支持的
+```javascript
+let arrObj = {0: 'Mary', 1: 'bill', 2: 'guy', 3: 'trueman', length: 4}
+// 方法一：
+Array.from(arrObj)
+// 方法二：
+Array.prototype.slice.call(arrObj)
+// 方法三（骚操作）：
+[].slice.call(arrObj)
+// 结果	['Mary', 'bill', 'guy', 'trueman']
+// 如有其他情况，例如，少了数字，或者键值不为数字或者数字样式的字符串，或者没有length，都会导致转换出问题，如下
+// 情况一： 无length
+let arrObj = { 1: 'bill', 2: 'guy', 3: 'trueman'}
+// 结果  []
+// 情况二： length与实际不符
+let arrObj = { 1: 'bill', 2: 'guy', 3: 'trueman', length: 3}
+// 结果  [undefined, 'bill', 'guy']
+// 情况二： 键值为字符串，而非数字
+let arrObj = { name: 'bill', '2': 'guy', 3: 'trueman', length: 3}
+// 结果  (3) [undefined, undefined, 'guy']， 数字字符串可以隐式转换，是支持的
+```
 
 
 

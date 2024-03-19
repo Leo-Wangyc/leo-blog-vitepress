@@ -20,7 +20,7 @@ v-once包裹的内容，只会渲染一次，后续值的更新不会触发组�
 
 ## 常用方法
 
-### *$nextTick*
+### $nextTick
 
 `this.$nextTick`方法允许你在DOM更新完成后执行某个操作。它接受一个回调函数作为参数，Vue将在DOM更新完成后执行这个回调函数。
 
@@ -1222,8 +1222,6 @@ router.beforeEach((to, from, next)=>{
   next()	// 需要执行next通知渲染路由
 })
 ```
-
-
 
 
 
