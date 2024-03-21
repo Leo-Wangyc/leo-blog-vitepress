@@ -1446,14 +1446,14 @@ class Vue{
 上面就是一个基本的Vue的结构了，我们需要再往里面补充逻辑
 
 1. **将属性注入到vue实例**
-2. **创建observer对data的属性变化进行监听**
+2. **创建observer（观察者）实现对data的属性变化进行观察监听**
 3. **视图的解析**
 
 **功能实现**
 
 下面来分别进行讲解
 
-第一步，将属性注入到Vue的实例中，为的是直接this.name就可以拿到上面vm实例中，$data里面的值，相当于是为了实现直接通过`this.name`可以拿到`this.$data.name`的值，这一步，vue2采用的是defineProperty来实现
+第一步，将属性注入到Vue的实例中，**为的是直接this.name就可以拿到上面vm实例中`$data`里面的值**，相当于是为了实现直接通过`this.name`可以拿到`this.$data.name`的值，这一步，vue2采用的是defineProperty来实现
 
 ⚠️**注意！**这里，我们不能直接用`Object.assign(target, source)`的方式进行处理，因为这样**对于值类型来说是深拷贝**。这么做，并不是通过this.name拿到this.$data.name，而是直接复制一个值，当我们尝试更改this.name的时候，并不是更改的this.$data.name
 
@@ -1484,7 +1484,7 @@ function proxyVm (target, source){
 }
 ```
 
-第二步，创建Observer实现对data里面属性的监听，这是通过创建一个Observer类来实现的
+第二步，**创建observer（观察者）实现对data的属性变化进行观察监听**，这是通过创建一个Observer类来实现的
 
 要实现这个Observer，我们需要将data传进去，并分别对里面的每个属性进行监听，如果属性的值本身是个对象，则需要递归进行监听
 
@@ -1493,18 +1493,18 @@ class Vue {
   constructor(){...}
   
   ...
-  // 创建一个新的Observer，来实现对data里面所有数据的响应式
+  // 创建一个新的Observer，来实现对data里面所有数据的观察监听
   new Observer(data)
 }
 
 class Observer {
   constructor(data){
     this.data = data
-    // 这个walk用来实现具体的监听逻辑
+    // 这个walk用来实现具体的监听逻辑，我们一般不在constructor中编写具体的逻辑代码
 		this.walk(data)
   }
   
-  // 将整个data,单个属性key以及值value，也就是data[key]传入
+  // 遍历整个data中的数据，对每一项都进行一次响应式方法（即defineReactive里面的逻辑）处理
   walk(data){
     Object.keys(data).forEach(key => defineReactive(data, key, data[key]))
   }
@@ -1512,19 +1512,20 @@ class Observer {
 
 // 该方法用于设置响应式
 function defineReactive(data, key, value){
-  // 如果data中的某个属性本身也是个对象，那么就需要进行递归创建响应式
+  // 如果data中的某个属性本身也是个对象，那么就需要进行递归创建响应式，用observer再包一层
   if (typeof value === 'object' && value !== null){
     return new Observer(value)
   }
-  // 
+  // 如果只是普通的值，就可以开始进行响应式设置了，vue2通过defineProperty进行设置
   Object.defineProperty({
     enumerable: true,
     configurable: true,
+    // 响应式数据是用来连接data(包括vue本身里面的通过this点出来的data)和模版语法中的数据，即 data <==> template 之间的双向绑定
     get(){
-      // 逻辑待补充
+      TODO // 通过模板解析，可以知道哪些地方调用到了哪些数据，使用到数据的时候会触发get，此时可以通过get进行收集，方便后续改变data数据(即set)的时候，同步更新对应模板上的数据。
     }	
     set(){
-    	// 逻辑待补充
+    	TODO // 此处更新data数据的时候，需要通知所有模板语法中使用到该数据的部分对数据进行更新
 		}
 	})
 }
@@ -1543,38 +1544,44 @@ function defineReactive(data, key, value){
 ```js
 class Observer {
   constructor(data){
-    this.data = data
-		this.walk(data)
+    ...
     // 添加eventBus
     this.dep = new Dep()
   }
   
   walk(data){
+    // 将Observer中的dep传入到下面的响应式逻辑中，从代码来看，每一个对象都有一个自己的Observer和Dep
     const dep = this.dep
     Object.keys(data).forEach(key => defineReactive(data, key, data[key], dep))
   }
 }
 ```
 
-然后，defineReactive中，这一块对于响应式逻辑的处理也可以添加逻辑了
+然后，defineReactive中，这一块对于响应式逻辑的处理也可以添加逻辑了，本质上就是一个eventBus
 
 ```js
 Object.defineProperty({
   enumerable: true,
   configurable: true,
   get(){
-    // 当响应式数据被读取，我们要通过dep记录一下读取的位置，方便到时候响应式数据进行变更的时候可以通知这里进行更改
+    // 当响应式数据被读取，我们要通过dep记录一下读取的位置，方便到时候响应式数据进行变更的时候可以通知这里进行更改。此处的逻辑类似于eventBus.on()
     dep.addSubscriber()
     return value
   }	
   set(newValue){
-    // 通过dep，通知所有使用到了当前属性的地方，对这个值的变更进行更新
+  	// 此处也需要添加一段是否为对象的判断，不过不是重点
+    if(value === newValue) return
+    value = newValue
+  	if (typeof value === 'object' && value !== null){
+      return new Observer(value)
+    }
+    // 通过dep，通知所有使用到了当前属性的地方，对这个值的变更进行更新，此处相当于eventBus.emit()
   	dep.notify()
   }
 })
 ```
 
-好，接下里，我们可以实现这个`Dep`了，和eventBus一样，定义一个`subscribers`，用于存储每个使用到该响应式数据的地方，然后实现一下上面提到的`addSubscriber`和`notify`，这就和发布订阅模式保持一致了
+好，接下里，我们可以实现这个`Dep`了，也就是一个eventBus，定义一个`subscribers`，用于存储每个使用到该响应式数据的地方，然后实现一下上面提到的`addSubscriber`和`notify`，这就和发布订阅模式保持一致了
 
 ```js
 class Dep{
@@ -1582,13 +1589,13 @@ class Dep{
     this.subscribers = []
 	}
   
-  // 此时，我们还不确定这个subscriber的形态
+  // 不过此时，我们还不确定这个subscriber的形态，假定为一个对象，且具有update方法对应eventBus中的callback
   addSubscriber(...){
     this.subscribers.push(...)
 	}
   
   notify(){
-    // update就是 subscriber的更新回调
+    // 类似eventBus中的直接调用callback，不过这里假定是个对象，所以调用update方法
     this.subscribers.forEach(sub => sub.update())
   }
 }

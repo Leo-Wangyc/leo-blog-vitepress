@@ -750,37 +750,33 @@ sum(1, 2);
 
 与函数不同的是，promise 回根据内部执行情况，决定走 resolve 还是走 reject，resolve 的话，会调用外部的.then，reject 的话，会调用外部的.catch
 
-- promise 用来执行异步操作，有效地消除了回调地狱，并且增加了错误捕获机制，其本质上是一个函数对象，会**自行调用**，自身拥有着**all、reject、resolve**等方法，其原型上有**then、catch**等方法。示例如下：
+promise 用来执行异步操作，有效地消除了回调地狱，并且增加了错误捕获机制，其本质上是一个函数对象，会**自行调用**，自身拥有着**all、reject、resolve**等方法，其原型上有**then、catch**等方法。示例如下：
 
-  ```javascript
-  let p = new Promise(function (resolve, reject) {
-    //做一些异步操作
-    setTimeout(function () {
-      console.log("执行了Promise");
-      resolve("resolve中的参数");
-    }, 2000);
-  });
-  ```
+```javascript
+let p = new Promise(function (resolve, reject) {
+  //做一些异步操作
+  setTimeout(function () {
+    console.log("执行了Promise");
+    resolve("resolve中的参数");
+  }, 2000);
+});
+```
 
-  在此案例中，浏览器在 2000ms 后会直接执行 setTimeout 函数
+在此案例中，浏览器在 2000ms 后会直接执行 setTimeout 函数
 
-- promise 所拥有的特性：
+**promise 特性**：
 
-  1. promise 一定会返回一个结果
-  2. promise 还是基于回调的
-  3. 当使用 promise 的时候会传入一个执行器，此执行器是立即执行，即 new Promise(fun(){})括号中的 fun(){}是直接执行的
-  4. 当前 executor 给了两个函数可以来描述当前 promise 的状态，分别是 resolve 和 reject
-  5. promise 中有三个状态：成功态，失败态，等待态（默认为等待态）
-  6. 如果调用 resolve 会走到成功态，如果调用 reject 或者发生异常会走失败态
-  7. promise 一旦状态变化后不能更改，例如，调了 resolve 之后，再调 reject 是不会生效的，同理，throw Error 之后再 resolve 也是不会生效的
+1. promise 一定会返回一个结果
+2. promise 还是基于回调的
+3. 当使用 promise 的时候会传入一个执行器，此执行器是立即执行，即 new Promise(fun(){})括号中的 fun(){}是直接执行的
+4. 当前 executor 给了两个函数可以来描述当前 promise 的状态，分别是 resolve 和 reject
+5. promise 中有三个状态：成功态，失败态，等待态（默认为等待态）
+6. 如果调用 resolve 会走到成功态，如果调用 reject 或者发生异常会走失败态
+7. promise 一旦状态变化后不能更改，例如，调了 resolve 之后，再调 reject 是不会生效的，同理，throw Error 之后再 resolve 也是不会生效的
 
-- Resolve, reject
+⚠️**注意，promise 会直接自调用**，所以一定要确保其中的改赋值的变量都已赋值！！！
 
-  分别对应成功与失败所调用的函数
 
-- **注意点！！！**
-
-  ！！！**注意，promise 会直接自调用**，所以一定要确保其中的改赋值的变量都已赋值！！！
 
 ### promise 在实际函数中的运用
 
@@ -876,77 +872,81 @@ promiseClick()
 
 ### promise.all
 
-- 说明
+**说明**
 
-  Promise.all 可以将多个 Promise 实例包装成一个新的 Promise 实例。同时，成功和失败的返回值是不同的，成功的时候返回的是一个**结果数组**，而失败的时候则返回**最先被 reject 失败状态的值**。
+Promise.all 可以将多个 Promise 实例包装成一个新的 Promise 实例。同时，成功和失败的返回值是不同的，成功的时候返回的是一个**结果数组**，而失败的时候则返回**最先被 reject 失败状态的值**。
 
-- 语法示例
+**语法**
 
-  ```javascript
-  let p1 = new Promise((resolve, reject) => {
-    resolve("成功了");
+```javascript
+let p1 = new Promise((resolve, reject) => {
+  resolve("成功了");
+});
+
+let p2 = new Promise((resolve, reject) => {
+  resolve("success");
+});
+
+let p3 = Promse.reject("失败");
+
+Promise.all([p1, p2])
+  .then((result) => {
+    console.log(result); //['成功了', 'success']
+  })
+  .catch((error) => {
+    console.log(error);
   });
 
-  let p2 = new Promise((resolve, reject) => {
-    resolve("success");
+Promise.all([p1, p3, p2])
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((error) => {
+    console.log(error); // 失败了，打出 '失败'
   });
+```
 
-  let p3 = Promse.reject("失败");
+注意点
 
-  Promise.all([p1, p2])
-    .then((result) => {
-      console.log(result); //['成功了', 'success']
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+**Promise.all 获得的成功结果的数组里面的数据顺序和 Promise.all 接收到的数组顺序是一致的**
 
-  Promise.all([p1, p3, p2])
-    .then((result) => {
-      console.log(result);
-    })
-    .catch((error) => {
-      console.log(error); // 失败了，打出 '失败'
-    });
-  ```
+参考资料
 
-- 注意点
+> https://www.jianshu.com/p/7e60fc1be1b2
 
-  **Promise.all 获得的成功结果的数组里面的数据顺序和 Promise.all 接收到的数组顺序是一致的**
 
-- 参考资料
-
-  > https://www.jianshu.com/p/7e60fc1be1b2
 
 ### promise.race
 
-- 说明
+**说明**
 
-  race 即赛跑的意思，promise.race()接收一个 promise 数组为参数，其中哪个 promise 最先执行完就先执行哪一个，其他的都不执行
+race 即赛跑的意思，promise.race()接收一个 promise 数组为参数，其中哪个 promise 最先执行完就先执行哪一个，其他的都不执行
 
-- 语法
+**语法**
 
-  ```javascript
-  let p1 = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve("success");
-    }, 1000);
+```javascript
+let p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve("success");
+  }, 1000);
+});
+
+let p2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject("failed");
+  }, 500);
+});
+
+Promise.race([p1, p2])
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((error) => {
+    console.log(error); // 打开的是 'failed'
   });
-  
-  let p2 = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      reject("failed");
-    }, 500);
-  });
-  
-  Promise.race([p1, p2])
-    .then((result) => {
-      console.log(result);
-    })
-    .catch((error) => {
-      console.log(error); // 打开的是 'failed'
-    });
-  ```
+```
+
+
 
 ### promise.resolve
 
@@ -969,124 +969,129 @@ new Promise((resolve, reject) => resolve(value));
 
 相当于直接调用 resolve 方法改变 status 状态为 fullfilled
 
+
+
 ### promise 原理剖析
 
-- 参考资料
+> 参考资料
+>
+> https://www.jianshu.com/p/d39f9d3168df
+>
+> https://zhuanlan.zhihu.com/p/58428287 图解 promise 原理
+>
+> https://www.bilibili.com/video/BV1Tu411i72B/?spm_id_from=333.337.search-card.all.click&vd_source=292c7745eb30e2c00d6028dfa6d8c3c5 一小时快速版
+>
 
-  > https://www.jianshu.com/p/d39f9d3168df
-  >
-  > https://zhuanlan.zhihu.com/p/58428287 图解 promise 原理
-  >
-  > https://www.bilibili.com/video/BV1Tu411i72B/?spm_id_from=333.337.search-card.all.click&vd_source=292c7745eb30e2c00d6028dfa6d8c3c5 快速版
-  >
-  > node --> promise
+**简单实现**
 
-- 简单原理实现
+首先，以简单的 promise 的使用入手
 
-  首先，以正常 promise 的使用入手
+```typescript
+let p1 = new Promize((resolve, reject) => {
+  resolve(1);
+});
 
-  ```typescript
-  let p1 = new Promize((resolve, reject) => {
-    resolve(1);
-  });
-  
-  p1.then(
-    (res) => {
-      console.log(res);
-    },
-    (err) => {
-      console.log(err);
-    }
-  );
-  ```
-
-  可以看到，promise 接受一个函数(叫做 executor)当做参数，该函数包含 resolve 和 reject 两个函数，调用 resolve，会触发.then 的成功回调，调用 reject，会触发.then 的失败回调（也就是.catch，算是.then 失败回调的语法糖）
-
-  那么，开始实现
-
-  promise 能根据调用 resolve 和 reject 从而实现不同的.then，依赖于其中的三种 status，分别为 PENDING，FULLFILLED，REJECTED，promise 在实例化的时候，status 为 PENDING，当调用 resolve 的时候，会改为 FULLFILLED，当调用 reject 的时候，会改为 REJECTED，再加上，promise 在生成的时候会直接执行，所以 executor 需要直接执行
-
-  同时，resolve 和 reject 本身都会接收参数，将参数存储到类中
-
-  ```js
-  class MyPromise {
-    constructor(executor) {
-      this.status = "PENDING";
-      this.value = "";
-      this.error = "";
-  
-      this.resolve = (value) => {
-        this.status = "FULLFILLED";
-        this.value = value;
-      };
-      this.reject = (error) => {
-        this.status = "REJECTED";
-        this.error = error;
-      };
-      executor(this.resolve, this.reject); // 此处executor执行，根据外部调用情况，对应更改status的值
-    }
+p1.then(
+  (res) => {
+    console.log(res);
+  },
+  (err) => {
+    console.log(err);
   }
-  ```
+);
+```
 
-  接下来，来实现 then，then 接收两个函数作为参数，一个成功回调，一个失败回调
+可以看到，promise 接受一个函数(叫做 executor)当做参数，该函数包含 resolve 和 reject 两个函数，调用 resolve，会触发.then 的成功回调，调用 reject，会触发.then 的失败回调（也就是.catch，算是.then 失败回调的语法糖）
 
-  ```js
-  class MyPromise {
-    constructor(executor){
-      ...
-      this.resolve = (value) => {
-        this.status = 'FULLFILLED'
-        this.value = value
-        this.successFuncList.forEach((func) => func(this.value));	// 将暂存的函数进行调用
-      };
-      this.reject = (error) => {
-        this.status = 'REJECTED'
-        this.error = error
-        this.rejectFuncList.forEach((func) => func(this.error));
-      };
-      this.successFuncList = []
-      this.rejectFuncList = []
-    }
-  
-    then(onFulfilled, onRejected){
-      if (this.status === "FULLFILLED") {
-        onFulfilled(this.value);
-      }
-      if (this.status === "REJECTED") {
-        onRejected(this.error);
-      }
-      // 如果then里面是setTimeout这类函数，可能状态不会及时更新，这时候需要将函数暂存
-      if (this.status === "PENDING") {
-        this.successFuncList.push(() => successFunc);
-        this.rejectFuncList.push(() => failFunc);
-      }
-    }
+那么，开始实现
+
+promise 能根据调用 resolve 和 reject 从而实现不同的.then，依赖于其中的三种 status，分别为 PENDING，FULLFILLED，REJECTED，promise 在实例化的时候，status 为 PENDING，当调用 resolve 的时候，会改为 FULLFILLED，当调用 reject 的时候，会改为 REJECTED，再加上，promise 在生成的时候会直接执行，所以 executor 需要直接执行
+
+同时，resolve 和 reject 本身都会接收参数，将参数存储到类中
+
+```js
+class MyPromise {
+  constructor(executor) {
+    this.status = "PENDING";
+    this.value = "";
+    this.error = "";
+
+    this.resolve = (value) => {
+      this.status = "FULLFILLED";
+      this.value = value;
+    };
+    this.reject = (error) => {
+      this.status = "REJECTED";
+      this.error = error;
+    };
+    executor(this.resolve, this.reject); // 此处executor执行，根据外部调用情况，对应更改status的值
   }
-  ```
+}
+```
 
-  第三步，来实现链式调用
+接下来，来实现 then，then 接收两个函数作为参数，一个成功回调，一个失败回调
 
-  很简单，仅需将.then 里面的内容用 promise 包裹，然后再状态改变的时候再次触发 resolve/reject 更改 promise 的状态即可，链式调用的.then 参数如何接收待补充
+```js
+class MyPromise {
+  constructor(executor){
+    ...
+    this.resolve = (value) => {
+      this.status = 'FULLFILLED'
+      this.value = value
+      this.successFuncList.forEach((func) => func(this.value));	// 将暂存的函数进行调用
+    };
+    this.reject = (error) => {
+      this.status = 'REJECTED'
+      this.error = error
+      this.rejectFuncList.forEach((func) => func(this.error));
+    };
+    this.successFuncList = []
+    this.rejectFuncList = []
+  }
 
-  ```js
-  ...
   then(onFulfilled, onRejected){
-    const p2 = new MyPromise((resolve, reject)=> {
-      if (this.status === "FULLFILLED") {
-        onFulfilled(this.value);
-        resolve()
-      }
-      if (this.status === "REJECTED") {
-        onRejected(this.error);
-        reject()
-      }
-      if (this.status === "PENDING") {
-        this.successFuncList.push(() => successFunc);
-        this.rejectFuncList.push(() => failFunc);
-      }
-    })
+    if (this.status === "FULLFILLED") {
+      onFulfilled(this.value);
+    }
+    if (this.status === "REJECTED") {
+      onRejected(this.error);
+    }
+    // 如果then里面是setTimeout这类函数，可能状态不会及时更新，这时候需要将函数暂存
+    if (this.status === "PENDING") {
+      this.successFuncList.push(() => successFunc);
+      this.rejectFuncList.push(() => failFunc);
+    }
   }
-  ```
+}
+```
+
+第三步，来实现链式调用
+
+很简单，仅需将.then 里面的内容用 promise 包裹，然后再状态改变的时候再次触发 resolve/reject 更改 promise 的状态即可，链式调用的.then 参数如何接收待补充
+
+```js
+...
+then(onFulfilled, onRejected){
+  const p2 = new MyPromise((resolve, reject)=> {
+    if (this.status === "FULLFILLED") {
+      onFulfilled(this.value);
+      resolve()
+    }
+    if (this.status === "REJECTED") {
+      onRejected(this.error);
+      reject()
+    }
+    if (this.status === "PENDING") {
+      this.successFuncList.push(() => successFunc);
+      this.rejectFuncList.push(() => failFunc);
+    }
+  })
+}
+```
+
+
+
+
 
 ## Async, Await
 
@@ -1154,6 +1159,8 @@ console.log(generator.next()); // 第三次调用next
 **底层实现**
 
 generator 底层涉及涉及到了 JavaScript 引擎的内部机制，这使得直接在 JavaScript 中完全模拟其行为比较复杂。Generator 的核心特性是能够暂停和恢复执行。在 JavaScript 引擎层面，这需要引擎能够在函数执行中的任意时刻保存当前的执行上下文（包括变量状态、调用栈等），并在适当的时候恢复该上下文。
+
+
 
 ### async, await
 
@@ -2102,4 +2109,10 @@ import demo from 'a.js'
 console.log(demo.c)  // 3
 console.log(demo.d)  // 4
 ```
+
+
+
+
+
+## 防抖&节流
 
