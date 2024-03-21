@@ -1,5 +1,3 @@
-# Python
-
 ## variables
 
 python 没有特殊符号定义类型，属于动态创建类型
@@ -162,11 +160,15 @@ def is_right(answer):
 
 **注意，python 中没有‘||’ (或)的关键字，必须使用 or**
 
+
+
 ### if in
 
 **if item in item_dic:**
 
 If in 关键字，判断某项是否在某个字典中有值
+
+
 
 ### match
 
@@ -184,4 +186,6 @@ match name:
 ````
 
 
+
+## Loop
 
