@@ -593,11 +593,25 @@ Function.prototype.myBind = function (obj, ...args) {
 
 ## 模板字符串
 
+> template literal
+
 即通过反引号，添加$符号表示变量的方式
 
 ```js
 let name = "leo";
 let describe = `My name is ${name}`;
+```
+
+
+
+
+
+## 三元表达式
+
+> ternary operators
+
+```js
+const title = title ? title : 'Default Title'
 ```
 
 
