@@ -190,6 +190,84 @@ html {
 
 
 
+## CSS Module
+
+CSS Modules 是一个通用的 CSS 文件处理方式
+
+CSS Modules 的核心思想是通过自动生成唯一的类名来避免样式冲突，从而实现样式的模块化和组件级别的作用域
+
+CSS Modules Provide a way to make CSS classes locally scoped to components by default, reducing the risk of styling conflicts.
+
+
+
+### 和CSS区别
+
+`.module.css` 文件和普通的 `.css` 文件在编写样式规则时使用的语法是相同的，都遵循 CSS 的标准语法。它们之间的主要区别在于如何被 Webpack（或其他构建工具）处理，以及它们如何应用于你的项目中。
+
+**普通的 CSS 文件**
+
+1. **全局作用域**：当你在项目中导入一个普通的 `.css` 文件时，其中的样式规则会全局应用。这意味着任何元素都可以被这些样式规则选中，除非有更具体的选择器覆盖了这些规则。
+2. **潜在的命名冲突**：因为样式是全局的，所以不同组件或库之间的样式可能会相互冲突。这要求开发者在命名 CSS 类名时必须非常小心，以避免不期望的样式覆盖。
+
+**CSS Modules**
+
+1. **局部作用域**：`.module.css` 文件通过 CSS Modules 技术来实现 CSS 的局部作用域。当你导入一个 CSS Module 时，构建系统（如 Webpack）会自动生成唯一的类名（通常是通过附加哈希值来实现）。这意味着你可以在 CSS Module 中自由地命名类，而不用担心命名冲突。
+2. **显式的类名引用**：在 JavaScript 或其他模板语言中使用 CSS Module 时，你需要显式地引用 CSS Module 导出的类名。这种方式使得样式和组件的关系更加清晰，也更容易追踪哪些样式被应用到了哪些元素上。
+3. **避免样式冲突**：由于每个 CSS Module 的类名都是唯一的，因此大大减少了样式冲突的可能性。这使得开发大型、复杂的前端项目时，样式管理变得更加简单和可维护。
+
+
+
+### 示例代码
+
+React
+
+```jsx
+// React
+import styles from './Button.module.css';
+
+function Button() {
+  return <button className={styles.button}>Click me</button>;
+}
+```
+
+Vue
+
+```js
+// vue，单文件方式
+<template>
+  <button :class="$style.button">Click me</button>
+</template>
+
+<style module>
+.button {
+  color: white;
+  background-color: blue;
+}
+
+// vue，多文件方式
+<template>
+  <button :class="$style.button">Click Me</button>
+</template>
+
+<script>
+import styles from './Button.module.css';
+
+export default {
+  computed: {
+    $style() {
+      return styles;
+    }
+  }
+}
+</script>
+```
+
+
+
+ 
+
+
+
 ## css 预处理
 
 预处理工具有 Less 和 sass 等
@@ -284,6 +362,42 @@ p {
   @include sexy-border(blue, 5px)
 }
 ```
+
+
+
+
+
+## Tailwind CSS
+
+
+
+
+
+## Clsx
+
+一个用于结合React中的循环或者条件判断的动态类名生成库
+
+```jsx
+import clsx from 'clsx';
+ 
+export default function InvoiceStatus({ status }: { status: string }) {
+  return (
+    <span
+      className={clsx(
+        'inline-flex items-center rounded-full px-2 py-1 text-sm',
+        {
+          'bg-gray-100 text-gray-500': status === 'pending',
+          'bg-green-500 text-white': status === 'paid',
+        },
+      )}
+    >
+    // ...
+)}
+```
+
+
+
+
 
 
 
