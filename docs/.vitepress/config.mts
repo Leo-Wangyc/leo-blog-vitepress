@@ -123,6 +123,10 @@ export default withMermaid({
           text: "Computer Science",
           items: [
             {
+              text: "CS English",
+              link: "/documents/computer-science/cs-english",
+            },
+            {
               text: "Computer Architecture",
               link: "/documents/computer-science/computer-science",
             },
@@ -167,7 +171,7 @@ export default withMermaid({
                   link: "/documents/computer-science/front-end/front-end-theory",
                 },
                 {
-                  text: "html",
+                  text: "HTML",
                   link: "/documents/computer-science/front-end/html",
                 },
                 {
