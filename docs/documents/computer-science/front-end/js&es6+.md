@@ -10,48 +10,52 @@
 
 > 严格模式 _strict model_
 
-严格模式语法
+**严格模式语法**
 
-- 若是整个文件都使用，则定义在文件第一行，若仅在某一函数中使用，则定义在该函数内的第一行
+若是整个文件都使用，则定义在文件第一行，若仅在某一函数中使用，则定义在该函数内的第一行
 
-  ```javascript
-  "use strict"; //全局
+```javascript
+"use strict"; //全局
 
-  function func() {
-    "use strict"; //仅在函数内部
-  }
-  ```
+function func() {
+  "use strict"; //仅在函数内部
+}
+```
 
-- 严格模式区别
+**严格模式区别**
 
-  1. 严格模式下，不允许未声明就直接赋值
+1. 严格模式下，不允许未声明就直接赋值
 
-     ```javascript
-     a = 10; // ok
-     ```
+   ```javascript
+   a = 10; // ok
+   ```
 
-     ```javascript
-     "use strict";
-     a = 10; // error
-     var a = 10; // ok
-     ```
+   ```javascript
+   "use strict";
+   a = 10; // error
+   var a = 10; // ok
+   ```
 
-  2. 严格模式下，不允许属性重名
+2. 严格模式下，不允许属性重名
 
-     ```javascript
-     var obj = {
-       a: "hello",
-       a: "world",
-     }; // ok
-     ```
+   ```javascript
+   var obj = {
+     a: "hello",
+     a: "world",
+   }; // ok
+   ```
 
-     ```javascript
-     "use strict";
-     var obj = {
-       a: "hello",
-       a: "world",
-     }; // error
-     ```
+   ```javascript
+   "use strict";
+   var obj = {
+     a: "hello",
+     a: "world",
+   }; // error
+   ```
+
+
+
+
 
 ## 数据类型
 
@@ -65,6 +69,8 @@
 - bigInt
 - symbol
 
+
+
 ### 引用类型
 
 引用类型可以说只有一个，即 Object，也可以说，有如下三个，加上两个特殊对象，正则和日期
@@ -74,6 +80,28 @@
 - Array
 - RegExp(正则)
 - Date(日期)
+
+
+
+### Infinity
+
+`Infinity` 是 JavaScript 中的一个特殊常量，表示无穷大
+
+```javascript
+console.log(Infinity + 1); // Infinity
+console.log(Infinity * Infinity); // Infinity
+console.log(Infinity - Infinity); // NaN
+console.log(0 * Infinity); // NaN
+```
+
+`Infinity` 也可以在数组方法中使用
+
+```js
+var arr = [1, [2, [3, [4, 5]]]];
+console.log(arr.flat(Infinity)); // [1, 2, 3, 4, 5]
+```
+
+
 
 ### 虚值与真值
 
@@ -261,129 +289,135 @@ Object.prototype.toString.call({}); // "[object Object]"
 
 ### Object.create
 
-- **说明**：
+**说明**：
 
-  Object.create 用于创建一个新的对象并添加新的属性，可以用来实现**对象的继承**
+Object.create 用于创建一个新的对象并添加新的属性，可以用来实现**对象的继承**
 
-- **语法**：
+**语法**：
 
-  ```javascript
-  Object.create(obj, newProperty);
-  ```
+```javascript
+Object.create(obj, newProperty);
+```
 
-  ```javascript
-  let obj = { foo: 123 };
-  let obj2 = Object.create(obj, {
-    name: {
-      value: 'hello',
-      writable: false
-      ...
-    }
-  })	// 这里obj2就继承了obj的所有属性，并添加上了新的属性，obj中的属性将会全部存在于obj2的__proto__中
-  ```
+```javascript
+let obj = { foo: 123 };
+let obj2 = Object.create(obj, {
+  name: {
+    value: 'hello',
+    writable: false
+    ...
+  }
+})	// 这里obj2就继承了obj的所有属性，并添加上了新的属性，obj中的属性将会全部存在于obj2的__proto__中
+```
 
-- **与 new Object 继承的区别**
+**与 new Object 继承的区别**
 
-  - new object 实现的继承，父对象的属性会直接添加到子类中，子类可以直接通过点属性(.xxx)的方式点出来，继承的属性存在在子类上
+new object 实现的继承，父对象的属性会直接添加到子类中，子类可以直接通过点属性(.xxx)的方式点出来，继承的属性存在在子类上
 
-    ```javascript
-    // new Object() 方式创建
-    var a = { rep: "apple" };
-    var b = new Object(a);
-    console.log(b); // {rep: "apple"}
-    console.log(b.__proto__); // {}
-    console.log(b.rep); // {rep: "apple"}
-    ```
+```javascript
+// new Object() 方式创建
+var a = { rep: "apple" };
+var b = new Object(a);
+console.log(b); // {rep: "apple"}
+console.log(b.__proto__); // {}
+console.log(b.rep); // {rep: "apple"}
+```
 
-  - 而 create 实现的继承，父对象的属性会添加到子类的原型上，子类也可以直接点出来，但是继承的属性不会存在于子类上
+而 create 实现的继承，父对象的属性会添加到子类的原型上，子类也可以直接点出来，但是继承的属性不会存在于子类上
 
-    ```javascript
-    // Object.create() 方式创建
-    var a = { rep: "apple" };
-    var b = Object.create(a);
-    console.log(b); // {}
-    console.log(b.__proto__); // {rep: "apple"}
-    console.log(b.rep); // {rep: "apple"}
-    ```
+```javascript
+// Object.create() 方式创建
+var a = { rep: "apple" };
+var b = Object.create(a);
+console.log(b); // {}
+console.log(b.__proto__); // {rep: "apple"}
+console.log(b.rep); // {rep: "apple"}
+```
+
+
 
 ### obj.hasOwnProperty
 
-- 说明
+**说明**
 
-  用于判断对象自身是否存在某一**非继承**的属性
+用于判断对象自身是否存在某一**非继承**的属性
 
-- 语法
+**语法**
 
-  ```javascript
-  function foo() {
-    this.name = "foo";
-    this.sayHi = function () {
-      console.log("Say Hi");
-    };
-  }
-  
-  foo.prototype.sayGoodBy = function () {
-    console.log("Say Good By");
+```javascript
+function foo() {
+  this.name = "foo";
+  this.sayHi = function () {
+    console.log("Say Hi");
   };
-  
-  let myPro = new foo();
-  
-  console.log(myPro.name); // foo
-  console.log(myPro.hasOwnProperty("name")); // true
-  console.log(myPro.hasOwnProperty("toString")); // false
-  console.log(myPro.hasOwnProperty("hasOwnProperty")); // fasle
-  console.log(myPro.hasOwnProperty("sayHi")); // true
-  console.log(myPro.hasOwnProperty("sayGoodBy")); // false
-  console.log("sayGoodBy" in myPro); // true
-  ```
+}
+
+foo.prototype.sayGoodBy = function () {
+  console.log("Say Good By");
+};
+
+let myPro = new foo();
+
+console.log(myPro.name); // foo
+console.log(myPro.hasOwnProperty("name")); // true
+console.log(myPro.hasOwnProperty("toString")); // false
+console.log(myPro.hasOwnProperty("hasOwnProperty")); // fasle
+console.log(myPro.hasOwnProperty("sayHi")); // true
+console.log(myPro.hasOwnProperty("sayGoodBy")); // false
+console.log("sayGoodBy" in myPro); // true
+```
+
+
 
 ### in 关键字
 
 可以用 in 进行循环，也可以用于做一些判断
 
-1. **用作循环的情况**
+**用作循环的情况**
 
-   用作循环即是 for..in 循环，可以实现类似数组 map 的功能，但是 for..in 可以循环对象，也可以循环数组
+用作循环即是 for..in 循环，可以实现类似数组 map 的功能，但是 for..in 可以循环对象，也可以循环数组
 
-   - 用作循环数组的时候，循环出来的内容是**数组的 id**
+- 用作循环数组的时候，循环出来的内容是**数组的 id**
 
-     ```typescript
-     let arr2 = ["Tom", "Jerry", "Bob"];
-     for (let i in arr2) {
-       console.log(i);
-     } // 0 1 2
-     ```
+  ```typescript
+  let arr2 = ["Tom", "Jerry", "Bob"];
+  for (let i in arr2) {
+    console.log(i);
+  } // 0 1 2
+  ```
 
-   - 用作循环对象的时候，循环出来的内容是**对象的 Key**
+- 用作循环对象的时候，循环出来的内容是**对象的 Key**
 
-     ```typescript
-     let obj = { name: "leo", height: "180" };
-     for (let i in obj) {
-       console.log(i);
-     } // name  height
-     ```
+  ```typescript
+  let obj = { name: "leo", height: "180" };
+  for (let i in obj) {
+    console.log(i);
+  } // name  height
+  ```
 
-2. **用作判断某一个值是否在数组/对象内**
+**用作判断某一个值是否在数组/对象内**
 
-   注意，用于判断的时候，同样遵循上述的原则，数组为 id，对象为 key
+注意，用于判断的时候，同样遵循上述的原则，数组为 id，对象为 key
 
-   ```typescript
-   let arr = ["a", "b", "c"];
-   console.log("b" in arr); // false
-   console.log(2 in arr); // true
-   
-   let obj = { name: "leo", age: 18 };
-   console.log(18 in obj); // false
-   console.log("name" in obj); // true, 同时要注意，此处的key必须为字符串格式，若不加''，则会判断为变量
-   ```
+```typescript
+let arr = ["a", "b", "c"];
+console.log("b" in arr); // false
+console.log(2 in arr); // true
+
+let obj = { name: "leo", age: 18 };
+console.log(18 in obj); // false
+console.log("name" in obj); // true, 同时要注意，此处的key必须为字符串格式，若不加''，则会判断为变量
+```
 
 > 参考文档：
 >
 > https://www.cnblogs.com/memphis-f/p/12073013.html
 
-## 变量扩展
 
----
+
+
+
+## 变量扩展
 
 ### let, const
 
@@ -405,6 +439,10 @@ Object.prototype.toString.call({}); // "[object Object]"
 const { subHisId = "", deptId = "", scheduleDate: date = "" } = item;
 ```
 
+
+
+
+
 ## 函数扩展
 
 ### arguments
@@ -418,6 +456,8 @@ function func() {
 }
 func(1, 2, "3");
 ```
+
+
 
 ### 箭头函数
 
@@ -449,6 +489,8 @@ func(1, 2, "3");
 
   **始终指向自身所在的代码块的对象**
 
+
+
 ### call,apply,bind
 
 > 参考视频：
@@ -457,97 +499,101 @@ func(1, 2, "3");
 
 这三个函数本质上都是一样的，都是函数方法，用于改变函数的 this 的指向，区别及使用方法如下
 
-- 函数用法
+**call**
 
-  1. **call**
+函数方法，用于改变 this 指向，且会**直接调用！**无返回值
 
-     函数方法，用于改变 this 指向，且会**直接调用！**无返回值
-
-     ```typescript
-     let cat = {
-     	name: '喵喵',
-     }
-     let dog = {
-       name: '汪汪',
-       sayName(){		// 注意，此处不可以使用箭头函数，箭头函数会改变This指向到该函数定义的时候的作用域指向的对象，而js中作用域仅有函数才会存在，对象不存在作用域，所以，dog对象没有作用域，sayName的外部作用域就是window，所以this会指向window
-         console.log('My name is' + this.name)
-       }
-       eat(food1, food2){
-         console.log('I like eat' + food1 + 'and' + food2)
-     	}
-     }
-     // call方法会把函数中的This指向后面的第一个参数
-     dog.sayName.call(cat); // My name is 喵喵
-     dog.eat.call(cat, '鱼', '猫饼干')
-     ```
-
-  2. **apply**
-
-     与 call 其他基本一致，函数也会**直接调用**，但是，apply 传参接受的参数是一个数组，无返回值
-
-     ```typescript
-     //......  // 和上面一致
-     dog.eat.call(cat, ["鱼", "猫饼干"]);
-     ```
-
-  3. **bind**
-
-     bind 与 call 和 apply 不同，bind**不会直接调用函数！**，而是把函数当做返回值，方便后续持续调用，而省略掉每次要改 this 都要 call 一次的问题
-
-     ```typescript
-     // .......   // 其他一致
-     let fun = dog.sayName.bind(cat);
-     fun();
-     ```
-
-- 函数实现原理
-
-  实现原理很简单，只需要把需要执行的函数挂载到需要绑定 this 的对象上，然后进行相关操作后，删除掉对象上的函数即可，以 call 和 bind 为例
-
-  ```javascript
-  // call
-  let age = 1;
-  let gender = female;
-  let obj = {
-    age: 2,
-    gender: "male",
-  };
-  function logInfo() {
-    console.log(age, gender);
-    console.log(this.age, this.gender);
+```typescript
+let cat = {
+	name: '喵喵',
+}
+let dog = {
+  name: '汪汪',
+  sayName(){		// 注意，此处不可以使用箭头函数，箭头函数会改变This指向到该函数定义的时候的作用域指向的对象，而js中作用域仅有函数才会存在，对象不存在作用域，所以，dog对象没有作用域，sayName的外部作用域就是window，所以this会指向window
+    console.log('My name is' + this.name)
   }
-  // 原生方法：
-  logInfo.call(obj);
-  // 1, female  2, male
-  
-  // 自己实现一个call
-  Function.prototype.myCall = function (obj, ...args) {
-    // 第一步， 将函数挂载到obj上，此时的this是调用myCall方法的函数本身。例如，logInfo.myCall，那么this和obj.func就是logInfo
-    obj.func = this;
-    // 第二步，因为call函数会自调用，所以直接调用该函数即可，此时因为是obj调用的，所以函数内的this也指向obj
-    obj.func(...args);
-    // 第三步，函数执行完毕后，删除该函数，保持obj不改变
+  eat(food1, food2){
+    console.log('I like eat' + food1 + 'and' + food2)
+	}
+}
+// call方法会把函数中的This指向后面的第一个参数
+dog.sayName.call(cat); // My name is 喵喵
+dog.eat.call(cat, '鱼', '猫饼干')
+```
+
+**apply**
+
+与 call 其他基本一致，函数也会**直接调用**，但是，apply 传参接受的参数是一个数组，无返回值
+
+```typescript
+//......  // 和上面一致
+dog.eat.call(cat, ["鱼", "猫饼干"]);
+```
+
+**bind**
+
+bind 与 call 和 apply 不同，bind**不会直接调用函数！**，而是把函数当做返回值，方便后续持续调用，而省略掉每次要改 this 都要 call 一次的问题
+
+```typescript
+// .......   // 其他一致
+let fun = dog.sayName.bind(cat);
+fun();
+```
+
+**函数实现原理**
+
+实现原理很简单，只需要把需要执行的函数挂载到需要绑定 this 的对象上，然后进行相关操作后，删除掉对象上的函数即可，以 call 和 bind 为例
+
+```javascript
+// call
+let age = 1;
+let gender = female;
+let obj = {
+  age: 2,
+  gender: "male",
+};
+function logInfo() {
+  console.log(age, gender);
+  console.log(this.age, this.gender);
+}
+// 原生方法：
+logInfo.call(obj);
+// 1, female  2, male
+
+// 自己实现一个call
+Function.prototype.myCall = function (obj, ...args) {
+  // 第一步， 将函数挂载到obj上，此时的this是调用myCall方法的函数本身。例如，logInfo.myCall，那么this和obj.func就是logInfo
+  obj.func = this;
+  // 第二步，因为call函数会自调用，所以直接调用该函数即可，此时因为是obj调用的，所以函数内的this也指向obj
+  const res = obj.func(...args);
+  // 第三步，函数执行完毕后，删除该函数，保持obj不改变
+  delete obj.func;
+  // 最后，return原函数本身的返回值即可
+  return res;
+};
+
+// 自己实现一个bind
+Function.prototype.myBind = function (obj, ...args) {
+  // 第一步，与上述所说一致，挂载函数到obj上
+  obj.func = this;
+  // 第二步，bind不调用函数，而是返回一个函数，所以，直接返回一个函数出去
+  return function () {
+    // 第三步，逻辑同上
+    const res = obj.func(...args);
+    // 最后别忘了删除
     delete obj.func;
-    // 最后，因为call函数没有返回值，所以直接return即可
-    return;
+    return res;
   };
-  
-  // 自己实现一个bind
-  Function.prototype.myBind = function (obj, ...args) {
-    // 第一步，与上述所说一致，挂载函数到obj上
-    obj.func = this;
-    // 第二步，bind不调用函数，而是返回一个函数，所以，直接返回一个函数出去
-    return function () {
-      // 第三步，逻辑同上
-      obj.func(...args);
-      // 最后别忘了删除
-      delete obj.func;
-      return;
-    };
-  };
-  ```
+};
+```
+
+
+
+
 
 ## 模板字符串
+
+> template literal
 
 即通过反引号，添加$符号表示变量的方式
 
@@ -555,6 +601,22 @@ func(1, 2, "3");
 let name = "leo";
 let describe = `My name is ${name}`;
 ```
+
+
+
+
+
+## 三元表达式
+
+> ternary operators
+
+```js
+const title = title ? title : 'Default Title'
+```
+
+
+
+
 
 ## 解构赋值
 
@@ -602,6 +664,10 @@ console.log(bill); // 'peter'
 undefined ?? 123; // 123
 undefined || 123; // 123
 ```
+
+
+
+
 
 ## for...in 与 for...of
 
@@ -675,6 +741,10 @@ for (let value of myArray) {
 // 7 number
 ```
 
+
+
+
+
 ## Promise
 
 ### Promise 简介
@@ -694,37 +764,33 @@ sum(1, 2);
 
 与函数不同的是，promise 回根据内部执行情况，决定走 resolve 还是走 reject，resolve 的话，会调用外部的.then，reject 的话，会调用外部的.catch
 
-- promise 用来执行异步操作，有效地消除了回调地狱，并且增加了错误捕获机制，其本质上是一个函数对象，会**自行调用**，自身拥有着**all、reject、resolve**等方法，其原型上有**then、catch**等方法。示例如下：
+promise 用来执行异步操作，有效地消除了回调地狱，并且增加了错误捕获机制，其本质上是一个函数对象，会**自行调用**，自身拥有着**all、reject、resolve**等方法，其原型上有**then、catch**等方法。示例如下：
 
-  ```javascript
-  let p = new Promise(function (resolve, reject) {
-    //做一些异步操作
-    setTimeout(function () {
-      console.log("执行了Promise");
-      resolve("resolve中的参数");
-    }, 2000);
-  });
-  ```
+```javascript
+let p = new Promise(function (resolve, reject) {
+  //做一些异步操作
+  setTimeout(function () {
+    console.log("执行了Promise");
+    resolve("resolve中的参数");
+  }, 2000);
+});
+```
 
-  在此案例中，浏览器在 2000ms 后会直接执行 setTimeout 函数
+在此案例中，浏览器在 2000ms 后会直接执行 setTimeout 函数
 
-- promise 所拥有的特性：
+**promise 特性**：
 
-  1. promise 一定会返回一个结果
-  2. promise 还是基于回调的
-  3. 当使用 promise 的时候会传入一个执行器，此执行器是立即执行，即 new Promise(fun(){})括号中的 fun(){}是直接执行的
-  4. 当前 executor 给了两个函数可以来描述当前 promise 的状态，分别是 resolve 和 reject
-  5. promise 中有三个状态：成功态，失败态，等待态（默认为等待态）
-  6. 如果调用 resolve 会走到成功态，如果调用 reject 或者发生异常会走失败态
-  7. promise 一旦状态变化后不能更改，例如，调了 resolve 之后，再调 reject 是不会生效的，同理，throw Error 之后再 resolve 也是不会生效的
+1. promise 一定会返回一个结果
+2. promise 还是基于回调的
+3. 当使用 promise 的时候会传入一个执行器，此执行器是立即执行，即 new Promise(fun(){})括号中的 fun(){}是直接执行的
+4. 当前 executor 给了两个函数可以来描述当前 promise 的状态，分别是 resolve 和 reject
+5. promise 中有三个状态：成功态，失败态，等待态（默认为等待态）
+6. 如果调用 resolve 会走到成功态，如果调用 reject 或者发生异常会走失败态
+7. promise 一旦状态变化后不能更改，例如，调了 resolve 之后，再调 reject 是不会生效的，同理，throw Error 之后再 resolve 也是不会生效的
 
-- Resolve, reject
+⚠️**注意，promise 会直接自调用**，所以一定要确保其中的改赋值的变量都已赋值！！！
 
-  分别对应成功与失败所调用的函数
 
-- **注意点！！！**
-
-  ！！！**注意，promise 会直接自调用**，所以一定要确保其中的改赋值的变量都已赋值！！！
 
 ### promise 在实际函数中的运用
 
@@ -820,77 +886,81 @@ promiseClick()
 
 ### promise.all
 
-- 说明
+**说明**
 
-  Promise.all 可以将多个 Promise 实例包装成一个新的 Promise 实例。同时，成功和失败的返回值是不同的，成功的时候返回的是一个**结果数组**，而失败的时候则返回**最先被 reject 失败状态的值**。
+Promise.all 可以将多个 Promise 实例包装成一个新的 Promise 实例。同时，成功和失败的返回值是不同的，成功的时候返回的是一个**结果数组**，而失败的时候则返回**最先被 reject 失败状态的值**。
 
-- 语法示例
+**语法**
 
-  ```javascript
-  let p1 = new Promise((resolve, reject) => {
-    resolve("成功了");
+```javascript
+let p1 = new Promise((resolve, reject) => {
+  resolve("成功了");
+});
+
+let p2 = new Promise((resolve, reject) => {
+  resolve("success");
+});
+
+let p3 = Promse.reject("失败");
+
+Promise.all([p1, p2])
+  .then((result) => {
+    console.log(result); //['成功了', 'success']
+  })
+  .catch((error) => {
+    console.log(error);
   });
 
-  let p2 = new Promise((resolve, reject) => {
-    resolve("success");
+Promise.all([p1, p3, p2])
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((error) => {
+    console.log(error); // 失败了，打出 '失败'
   });
+```
 
-  let p3 = Promse.reject("失败");
+注意点
 
-  Promise.all([p1, p2])
-    .then((result) => {
-      console.log(result); //['成功了', 'success']
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+**Promise.all 获得的成功结果的数组里面的数据顺序和 Promise.all 接收到的数组顺序是一致的**
 
-  Promise.all([p1, p3, p2])
-    .then((result) => {
-      console.log(result);
-    })
-    .catch((error) => {
-      console.log(error); // 失败了，打出 '失败'
-    });
-  ```
+参考资料
 
-- 注意点
+> https://www.jianshu.com/p/7e60fc1be1b2
 
-  **Promise.all 获得的成功结果的数组里面的数据顺序和 Promise.all 接收到的数组顺序是一致的**
 
-- 参考资料
-
-  > https://www.jianshu.com/p/7e60fc1be1b2
 
 ### promise.race
 
-- 说明
+**说明**
 
-  race 即赛跑的意思，promise.race()接收一个 promise 数组为参数，其中哪个 promise 最先执行完就先执行哪一个，其他的都不执行
+race 即赛跑的意思，promise.race()接收一个 promise 数组为参数，其中哪个 promise 最先执行完就先执行哪一个，其他的都不执行
 
-- 语法
+**语法**
 
-  ```javascript
-  let p1 = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve("success");
-    }, 1000);
+```javascript
+let p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve("success");
+  }, 1000);
+});
+
+let p2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject("failed");
+  }, 500);
+});
+
+Promise.race([p1, p2])
+  .then((result) => {
+    console.log(result);
+  })
+  .catch((error) => {
+    console.log(error); // 打开的是 'failed'
   });
-  
-  let p2 = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      reject("failed");
-    }, 500);
-  });
-  
-  Promise.race([p1, p2])
-    .then((result) => {
-      console.log(result);
-    })
-    .catch((error) => {
-      console.log(error); // 打开的是 'failed'
-    });
-  ```
+```
+
+
 
 ### promise.resolve
 
@@ -913,124 +983,129 @@ new Promise((resolve, reject) => resolve(value));
 
 相当于直接调用 resolve 方法改变 status 状态为 fullfilled
 
+
+
 ### promise 原理剖析
 
-- 参考资料
+> 参考资料
+>
+> https://www.jianshu.com/p/d39f9d3168df
+>
+> https://zhuanlan.zhihu.com/p/58428287 图解 promise 原理
+>
+> https://www.bilibili.com/video/BV1Tu411i72B/?spm_id_from=333.337.search-card.all.click&vd_source=292c7745eb30e2c00d6028dfa6d8c3c5 一小时快速版
+>
 
-  > https://www.jianshu.com/p/d39f9d3168df
-  >
-  > https://zhuanlan.zhihu.com/p/58428287 图解 promise 原理
-  >
-  > https://www.bilibili.com/video/BV1Tu411i72B/?spm_id_from=333.337.search-card.all.click&vd_source=292c7745eb30e2c00d6028dfa6d8c3c5 快速版
-  >
-  > node --> promise
+**简单实现**
 
-- 简单原理实现
+首先，以简单的 promise 的使用入手
 
-  首先，以正常 promise 的使用入手
+```typescript
+let p1 = new Promize((resolve, reject) => {
+  resolve(1);
+});
 
-  ```typescript
-  let p1 = new Promize((resolve, reject) => {
-    resolve(1);
-  });
-  
-  p1.then(
-    (res) => {
-      console.log(res);
-    },
-    (err) => {
-      console.log(err);
-    }
-  );
-  ```
-
-  可以看到，promise 接受一个函数(叫做 executor)当做参数，该函数包含 resolve 和 reject 两个函数，调用 resolve，会触发.then 的成功回调，调用 reject，会触发.then 的失败回调（也就是.catch，算是.then 失败回调的语法糖）
-
-  那么，开始实现
-
-  promise 能根据调用 resolve 和 reject 从而实现不同的.then，依赖于其中的三种 status，分别为 PENDING，FULLFILLED，REJECTED，promise 在实例化的时候，status 为 PENDING，当调用 resolve 的时候，会改为 FULLFILLED，当调用 reject 的时候，会改为 REJECTED，再加上，promise 在生成的时候会直接执行，所以 executor 需要直接执行
-
-  同时，resolve 和 reject 本身都会接收参数，将参数存储到类中
-
-  ```js
-  class MyPromise {
-    constructor(executor) {
-      this.status = "PENDING";
-      this.value = "";
-      this.error = "";
-  
-      this.resolve = (value) => {
-        this.status = "FULLFILLED";
-        this.value = value;
-      };
-      this.reject = (error) => {
-        this.status = "REJECTED";
-        this.error = error;
-      };
-      executor(this.resolve, this.reject); // 此处executor执行，根据外部调用情况，对应更改status的值
-    }
+p1.then(
+  (res) => {
+    console.log(res);
+  },
+  (err) => {
+    console.log(err);
   }
-  ```
+);
+```
 
-  接下来，来实现 then，then 接收两个函数作为参数，一个成功回调，一个失败回调
+可以看到，promise 接受一个函数(叫做 executor)当做参数，该函数包含 resolve 和 reject 两个函数，调用 resolve，会触发.then 的成功回调，调用 reject，会触发.then 的失败回调（也就是.catch，算是.then 失败回调的语法糖）
 
-  ```js
-  class MyPromise {
-    constructor(executor){
-      ...
-      this.resolve = (value) => {
-        this.status = 'FULLFILLED'
-        this.value = value
-        this.successFuncList.forEach((func) => func(this.value));	// 将暂存的函数进行调用
-      };
-      this.reject = (error) => {
-        this.status = 'REJECTED'
-        this.error = error
-        this.rejectFuncList.forEach((func) => func(this.error));
-      };
-      this.successFuncList = []
-      this.rejectFuncList = []
-    }
-  
-    then(onFulfilled, onRejected){
-      if (this.status === "FULLFILLED") {
-        onFulfilled(this.value);
-      }
-      if (this.status === "REJECTED") {
-        onRejected(this.error);
-      }
-      // 如果then里面是setTimeout这类函数，可能状态不会及时更新，这时候需要将函数暂存
-      if (this.status === "PENDING") {
-        this.successFuncList.push(() => successFunc);
-        this.rejectFuncList.push(() => failFunc);
-      }
-    }
+那么，开始实现
+
+promise 能根据调用 resolve 和 reject 从而实现不同的.then，依赖于其中的三种 status，分别为 PENDING，FULLFILLED，REJECTED，promise 在实例化的时候，status 为 PENDING，当调用 resolve 的时候，会改为 FULLFILLED，当调用 reject 的时候，会改为 REJECTED，再加上，promise 在生成的时候会直接执行，所以 executor 需要直接执行
+
+同时，resolve 和 reject 本身都会接收参数，将参数存储到类中
+
+```js
+class MyPromise {
+  constructor(executor) {
+    this.status = "PENDING";
+    this.value = "";
+    this.error = "";
+
+    this.resolve = (value) => {
+      this.status = "FULLFILLED";
+      this.value = value;
+    };
+    this.reject = (error) => {
+      this.status = "REJECTED";
+      this.error = error;
+    };
+    executor(this.resolve, this.reject); // 此处executor执行，根据外部调用情况，对应更改status的值
   }
-  ```
+}
+```
 
-  第三步，来实现链式调用
+接下来，来实现 then，then 接收两个函数作为参数，一个成功回调，一个失败回调
 
-  很简单，仅需将.then 里面的内容用 promise 包裹，然后再状态改变的时候再次触发 resolve/reject 更改 promise 的状态即可，链式调用的.then 参数如何接收待补充
+```js
+class MyPromise {
+  constructor(executor){
+    ...
+    this.resolve = (value) => {
+      this.status = 'FULLFILLED'
+      this.value = value
+      this.successFuncList.forEach((func) => func(this.value));	// 将暂存的函数进行调用
+    };
+    this.reject = (error) => {
+      this.status = 'REJECTED'
+      this.error = error
+      this.rejectFuncList.forEach((func) => func(this.error));
+    };
+    this.successFuncList = []
+    this.rejectFuncList = []
+  }
 
-  ```js
-  ...
   then(onFulfilled, onRejected){
-    const p2 = new MyPromise((resolve, reject)=> {
-      if (this.status === "FULLFILLED") {
-        onFulfilled(this.value);
-        resolve()
-      }
-      if (this.status === "REJECTED") {
-        onRejected(this.error);
-        reject()
-      }
-      if (this.status === "PENDING") {
-        this.successFuncList.push(() => successFunc);
-        this.rejectFuncList.push(() => failFunc);
-      }
-    })
+    if (this.status === "FULLFILLED") {
+      onFulfilled(this.value);
+    }
+    if (this.status === "REJECTED") {
+      onRejected(this.error);
+    }
+    // 如果then里面是setTimeout这类函数，可能状态不会及时更新，这时候需要将函数暂存
+    if (this.status === "PENDING") {
+      this.successFuncList.push(() => successFunc);
+      this.rejectFuncList.push(() => failFunc);
+    }
   }
-  ```
+}
+```
+
+第三步，来实现链式调用
+
+很简单，仅需将.then 里面的内容用 promise 包裹，然后再状态改变的时候再次触发 resolve/reject 更改 promise 的状态即可，链式调用的.then 参数如何接收待补充
+
+```js
+...
+then(onFulfilled, onRejected){
+  const p2 = new MyPromise((resolve, reject)=> {
+    if (this.status === "FULLFILLED") {
+      onFulfilled(this.value);
+      resolve()
+    }
+    if (this.status === "REJECTED") {
+      onRejected(this.error);
+      reject()
+    }
+    if (this.status === "PENDING") {
+      this.successFuncList.push(() => successFunc);
+      this.rejectFuncList.push(() => failFunc);
+    }
+  })
+}
+```
+
+
+
+
 
 ## Async, Await
 
@@ -1098,6 +1173,8 @@ console.log(generator.next()); // 第三次调用next
 **底层实现**
 
 generator 底层涉及涉及到了 JavaScript 引擎的内部机制，这使得直接在 JavaScript 中完全模拟其行为比较复杂。Generator 的核心特性是能够暂停和恢复执行。在 JavaScript 引擎层面，这需要引擎能够在函数执行中的任意时刻保存当前的执行上下文（包括变量状态、调用栈等），并在适当的时候恢复该上下文。
+
+
 
 ### async, await
 
@@ -1677,35 +1754,48 @@ Array.prototype.myReduce = function (cb, initialValue = 0) {
 
 
 
+### Array.flat
+
+为了打平一个数组，可以使用 ES2019 引入的 `Array.prototype.flat()` 方法：
+
+```javascript
+var arr = [1, [2, [[3, 4], 5], 6]];
+var flatArr = arr.flat(Infinity); // 使用 Infinity 作为深度，以确保数组完全被打平
+console.log(flatArr); // 输出: [1, 2, 3, 4, 5, 6]
+```
+
+在这个例子中，`flat` 方法接受一个参数，指定要打平的深度。将其设置为 `Infinity` 可以确保无论数组有多深都会被完全打平
+
 
 
 ### 类数组
 
-- 类数组的定义：
+**定义**
 
-  要包含 Length，否则无法转换
+要包含 Length，否则无法转换
 
-- 类数组转数组
+**类数组转数组**
 
-  ```javascript
-  let arrObj = {0: 'Mary', 1: 'bill', 2: 'guy', 3: 'trueman', length: 4}
-  // 方法一：
-  Array.from(arrObj)
-  // 方法二：
-  Array.prototype.slice.call(arrObj)
-  // 方法三（骚操作）：
-  [].slice.call(arrObj)
-  // 结果	['Mary', 'bill', 'guy', 'trueman']
-  // 如有其他情况，例如，少了数字，或者键值不为数字或者数字样式的字符串，或者没有length，都会导致转换出问题，如下
-  // 情况一： 无length
-  let arrObj = { 1: 'bill', 2: 'guy', 3: 'trueman'}
-  // 结果  []
-  // 情况二： length与实际不符
-  let arrObj = { 1: 'bill', 2: 'guy', 3: 'trueman', length: 3}
-  // 结果  [undefined, 'bill', 'guy']
-  // 情况二： 键值为字符串，而非数字
-  let arrObj = { name: 'bill', '2': 'guy', 3: 'trueman', length: 3}
-  // 结果  (3) [undefined, undefined, 'guy']， 数字字符串可以隐式转换，是支持的
+```javascript
+let arrObj = {0: 'Mary', 1: 'bill', 2: 'guy', 3: 'trueman', length: 4}
+// 方法一：
+Array.from(arrObj)
+// 方法二：
+Array.prototype.slice.call(arrObj)
+// 方法三（骚操作）：
+[].slice.call(arrObj)
+// 结果	['Mary', 'bill', 'guy', 'trueman']
+// 如有其他情况，例如，少了数字，或者键值不为数字或者数字样式的字符串，或者没有length，都会导致转换出问题，如下
+// 情况一： 无length
+let arrObj = { 1: 'bill', 2: 'guy', 3: 'trueman'}
+// 结果  []
+// 情况二： length与实际不符
+let arrObj = { 1: 'bill', 2: 'guy', 3: 'trueman', length: 3}
+// 结果  [undefined, 'bill', 'guy']
+// 情况二： 键值为字符串，而非数字
+let arrObj = { name: 'bill', '2': 'guy', 3: 'trueman', length: 3}
+// 结果  (3) [undefined, undefined, 'guy']， 数字字符串可以隐式转换，是支持的
+```
 
 
 
@@ -2033,4 +2123,10 @@ import demo from 'a.js'
 console.log(demo.c)  // 3
 console.log(demo.d)  // 4
 ```
+
+
+
+
+
+## 防抖&节流
 
