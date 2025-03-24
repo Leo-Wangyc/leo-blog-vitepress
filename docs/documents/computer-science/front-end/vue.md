@@ -646,7 +646,7 @@ Vue3 composition API中的组件
 
 
 
-## 组件传参
+## 组件通信
 
 ### 父组件 to 子组件
 
@@ -658,13 +658,13 @@ Vue3 composition API中的组件
 // 1.js方式
 const props = defineProps({
 	title: {
-    type: string
-    default: ''
-  },
+        type: string
+        default: ''
+      },
   arr: {
-    type: Array,
-    default: [],
-	}
+        type: Array,
+        default: [],
+   }
 })
 // 2.ts方式
 const props = defineProps<{
@@ -1346,9 +1346,83 @@ this.$store.a.state.loginStatus
 
 
 
+## 实际开发
+
+### 全局变量
+
+
+
 
 
 ## Pinia
+
+### 基本使用
+
+一. 挂载
+
+先在main.js里面，挂载一下pinia
+
+```js
+// main.js
+import { createPinia } from 'pinia';
+
+export function createApp() {
+    const app = createSSRApp(App)
+	const pinia = createPinia();
+	app.use(pinia);
+  return {
+    app
+  }
+}
+```
+
+二. 定义store
+
+然后，在stores里面定义一个store，可以正常使用vue的各种生命周期函数
+
+```js
+// stores/deviceInfo.js
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue'
+
+export const useDeviceInfoStore = defineStore('counter', () => {
+  const deviceInfo = ref({
+		navBarHeight: 0,
+		statusBarHeight: 0
+	})
+	
+	uni.getSystemInfo({
+		success: (e) => {
+			deviceInfo.value.statusBarHeight = e.statusBarHeight;
+			const custom = uni.getMenuButtonBoundingClientRect();
+			if (!custom) return
+			deviceInfo.value.navBarHeight = custom?.height + (custom?.top - e.statusBarHeight) * 2;
+			console.log('deviceInfo', deviceInfo.value)
+		},
+		fail: (err) => {
+			console.error('Failed to get system info:', err);
+		}
+	});
+	
+  return { deviceInfo }
+})
+```
+
+三. 使用store
+
+```js
+<script setup>
+	import { ref, onMounted, inject,computed } from 'vue'
+	import { useDeviceInfoStore } from '@/stores/deviceInfo'
+	
+	const deviceInfoStore = useDeviceInfoStore()
+	
+	onMounted(()=>{
+		console.log('doubleValue=-=-==-=-', deviceInfoStore.deviceInfo.navBarHeight)
+	})
+
+</script>
+```
 
 
 

@@ -33,3 +33,12 @@ joe，不是这么用的/你用错了
 ### we have to get past this
 
 我们一定要解决这件事（形容让某件事有一个了断）
+
+### My sharing is paused
+
+（一般用于webinar中）分享屏幕的时候断连了
+
+
+
+
+
